@@ -1,0 +1,33 @@
+<!-- <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 5.0//EN" "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd"> -->
+<!DOCTYPE hibernate-configuration SYSTEM "classpath:hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+
+        <!-- Database connection settings -->
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:5432/Kefir</property>
+        <property name="hibernate.connection.username">postgres</property>
+        <property name="hibernate.connection.password">postgres</property>
+
+        <!-- Hibernate dialect -->
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+
+        <!-- JDBC connection pool settings -->
+        <!--
+        <property name="hibernate.c3p0.min_size">5</property>
+        <property name="hibernate.c3p0.max_size">20</property> -->
+
+        <!-- Enable Hibernate debug -->
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+        <!--<property name="hibernate.hbm2ddl.auto">update</property> -->
+
+        <!--<property name="hibernate.generate_statistics">true</property> -->
+
+        <!-- Disable the second-level cache -->
+        <!--<property name="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</property> -->
+
+        <!-- Mapping classes -->
+        <!--<mapping class="org.kefir.entity.Testo"/> -->
+    </session-factory>
+</hibernate-configuration>
