@@ -1,7 +1,7 @@
-package org.kefir.service;
+package org.kefir.services;
 
-import org.kefir.entity.CoreUser;
-import org.kefir.repository.CoreUserRepository;
+import org.kefir.entities.CoreUser;
+import org.kefir.repositories.CoreUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

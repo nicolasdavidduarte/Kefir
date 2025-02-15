@@ -28,6 +28,6 @@
         <!--<property name="hibernate.cache.provider_class">org.hibernate.cache.NoCacheProvider</property> -->
 
         <!-- Mapping classes -->
-        <!--<mapping class="org.kefir.entity.Testo"/> -->
+        <!--<mapping class="org.kefir.entities.Testo"/> -->
     </session-factory>
 </hibernate-configuration>

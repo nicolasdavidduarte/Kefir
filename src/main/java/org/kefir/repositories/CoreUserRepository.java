@@ -1,6 +1,6 @@
-package org.kefir.repository;
+package org.kefir.repositories;
 
-import org.kefir.entity.CoreUser;
+import org.kefir.entities.CoreUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

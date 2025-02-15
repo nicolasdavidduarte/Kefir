@@ -1,4 +1,4 @@
-package org.kefir.entity;
+package org.kefir.entities;
 
 import jakarta.persistence.*;
 

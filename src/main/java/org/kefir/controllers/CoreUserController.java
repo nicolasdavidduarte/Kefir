@@ -1,7 +1,7 @@
-package org.kefir.controller;
+package org.kefir.controllers;
 
-import org.kefir.entity.CoreUser;
-import org.kefir.service.CoreUserService;
+import org.kefir.entities.CoreUser;
+import org.kefir.services.CoreUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,17 +12,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/systemUser")
-public class SystemUserController {
+@RequestMapping("/api/coreUser")
+public class CoreUserController {
 
     @Autowired
     private final CoreUserService coreUserService;
 
-    public SystemUserController(CoreUserService coreUserService) {
+    public CoreUserController(CoreUserService coreUserService) {
         this.coreUserService = coreUserService;
     }
 
-    // Endpoint to retrieve all records from the testo table
+    // Endpoint to retrieve all records from the core_user table
     @GetMapping
     public List<CoreUser> getAll() {
         return coreUserService.findAll();

@@ -2,7 +2,7 @@ package org.kefir;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.kefir.entity.Testo;
+import org.kefir.entities.CoreUser;
 
 public class HibernateUtil {
     private static final SessionFactory sessionFactory = buildSessionFactory();
@@ -10,7 +10,7 @@ public class HibernateUtil {
     private static SessionFactory buildSessionFactory() {
         try {
             // Create the SessionFactory from hibernate.cfg.xml
-            return new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(Testo.class).buildSessionFactory();
+            return new Configuration().configure("hibernate.cfg.xml").addAnnotatedClass(CoreUser.class).buildSessionFactory();
         } catch (Throwable ex) {
             System.err.println("Initial SessionFactory creation failed." + ex);
             throw new ExceptionInInitializerError(ex);
