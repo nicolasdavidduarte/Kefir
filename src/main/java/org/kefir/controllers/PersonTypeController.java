@@ -1,0 +1,34 @@
+package org.kefir.controllers;
+
+import org.kefir.entities.PersonType;
+import org.kefir.services.PersonTypeService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/personType")
+public class PersonTypeController {
+
+    private final PersonTypeService personTypeService;
+
+    public PersonTypeController(PersonTypeService personTypeService) {
+        this.personTypeService = personTypeService;
+    }
+
+    // Endpoint to retrieve all records from the person_type table
+    @GetMapping
+    public List<PersonType> getAll() {
+        return personTypeService.findAll();
+    }
+
+    // Endpoint to retrieve a single record by ID
+    @GetMapping("/{id}")
+    public Optional<PersonType> getById(@PathVariable Long id) {
+        return personTypeService.findById(id);
+    }
+}
