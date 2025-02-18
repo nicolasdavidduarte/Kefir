@@ -1,7 +1,7 @@
 package org.kefir.entities;
 
 import jakarta.persistence.*;
-
+import org.kefir.DTOs.LoanDTO;
 import java.util.Date;
 
 @Entity
@@ -28,21 +28,21 @@ public class Loan {
     // Constructors
     public Loan() {}
 
-    public Loan(int id, int customer, int loanType, double totalOperationAmount, Date openingDate, int currency, Date expirationDate, int totalTermDays, Date closedDate, int closedCode, Date nextInstallmentDate, int status, Date lastModificationDate, int coreUser) {
-        this.id = id;
-        this.customer = customer;
-        this.loanType = loanType;
-        this.totalOperationAmount = totalOperationAmount;
-        this.openingDate = openingDate;
-        this.currency = currency;
-        this.expirationDate = expirationDate;
-        this.totalTermDays = totalTermDays;
-        this.closedDate = closedDate;
-        this.closedCode = closedCode;
-        this.nextInstallmentDate = nextInstallmentDate;
-        this.status = status;
-        this.lastModificationDate = lastModificationDate;
-        this.coreUser = coreUser;
+    public Loan(LoanDTO loanDTO) {
+        this.id = loanDTO.getId();
+        this.customer = loanDTO.getCustomer();
+        this.loanType = loanDTO.getLoanType();
+        this.totalOperationAmount = loanDTO.getTotalOperationAmount();
+        this.openingDate = loanDTO.getOpeningDate();
+        this.currency = loanDTO.getCurrency();
+        this.expirationDate = loanDTO.getExpirationDate();
+        this.totalTermDays = loanDTO.getTotalTermDays();
+        this.closedDate = loanDTO.getClosedDate();
+        this.closedCode = loanDTO.getClosedCode();
+        this.nextInstallmentDate = loanDTO.getNextInstallmentDate();
+        this.status = loanDTO.getStatus();
+        this.lastModificationDate = loanDTO.getLastModificationDate();
+        this.coreUser = loanDTO.getCoreUser();
     }
 
     public int getId() {
