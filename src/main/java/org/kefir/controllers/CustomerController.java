@@ -1,11 +1,10 @@
 package org.kefir.controllers;
 
+import org.kefir.DTOs.CustomerDTO;
 import org.kefir.entities.Customer;
 import org.kefir.services.CustomerService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,5 +29,12 @@ public class CustomerController {
     @GetMapping("/{id}")
     public Optional<Customer> getById(@PathVariable Long id) {
         return customerService.findById(id);
+    }
+
+    // Create a new customer
+    @PostMapping
+    public ResponseEntity<Customer> createCustomer(@RequestBody CustomerDTO customer) {
+        Customer createdCustomer = customerService.createCustomer(customer);
+        return ResponseEntity.ok(createdCustomer);
     }
 }

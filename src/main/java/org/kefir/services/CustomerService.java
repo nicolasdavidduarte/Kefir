@@ -29,7 +29,6 @@ public class CustomerService {
 
         Customer newCustomer = new Customer();
 
-        newCustomer.setId(customerDTO.getId());
         newCustomer.setName(customerDTO.getName());
         newCustomer.setFirstName1(customerDTO.getFirstName1());
         newCustomer.setFirstName2(customerDTO.getFirstName2());

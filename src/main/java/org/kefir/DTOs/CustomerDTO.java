@@ -20,13 +20,13 @@ public class CustomerDTO {
     public CustomerDTO(int id, String name, String firstName1, String firstName2, String lastName1, String lastName2, String nameShort, int personType, int customerType, String name1, String firstName11, String lastName11, String firstName21, String lastName21, String nameShort1, int personType1, int customerType1, int status, Date lastModificationDate, int coreUser) {
         this.id = id;
         this.name = name1;
-        this.firstName1 = firstName11;
-        this.lastName1 = lastName11;
-        this.firstName2 = firstName21;
-        this.lastName2 = lastName21;
-        this.nameShort = nameShort1;
-        this.personType = personType1;
-        this.customerType = customerType1;
+        this.firstName1 = firstName1;
+        this.lastName1 = lastName1;
+        this.firstName2 = firstName2;
+        this.lastName2 = lastName2;
+        this.nameShort = nameShort;
+        this.personType = personType;
+        this.customerType = customerType;
         this.status = status;
         this.lastModificationDate = lastModificationDate;
         this.coreUser = coreUser;
