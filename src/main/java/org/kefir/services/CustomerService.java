@@ -4,6 +4,7 @@ import org.kefir.DTOs.CustomerDTO;
 import org.kefir.entities.Customer;
 import org.kefir.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class CustomerService {
         return customerRepository.findById(id);
     }
 
+    @Transactional
     public Customer createCustomer(CustomerDTO customerDTO){
 
         Customer newCustomer = new Customer();
