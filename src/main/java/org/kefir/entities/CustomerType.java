@@ -2,38 +2,37 @@ package org.kefir.entities;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
-
 @Entity
 @Table(name = "customer_type")
 public class CustomerType {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    // Constructors
-    public CustomerType() {}
+  private String name;
 
-    public CustomerType(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+  // Constructors
+  public CustomerType() {}
 
-    public int getId() {
-        return id;
-    }
+  public CustomerType(int id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 }

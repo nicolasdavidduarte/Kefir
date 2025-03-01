@@ -1,46 +1,24 @@
-/*import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-export default App;
-*/
-
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import KefirMain from "./components/KefirMain";
 import LoanList from "./components/LoanList";
-import LoanForm from "./components/LoanForm";
+import LoanForm from "./components/LoanCreation";
 
 const App: React.FC = () => {
     return (
         <Router>
-            <div>
-                <h1>Loan Management System</h1>
-                <Routes>
-                    <Route path="/" element={<LoanList />} />
-                    <Route path="/create-loan" element={<LoanForm />} />
-                </Routes>
-            </div>
+            <div className="text-white p-4" style={{ backgroundColor: '#1a68bb' }}>
+                  <h2 className="h3 fw-bold">Kefir Loan Manager</h2>
+             </div>
+
+
+            <Routes>
+                <Route path="/" element={<Navigate to="/main" />} />
+
+                <Route path="/main" element={<KefirMain />} />
+                <Route path="/list-loans" element={<LoanList />} />
+                <Route path="/create-loan" element={<LoanForm />} />
+            </Routes>
         </Router>
     );
 };

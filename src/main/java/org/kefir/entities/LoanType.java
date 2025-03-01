@@ -6,42 +6,43 @@ import jakarta.persistence.*;
 @Table(name = "loan_type")
 public class LoanType {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private String description;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    // Constructors
-    public LoanType() {}
+  private String name;
+  private String description;
 
-    public LoanType(int id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
+  // Constructors
+  public LoanType() {}
 
-    public int getId() {
-        return id;
-    }
+  public LoanType(int id, String name, String description) {
+    this.id = id;
+    this.name = name;
+    this.description = description;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
 }

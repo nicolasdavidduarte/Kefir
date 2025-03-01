@@ -1,159 +1,160 @@
 package org.kefir.entities;
 
 import jakarta.persistence.*;
-import org.kefir.DTOs.LoanDTO;
 import java.util.Date;
+import org.kefir.DTOs.LoanDTO;
 
 @Entity
 @Table(name = "loan")
 public class Loan {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private int customer;
-    private int loanType;
-    private double totalOperationAmount;
-    private Date openingDate;
-    private int currency;
-    private Date expirationDate;
-    private int totalTermDays;
-    private Date closedDate;
-    private int closedCode;
-    private Date nextInstallmentDate;
-    private int status;
-    private Date lastModificationDate;
-    private int coreUser;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    // Constructors
-    public Loan() {}
+  private int customer;
+  private int loanType;
+  private double totalOperationAmount;
+  private Date openingDate;
+  private int currency;
+  private Date expirationDate;
+  private int totalTermDays;
+  private Date closedDate;
+  private int closedCode;
+  private Date nextInstallmentDate;
+  private int status;
+  private Date lastModificationDate;
+  private int coreUser;
 
-    public Loan(LoanDTO loanDTO) {
-        this.id = loanDTO.getId();
-        this.customer = loanDTO.getCustomer();
-        this.loanType = loanDTO.getLoanType();
-        this.totalOperationAmount = loanDTO.getTotalOperationAmount();
-        this.openingDate = loanDTO.getOpeningDate();
-        this.currency = loanDTO.getCurrency();
-        this.expirationDate = loanDTO.getExpirationDate();
-        this.totalTermDays = loanDTO.getTotalTermDays();
-        this.closedDate = loanDTO.getClosedDate();
-        this.closedCode = loanDTO.getClosedCode();
-        this.nextInstallmentDate = loanDTO.getNextInstallmentDate();
-        this.status = loanDTO.getStatus();
-        this.lastModificationDate = loanDTO.getLastModificationDate();
-        this.coreUser = loanDTO.getCoreUser();
-    }
+  // Constructors
+  public Loan() {}
 
-    public int getId() {
-        return id;
-    }
+  public Loan(LoanDTO loanDTO) {
+    this.id = loanDTO.getId();
+    this.customer = loanDTO.getCustomer();
+    this.loanType = loanDTO.getLoanType();
+    this.totalOperationAmount = loanDTO.getTotalOperationAmount();
+    this.openingDate = loanDTO.getOpeningDate();
+    this.currency = loanDTO.getCurrency();
+    this.expirationDate = loanDTO.getExpirationDate();
+    this.totalTermDays = loanDTO.getTotalTermDays();
+    this.closedDate = loanDTO.getClosedDate();
+    this.closedCode = loanDTO.getClosedCode();
+    this.nextInstallmentDate = loanDTO.getNextInstallmentDate();
+    this.status = loanDTO.getStatus();
+    this.lastModificationDate = loanDTO.getLastModificationDate();
+    this.coreUser = loanDTO.getCoreUser();
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public int getCustomer() {
-        return customer;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setCustomer(int customer) {
-        this.customer = customer;
-    }
+  public int getCustomer() {
+    return customer;
+  }
 
-    public int getLoanType() {
-        return loanType;
-    }
+  public void setCustomer(int customer) {
+    this.customer = customer;
+  }
 
-    public void setLoanType(int loanType) {
-        this.loanType = loanType;
-    }
+  public int getLoanType() {
+    return loanType;
+  }
 
-    public double getTotalOperationAmount() {
-        return totalOperationAmount;
-    }
+  public void setLoanType(int loanType) {
+    this.loanType = loanType;
+  }
 
-    public void setTotalOperationAmount(double totalOperationAmount) {
-        this.totalOperationAmount = totalOperationAmount;
-    }
+  public double getTotalOperationAmount() {
+    return totalOperationAmount;
+  }
 
-    public Date getOpeningDate() {
-        return openingDate;
-    }
+  public void setTotalOperationAmount(double totalOperationAmount) {
+    this.totalOperationAmount = totalOperationAmount;
+  }
 
-    public void setOpeningDate(Date openingDate) {
-        this.openingDate = openingDate;
-    }
+  public Date getOpeningDate() {
+    return openingDate;
+  }
 
-    public int getCurrency() {
-        return currency;
-    }
+  public void setOpeningDate(Date openingDate) {
+    this.openingDate = openingDate;
+  }
 
-    public void setCurrency(int currency) {
-        this.currency = currency;
-    }
+  public int getCurrency() {
+    return currency;
+  }
 
-    public Date getExpirationDate() {
-        return expirationDate;
-    }
+  public void setCurrency(int currency) {
+    this.currency = currency;
+  }
 
-    public void setExpirationDate(Date expirationDate) {
-        this.expirationDate = expirationDate;
-    }
+  public Date getExpirationDate() {
+    return expirationDate;
+  }
 
-    public int getTotalTermDays() {
-        return totalTermDays;
-    }
+  public void setExpirationDate(Date expirationDate) {
+    this.expirationDate = expirationDate;
+  }
 
-    public void setTotalTermDays(int totalTermDays) {
-        this.totalTermDays = totalTermDays;
-    }
+  public int getTotalTermDays() {
+    return totalTermDays;
+  }
 
-    public Date getClosedDate() {
-        return closedDate;
-    }
+  public void setTotalTermDays(int totalTermDays) {
+    this.totalTermDays = totalTermDays;
+  }
 
-    public void setClosedDate(Date closedDate) {
-        this.closedDate = closedDate;
-    }
+  public Date getClosedDate() {
+    return closedDate;
+  }
 
-    public int getClosedCode() {
-        return closedCode;
-    }
+  public void setClosedDate(Date closedDate) {
+    this.closedDate = closedDate;
+  }
 
-    public void setClosedCode(int closedCode) {
-        this.closedCode = closedCode;
-    }
+  public int getClosedCode() {
+    return closedCode;
+  }
 
-    public Date getNextInstallmentDate() {
-        return nextInstallmentDate;
-    }
+  public void setClosedCode(int closedCode) {
+    this.closedCode = closedCode;
+  }
 
-    public void setNextInstallmentDate(Date nextInstallmentDate) {
-        this.nextInstallmentDate = nextInstallmentDate;
-    }
+  public Date getNextInstallmentDate() {
+    return nextInstallmentDate;
+  }
 
-    public int getStatus() {
-        return status;
-    }
+  public void setNextInstallmentDate(Date nextInstallmentDate) {
+    this.nextInstallmentDate = nextInstallmentDate;
+  }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
+  public int getStatus() {
+    return status;
+  }
 
-    public Date getLastModificationDate() {
-        return lastModificationDate;
-    }
+  public void setStatus(int status) {
+    this.status = status;
+  }
 
-    public void setLastModificationDate(Date lastModificationDate) {
-        this.lastModificationDate = lastModificationDate;
-    }
+  public Date getLastModificationDate() {
+    return lastModificationDate;
+  }
 
-    public int getCoreUser() {
-        return coreUser;
-    }
+  public void setLastModificationDate(Date lastModificationDate) {
+    this.lastModificationDate = lastModificationDate;
+  }
 
-    public void setCoreUser(int coreUser) {
-        this.coreUser = coreUser;
-    }
+  public int getCoreUser() {
+    return coreUser;
+  }
+
+  public void setCoreUser(int coreUser) {
+    this.coreUser = coreUser;
+  }
 }

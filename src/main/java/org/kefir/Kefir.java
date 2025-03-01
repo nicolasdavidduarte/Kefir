@@ -5,11 +5,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Kefir {
-    // Run this java and then you can make requests on Postman!
-    public static void main(String[] args) {
+  // Run this java and then you can make requests on Postman!
+  public static void main(String[] args) {
 
-        // Get the session factory from HibernateUtil
-        SpringApplication.run(Kefir.class, args);
-
-    }
+    // Get the session factory from HibernateUtil
+    SpringApplication.run(Kefir.class, args);
+  }
 }

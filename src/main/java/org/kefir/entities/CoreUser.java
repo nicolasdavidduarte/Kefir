@@ -6,63 +6,64 @@ import jakarta.persistence.*;
 @Table(name = "core_user")
 public class CoreUser {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String username;
-    private String password;
-    private String fullName;
-    private boolean enabled;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    // Constructors
-    public CoreUser() {}
+  private String username;
+  private String password;
+  private String fullName;
+  private boolean enabled;
 
-    public CoreUser(int id, String username, String password, String fullName, boolean enabled) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.fullName = fullName;
-        this.enabled = enabled;
-    }
+  // Constructors
+  public CoreUser() {}
 
-    // Getters and Setters
-    public int getId() {
-        return id;
-    }
+  public CoreUser(int id, String username, String password, String fullName, boolean enabled) {
+    this.id = id;
+    this.username = username;
+    this.password = password;
+    this.fullName = fullName;
+    this.enabled = enabled;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  // Getters and Setters
+  public int getId() {
+    return id;
+  }
 
-    public String getUsername() {
-        return username;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+  public String getUsername() {
+    return username;
+  }
 
-    public String getPassword() {
-        return password;
-    }
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+  public String getPassword() {
+    return password;
+  }
 
-    public String getFullName() {
-        return fullName;
-    }
+  public void setPassword(String password) {
+    this.password = password;
+  }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
+  public String getFullName() {
+    return fullName;
+  }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+  public void setFullName(String fullName) {
+    this.fullName = fullName;
+  }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 }

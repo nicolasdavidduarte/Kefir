@@ -6,32 +6,33 @@ import jakarta.persistence.*;
 @Table(name = "person_type")
 public class PersonType {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    // Constructors
-    public PersonType() {}
+  private String name;
 
-    public PersonType(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
+  // Constructors
+  public PersonType() {}
 
-    public int getId() {
-        return id;
-    }
+  public PersonType(int id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 }

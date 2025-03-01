@@ -6,42 +6,43 @@ import jakarta.persistence.*;
 @Table(name = "currency")
 public class Currency {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private boolean enabled;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    // Constructors
-    public Currency() {}
+  private String name;
+  private boolean enabled;
 
-    public Currency(int id, String name, boolean enabled) {
-        this.id = id;
-        this.name = name;
-        this.enabled = enabled;
-    }
+  // Constructors
+  public Currency() {}
 
-    public int getId() {
-        return id;
-    }
+  public Currency(int id, String name, boolean enabled) {
+    this.id = id;
+    this.name = name;
+    this.enabled = enabled;
+  }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setId(int id) {
+    this.id = id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 }
