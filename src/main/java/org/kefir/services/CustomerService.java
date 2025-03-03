@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.kefir.DTOs.CustomerDTO;
 import org.kefir.entities.Customer;
+import org.kefir.entities.Loan;
 import org.kefir.repositories.CustomerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,5 +44,14 @@ public class CustomerService {
     newCustomer.setCoreUser(customerDTO.getCoreUser());
 
     return customerRepository.save(newCustomer);
+  }
+
+  @Transactional
+  public void deleteCustomer(Long id) {
+    Customer customer =
+            customerRepository
+                    .findById(id)
+                    .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+    customerRepository.delete(customer);
   }
 }

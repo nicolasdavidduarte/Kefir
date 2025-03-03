@@ -1,22 +1,20 @@
 import React, { useState } from "react";
-import { createLoan } from "../services/loanService";
-import { Loan } from "../types";
+import { createCustomer } from "../services/customerService";
+import { Customer } from "../types";
 
-const LoanCreation: React.FC = () => {
-    const [form, setForm] = useState<Loan>({
-        customer: 1,
-        loanType: 1,
-        totalOperationAmount: 5000,
-        openingDate: "2025-02-22",
-        currency: 2,
-        expirationDate: "2025-12-20",
-        totalTermDays: 240,
-        nextInstallmentDate: "2024-03-18",
+const CustomerCreation: React.FC = () => {
+    const [form, setForm] = useState<Customer>({
+        name: "",
+        firstName1: "",
+        lastName1: "",
+        firstName2: "",
+        lastName2: "",
+        nameShort: "",
+        personType: 1,
+        customerType: 1,
         status: 1,
         lastModificationDate: "2024-02-20",
-        coreUser: 1,
-        closedDate: "",
-        closedCode: 0
+        coreUser: 1
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,15 +24,16 @@ const LoanCreation: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        await createLoan(form);
-        alert("Loan created successfully!");
+        const customerDTO = { ...form, lastModificationDate: new Date().toISOString() }; // Ensure date is in ISO format
+        await createCustomer(form);
+        alert("Customer created successfully!");
     };
 
     return (
         <div className="container mt-5">
             <div className="card">
                  <div className="text-white p-4" style={{ backgroundColor: '#1a68bb' }}>
-                    <h2 className="mb-0">Loan Creation</h2>
+                    <h2 className="mb-0">Customer Creation</h2>
                 </div>
                 <div className="card-body">
                     <form onSubmit={handleSubmit}>
@@ -59,7 +58,7 @@ const LoanCreation: React.FC = () => {
                                 </div>
                             ))}
                             <div className="col-12 d-flex justify-content-end">
-                                <button type="submit" className="btn btn-primary">Create Loan</button>
+                                <button type="submit" className="btn btn-primary">Create Customer</button>
                             </div>
                         </div>
                     </form>
@@ -69,4 +68,4 @@ const LoanCreation: React.FC = () => {
     );
 };
 
-export default LoanCreation;
+export default CustomerCreation;

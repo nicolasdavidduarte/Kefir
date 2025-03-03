@@ -48,7 +48,7 @@ public class LoanController {
     return ResponseEntity.ok("Loan successfully deleted!");
   }
 
-  // Endpoint to delete a loan
+  // Endpoint to update a loan
   @PostMapping("/updateLoan")
   public ResponseEntity<String> updateLoan(@RequestBody LoanDTO loanDTO) {
     loanService.updateLoan(loanDTO);
