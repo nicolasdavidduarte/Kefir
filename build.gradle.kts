@@ -1,16 +1,16 @@
+import org.gradle.api.tasks.*
+
 plugins {
     id("java")
     id("org.springframework.boot") version "3.1.0"
     id("io.spring.dependency-management") version "1.1.2"
 }
 
-
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17) // Change to 21 if using Java 21
     }
 }
-
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
@@ -41,7 +41,19 @@ dependencies {
     implementation("org.glassfish.jaxb:jaxb-runtime:3.0.2")
 }
 
-
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/resources")
+        }
+    }
 }
