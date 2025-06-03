@@ -20,12 +20,11 @@ repositories {
 }
 
 dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     implementation("org.hibernate.orm:hibernate-core:6.2.11.Final") // Upgrade to Hibernate 6
     implementation("org.hibernate:hibernate-validator:6.2.0.Final")
-    //implementation("org.slf4j:slf4j-api:1.7.30")
-    //implementation("org.slf4j:slf4j-simple:1.7.30")
     implementation("ch.qos.logback:logback-classic:1.4.11")
     implementation("ch.qos.logback:logback-core:1.4.11")
     implementation("org.postgresql:postgresql:42.7.2")  // Make sure to use the latest version
