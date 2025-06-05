@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
         - name: kefir-backend
-          image: kefir-backend:latest
-          imagePullPolicy: Never
+          image: nduarte93/kefir-backend:latest
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
@@ -43,6 +43,8 @@ spec:
               port: 8080
             initialDelaySeconds: 20
             periodSeconds: 5
+      imagePullSecrets:
+        - name: regcred
 ---
 apiVersion: v1
 kind: Service
@@ -56,4 +58,3 @@ spec:
       port: 80
       targetPort: 8080
   type: ClusterIP
-
