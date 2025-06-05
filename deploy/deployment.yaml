@@ -15,7 +15,7 @@ spec:
       containers:
         - name: kefir-backend
           image: nduarte93/kefir-backend:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
           env:
