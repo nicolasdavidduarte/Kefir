@@ -4,7 +4,7 @@ metadata:
   name: kefir-backend
   namespace: kefir-backend
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: kefir-backend
