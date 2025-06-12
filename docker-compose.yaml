@@ -12,8 +12,7 @@ services:
       retries: 5
 
   backend:
-    build: .
-    image: kefir-backend
+    image: nduarte93/kefir-backend
     depends_on:
       db:
         condition: service_healthy
