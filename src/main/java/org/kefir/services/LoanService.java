@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Optional;
 import org.kefir.DTOs.LoanDTO;
 import org.kefir.entities.Loan;
+import org.kefir.infrastructure.messaging.SnsPublisher;
 import org.kefir.repositories.LoanRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,17 +15,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoanService {
 
   private final LoanRepository loanRepository;
-
-  public LoanService(LoanRepository loanRepository) {
-    this.loanRepository = loanRepository;
-  }
-
   public List<Loan> findAll() {
     return loanRepository.findAll();
   }
-
   public Optional<Loan> findById(Long id) {
     return loanRepository.findById(id);
+  }
+  private final SnsPublisher snsPublisher;
+
+  @Autowired
+  public LoanService(SnsPublisher snsPublisher, LoanRepository loanRepository) {
+    this.snsPublisher = snsPublisher;
+    this.loanRepository = loanRepository;
   }
 
   @Transactional
@@ -42,7 +45,11 @@ public class LoanService {
     loan.setLastModificationDate(loanDTO.getLastModificationDate());
     loan.setCoreUser(loanDTO.getCoreUser());
 
-    return loanRepository.save(loan);
+    Loan loanSaved = loanRepository.save(loan);
+
+    snsPublisher.publishLoanCreated(loan.getId(), loan.getTotalOperationAmount());
+
+    return loanSaved;
   }
 
   @Transactional

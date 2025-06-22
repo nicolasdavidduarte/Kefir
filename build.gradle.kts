@@ -38,6 +38,8 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:3.0.2")
+    implementation("software.amazon.awssdk:sns:2.25.25")
+
 }
 
 tasks.test {
