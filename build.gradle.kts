@@ -39,7 +39,10 @@ dependencies {
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:3.0.2")
     implementation("software.amazon.awssdk:sns:2.25.25")
-
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.20")
+    implementation("org.projectlombok:lombok")
+    compileOnly("org.projectlombok:lombok:1.18.30")
+    annotationProcessor("org.projectlombok:lombok:1.18.30")
 }
 
 tasks.test {
