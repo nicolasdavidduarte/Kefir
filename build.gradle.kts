@@ -43,6 +43,8 @@ dependencies {
     implementation("org.projectlombok:lombok")
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
+    implementation("io.micrometer:micrometer-registry-prometheus")
+
 }
 
 tasks.test {
