@@ -80,6 +80,8 @@ public class LoanController {
 
   // Endpoint to create a new loan
   @PostMapping("/createLoan")
+  @Counted
+  @Timed(value = "loan.create.request", description = "Time taken to create loan")
   public ResponseEntity<Loan> createLoan(@RequestBody LoanDTO loan) {
     Loan createdLoan = loanService.create(loan);
     return ResponseEntity.ok(createdLoan);
