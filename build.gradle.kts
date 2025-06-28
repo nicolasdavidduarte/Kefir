@@ -4,6 +4,7 @@ plugins {
     id("java")
     id("org.springframework.boot") version "3.1.0"
     id("io.spring.dependency-management") version "1.1.2"
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
 java {
@@ -45,6 +46,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.30")
     annotationProcessor("org.projectlombok:lombok:1.18.30")
     implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 
 }
 
@@ -56,6 +58,12 @@ tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
+spotless {
+    java {
+        googleJavaFormat("1.17.0")
+        target("src/**/*.java")
+    }
+}
 
 sourceSets {
     main {
@@ -64,3 +72,5 @@ sourceSets {
         }
     }
 }
+
+
