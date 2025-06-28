@@ -1,19 +1,18 @@
 package org.kefir.controllers;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.kefir.DTOs.LoanDTO;
 import org.kefir.DTOs.LoanDataDTO;
-import org.kefir.entities.CoreUser;
 import org.kefir.entities.Loan;
 import org.kefir.orchestrators.LoanDataOrchestrator;
 import org.kefir.services.LoanService;
@@ -42,40 +41,34 @@ public class LoanController {
   // Endpoint to retrieve a single record by ID using a JSON request body
   @GetMapping("/getLoanById/{loanId}")
   @Operation(
-        summary = "Get loan details by id",
-          description = "Returns loan data by its identification number"
-  )
+      summary = "Get loan details by id",
+      description = "Returns loan data by its identification number")
   @ApiResponses(
-          value = {
-                  @ApiResponse(
-                          responseCode = "200",
-                          description = "Loan details returned successfully"
-                  ),
-                  @ApiResponse(
-                          responseCode = "401",
-                          description = "Unauthorized - Authentication required"
-                  ),
-                  @ApiResponse(
-                          responseCode = "404",
-                          description = "Loan not found"
-                  ),
-                  @ApiResponse(
-                          responseCode = "409",
-                          description = "Invalid loan"
-                  ),
-                  @ApiResponse(
-                          responseCode = "500",
-                          description = "Internal server error"
-                  )}
-  )
+      value = {
+        @ApiResponse(responseCode = "200", description = "Loan details returned successfully"),
+        @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+        @ApiResponse(responseCode = "404", description = "Loan not found"),
+        @ApiResponse(responseCode = "409", description = "Invalid loan"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+      })
   @Timed
   @Counted
-  public ResponseEntity<LoanDataDTO> getById(@PathVariable Long loanId) {
-    Optional<LoanDataDTO> loanDetails = Optional.ofNullable(loanDataOrchestrator.getLoanData(loanId));
+  public ResponseEntity<LoanDataDTO> getById(
+      @Parameter(
+              name = "loanId",
+              description = "Unique identifier of the loan to retrieve",
+              required = true,
+
+
+                    example = "12345")
+          @PathVariable
+          Long loanId) {
+    Optional<LoanDataDTO> loanDetails =
+        Optional.ofNullable(loanDataOrchestrator.getLoanData(loanId));
 
     return loanDetails
-            .map(details -> new ResponseEntity<>(details, HttpStatus.OK))
-            .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        .map(details -> new ResponseEntity<>(details, HttpStatus.OK))
+        .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
   }
 
   // Endpoint to create a new loan
