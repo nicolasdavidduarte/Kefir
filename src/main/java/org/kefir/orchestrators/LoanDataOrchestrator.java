@@ -11,31 +11,31 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class LoanDataOrchestrator {
-    private final LoanService loanService;
+  private final LoanService loanService;
 
-    public LoanDataDTO getLoanData(Long loanId) {
-        return loanService.findById(loanId)
-                .map(this::toLoanDataDTO)
-                .orElseThrow(() -> new RuntimeException("Loan not found with id: " + loanId));
-    }
+  public LoanDataDTO getLoanData(Long loanId) {
+    return loanService
+        .findById(loanId)
+        .map(this::toLoanDataDTO)
+        .orElseThrow(() -> new RuntimeException("Loan not found with id: " + loanId));
+  }
 
-    private LoanDataDTO toLoanDataDTO(Loan loan) {
-        return LoanDataDTO.builder()
-                .id((long) loan.getId())
-                .customer(loan.getCustomer())
-                .loanType(loan.getLoanType())
-                .totalOperationAmount(loan.getTotalOperationAmount())
-                .openingDate(loan.getOpeningDate())
-                .currency(loan.getCurrency())
-                .expirationDate(loan.getExpirationDate())
-                .totalTermDays(loan.getTotalTermDays())
-                .closedDate(loan.getClosedDate())
-                .closedCode(loan.getClosedCode())
-                .nextInstallmentDate(loan.getNextInstallmentDate())
-                .status(loan.getStatus())
-                .lastModificationDate(loan.getLastModificationDate())
-                .coreUser(loan.getCoreUser())
-                .build();
-    }
-
+  private LoanDataDTO toLoanDataDTO(Loan loan) {
+    return LoanDataDTO.builder()
+        .id((long) loan.getId())
+        .customer(loan.getCustomer())
+        .loanType(loan.getLoanType())
+        .totalOperationAmount(loan.getTotalOperationAmount())
+        .openingDate(loan.getOpeningDate())
+        .currency(loan.getCurrency())
+        .expirationDate(loan.getExpirationDate())
+        .totalTermDays(loan.getTotalTermDays())
+        .closedDate(loan.getClosedDate())
+        .closedCode(loan.getClosedCode())
+        .nextInstallmentDate(loan.getNextInstallmentDate())
+        .status(loan.getStatus())
+        .lastModificationDate(loan.getLastModificationDate())
+        .coreUser(loan.getCoreUser())
+        .build();
+  }
 }

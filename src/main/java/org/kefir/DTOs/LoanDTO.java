@@ -1,12 +1,21 @@
 package org.kefir.DTOs;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 
+@Schema(description = "Represents a loan")
 public class LoanDTO {
+  @Schema(description = "Loan identification number", example = "15001")
   private final int id;
+
+  @Schema(description = "Customer identification number", example = "1025")
   private final int customer;
+
   private final int loanType;
+
+  @Schema(description = "Loan amount requested", example = "10000.00")
   private final double totalOperationAmount;
+
   private final Date openingDate;
   private final int currency;
   private final Date expirationDate;

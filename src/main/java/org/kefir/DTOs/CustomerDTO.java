@@ -18,18 +18,18 @@ public class CustomerDTO {
 
   // Constructor to directly map the entity to DTO
   public CustomerDTO(
-          int id,
-          String name,
-          String firstName1,
-          String firstName2,
-          String lastName1,
-          String lastName2,
-          String nameShort,
-          int personType,
-          int customerType,
-          int status,
-          Date lastModificationDate,
-          int coreUser) {
+      int id,
+      String name,
+      String firstName1,
+      String firstName2,
+      String lastName1,
+      String lastName2,
+      String nameShort,
+      int personType,
+      int customerType,
+      int status,
+      Date lastModificationDate,
+      int coreUser) {
     this.id = id;
     this.name = name;
     this.firstName1 = firstName1;

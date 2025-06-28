@@ -4,6 +4,8 @@ import io.micrometer.core.annotation.Counted;
 import io.micrometer.core.annotation.Timed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,7 +47,13 @@ public class LoanController {
       description = "Returns loan data by its identification number")
   @ApiResponses(
       value = {
-        @ApiResponse(responseCode = "200", description = "Loan details returned successfully"),
+        @ApiResponse(
+            responseCode = "200",
+            description = "Loan details returned successfully",
+            content =
+                @Content(
+                    mediaType = "application/json",
+                    examples = @ExampleObject(value = "{\"id\":12345, \"amount\":10000.00}"))),
         @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
         @ApiResponse(responseCode = "404", description = "Loan not found"),
         @ApiResponse(responseCode = "409", description = "Invalid loan"),
@@ -58,9 +66,7 @@ public class LoanController {
               name = "loanId",
               description = "Unique identifier of the loan to retrieve",
               required = true,
-
-
-                      example = "12345")
+              example = "12345")
           @PathVariable
           Long loanId) {
     Optional<LoanDataDTO> loanDetails =

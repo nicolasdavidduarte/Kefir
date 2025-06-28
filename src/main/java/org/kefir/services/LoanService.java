@@ -15,12 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoanService {
 
   private final LoanRepository loanRepository;
+
   public List<Loan> findAll() {
     return loanRepository.findAll();
   }
+
   public Optional<Loan> findById(Long id) {
     return loanRepository.findById(id);
   }
+
   private final SnsPublisher snsPublisher;
 
   @Autowired

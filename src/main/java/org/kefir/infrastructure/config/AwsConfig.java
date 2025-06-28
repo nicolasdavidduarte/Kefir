@@ -7,8 +7,8 @@ import software.amazon.awssdk.services.sns.SnsClient;
 @Configuration
 public class AwsConfig {
 
-    @Bean
-    public SnsClient snsClient() {
-        return SnsClient.create();
-    }
+  @Bean
+  public SnsClient snsClient() {
+    return SnsClient.create();
+  }
 }

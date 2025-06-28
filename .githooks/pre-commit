@@ -1,0 +1,7 @@
+#!/bin/bash
+echo "Running spotlessCheck..."
+./gradlew spotlessCheck
+if [ $? -ne 0 ]; then
+  echo "❌ Spotless check failed. Please run './gradlew spotlessApply' and stage changes before committing."
+  exit 1
+fi
