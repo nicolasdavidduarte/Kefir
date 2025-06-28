@@ -60,7 +60,7 @@ public class LoanController {
               required = true,
 
 
-                    example = "12345")
+                      example = "12345")
           @PathVariable
           Long loanId) {
     Optional<LoanDataDTO> loanDetails =
