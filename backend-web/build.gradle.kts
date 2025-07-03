@@ -21,6 +21,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":domain"))
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
@@ -47,7 +48,8 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.30")
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
-
+    implementation("org.springframework.boot:spring-boot-starter-batch")
+    runtimeOnly("org.postgresql:postgresql")
 }
 
 tasks.test {

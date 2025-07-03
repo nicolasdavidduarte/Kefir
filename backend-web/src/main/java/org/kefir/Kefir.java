@@ -1,10 +1,12 @@
 package org.kefir;
 
+import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableBatchProcessing
 @SpringBootApplication
 public class Kefir {
   // Run this java and then you can make requests on Postman!
