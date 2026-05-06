@@ -6,15 +6,15 @@
         </encoder>
     </appender>
 
-    <appender name="TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+    <!--<appender name="TCP" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
         <destination>localhost:10518</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
             <includeMdc>true</includeMdc>
         </encoder>
-    </appender>
+    </appender>-->
 
     <root level="INFO">
         <appender-ref ref="STDOUT" />
-        <appender-ref ref="TCP"/>
+       <!-- <appender-ref ref="TCP"/> -->
     </root>
 </configuration>

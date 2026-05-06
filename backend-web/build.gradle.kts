@@ -2,19 +2,19 @@ import org.gradle.api.tasks.*
 
 import org.springframework.boot.gradle.tasks.run.BootRun
 
-tasks.withType<BootRun> {
-    jvmArgs(
-        "-javaagent:/opt/datadog/dd-java-agent.jar",
-        "-Ddd.agent.host=127.0.0.1",
-        "-Ddd.service=kefir",
-        "-Ddd.env=dev",
-        "-Ddd.version=1.0",
-        "-Ddd.trace.otlp.enabled=false",
-        "-Ddd.debugger.enabled=false",
-        "-Ddd.dynamic.instrumentation.enabled=false",
-        "-Ddd.logs.injection=true"
-    )
-}
+//tasks.withType<BootRun> {
+//    jvmArgs(
+//        "-javaagent:/opt/datadog/dd-java-agent.jar",
+//        "-Ddd.agent.host=127.0.0.1",
+//        "-Ddd.service=kefir",
+//        "-Ddd.env=dev",
+//        "-Ddd.version=1.0",
+//        "-Ddd.trace.otlp.enabled=false",
+//        "-Ddd.debugger.enabled=false",
+//        "-Ddd.dynamic.instrumentation.enabled=false",
+//        "-Ddd.logs.injection=true"
+//    )
+//}
 
 plugins {
     id("java")
@@ -66,6 +66,7 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:7.4")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.liquibase:liquibase-core")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.test {
