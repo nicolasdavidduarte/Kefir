@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kefir-backend
+  namespace: kefir-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kefir-backend
+  template:
+    metadata:
+      labels:
+        app: kefir-backend
+    spec:
+      containers:
+        - name: kefir-backend
+          image: nduarte93/kefir-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/kefir_db
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
+      imagePullSecrets:
+        - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kefir-backend-service
+  namespace: kefir-backend
+spec:
+  selector:
+    app: kefir-backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: NodePort

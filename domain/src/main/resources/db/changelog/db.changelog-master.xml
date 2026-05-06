@@ -1,0 +1,13 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <include file="db/changelog/changesets/001-insert-external_id-in-loan.xml"/>
+    <include file="db/changelog/changesets/002-add-external_id-unique-constraint-in-loan.xml"/>
+    <include file="db/changelog/changesets/003-recreate-idempotent-request.xml"/>
+    <include file="db/changelog/changesets/004-recreate-customer_table.xml"/>
+
+</databaseChangeLog>

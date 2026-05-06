@@ -1,0 +1,30 @@
+package com.kefir.web.controllers;
+
+import com.kefir.infrastructure.security.AuthService;
+import com.kefir.web.DTOs.AuthResponse;
+import com.kefir.web.DTOs.LoginRequest;
+import com.kefir.web.DTOs.RefreshRequest;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("api/auth")
+public class AuthController {
+  private final AuthService authService;
+
+  public AuthController(AuthService authService) {
+    this.authService = authService;
+  }
+
+  @PostMapping("/login")
+  public AuthResponse login(@RequestBody LoginRequest request) {
+    return authService.login(request.username(), request.password());
+  }
+
+  @PostMapping("/refresh")
+  public AuthResponse refresh(@RequestBody RefreshRequest request) {
+    return authService.refresh(request.refreshToken());
+  }
+}

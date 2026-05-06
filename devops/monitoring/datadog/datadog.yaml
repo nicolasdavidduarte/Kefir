@@ -1,0 +1,10 @@
+api_key: ${DD_API_KEY}
+site: us5.datadoghq.com
+dogstatsd_stats_enable: true
+dogstatsd_port: 8125
+bind_host: 0.0.0.0
+logs_enabled: true
+apm_config:
+  enabled: true
+process_config:
+  enabled: false
