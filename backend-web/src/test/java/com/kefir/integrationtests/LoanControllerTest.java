@@ -39,8 +39,8 @@ class LoanControllerTest {
 
     Loan loan =
         Loan.builder()
-            .id(1)
-            .customer(123)
+            .id(1L)
+            .customer(123L)
             .loanType(1)
             .totalOperationAmount(1000.0)
             .openingDate(LocalDate.now())
@@ -65,8 +65,8 @@ class LoanControllerTest {
   void testWhenGetLoanByExistentId_RetrieveLoan() throws Exception {
     Loan loan =
         new Loan(
-            1,
-            123,
+            1L,
+            123L,
             1,
             1000.0,
             LocalDate.now(),
@@ -84,7 +84,7 @@ class LoanControllerTest {
     LoanResponse loanDetails =
         LoanResponse.builder()
             .id(1L)
-            .customer(123)
+            .customer(123L)
             .loanType(1)
             .totalOperationAmount(1000.0)
             .openingDate(LocalDate.now())

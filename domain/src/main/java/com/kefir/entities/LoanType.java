@@ -1,48 +1,29 @@
 package com.kefir.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "loan_type")
 public class LoanType {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "loan_type_seq_gen")
+  @SequenceGenerator(
+          name = "loan_type_seq_gen",
+          sequenceName = "loan_type_id_seq",
+          allocationSize = 1
+  )
   private int id;
 
   private String name;
   private String description;
 
-  // Constructors
-  public LoanType() {}
-
-  public LoanType(int id, String name, String description) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
 }
