@@ -9,5 +9,7 @@
     <include file="db/changelog/changesets/002-add-external_id-unique-constraint-in-loan.xml"/>
     <include file="db/changelog/changesets/003-recreate-idempotent-request.xml"/>
     <include file="db/changelog/changesets/004-recreate-customer_table.xml"/>
+    <include file="db/changelog/changesets/005-update-loan-type-table.xml"/>
+    <include file="db/changelog/changesets/005-update-loan-type-table-2.xml"/>
 
 </databaseChangeLog>
