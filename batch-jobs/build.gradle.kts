@@ -2,9 +2,9 @@ import org.gradle.api.tasks.*
 
 plugins {
     id("java")
-    id("org.springframework.boot") version "3.1.0"
-    id("io.spring.dependency-management") version "1.1.2"
-    id("com.diffplug.spotless") version "6.25.0"
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
+    id("com.diffplug.spotless")
 }
 
 java {
@@ -26,6 +26,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter")
+
+    // Kotlin
+    implementation(kotlin("stdlib-jdk8"))
 
     // Logging
     implementation("ch.qos.logback:logback-classic:1.4.11")

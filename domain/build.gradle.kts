@@ -1,8 +1,11 @@
 plugins {
     id("java")
-    kotlin("jvm") version "2.0.0"
-    id("org.springframework.boot") version "3.2.5" // Use your project's version
-    id("io.spring.dependency-management") version "1.1.4"
+    id("org.springframework.boot")
+    id("io.spring.dependency-management")
+    id("com.diffplug.spotless")
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    kotlin("plugin.jpa")
 }
 
 group = "org.kefir" // Usá el mismo groupId que en los demás módulos
@@ -21,6 +24,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
     implementation(kotlin("stdlib-jdk8"))
+    implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
