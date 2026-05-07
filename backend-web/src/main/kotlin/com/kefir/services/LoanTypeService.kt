@@ -9,8 +9,6 @@ class LoanTypeService(private val loanTypeRepository: LoanTypeRepository) {
 
     fun getAllLoanTypes(): List<LoanType> = loanTypeRepository.findAll()
 
-    fun create(loanType : LoanType) : LoanType {
-        val loanTypeSaved = loanTypeRepository.save(loanType)
-        return loanTypeSaved
-    }
+    fun create(loanType : LoanType) : LoanType = loanTypeRepository.save(loanType)
+
 }

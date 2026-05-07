@@ -1,9 +1,6 @@
 package com.kefir.web.handlers;
 
-import com.kefir.exceptions.CustomerCreationException;
-import com.kefir.exceptions.CustomerNotFoundException;
-import com.kefir.exceptions.CustomerNotValidException;
-import com.kefir.exceptions.LoanNotFoundException;
+import com.kefir.exceptions.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +27,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(CustomerCreationException.class)
   public ResponseEntity<Map<String, Object>> handleCustomerCreation(CustomerCreationException ex) {
     return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, "Creation Exception", ex.getMessage());
+  }
+
+  @ExceptionHandler(LoanTypeCreationException.class)
+  public ResponseEntity<Map<String, Object>> handleLoanTypeCreation(LoanTypeCreationException ex) {
+    return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, "Loan Type Exception", ex.getMessage());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
