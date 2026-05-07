@@ -8,6 +8,7 @@ This system is developed using Java 21 and Kotlin with Spring Boot.
 ## Dependencies
 This project uses:
 * Hibernate to connect to the database and perform operations
+* Liquibase to execute database scripts
 * Micrometer for metrics to be consumed with Prometheus, Datadog and Grafana
 * Spring Security for authorization
 * Spring Batch for massive processing
