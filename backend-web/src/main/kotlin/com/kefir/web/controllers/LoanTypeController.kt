@@ -2,8 +2,10 @@ package com.kefir.web.controllers
 
 import com.kefir.entities.LoanType
 import com.kefir.services.LoanTypeService
+import com.kefir.web.DTOs.LoanTypeRequest
+import com.kefir.web.DTOs.LoanTypeResponse
 import jakarta.validation.Valid
-import org.springframework.http.ResponseEntity
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -14,7 +16,8 @@ class LoanTypeController(private val loanTypeService: LoanTypeService) {
     fun getLoanTypes(): List<LoanType> = loanTypeService.getAllLoanTypes()
 
     @PostMapping("/types")
-    fun createLoanType(@RequestBody @Valid loanType : LoanType) : ResponseEntity<LoanType> =
-         ResponseEntity.ok(loanTypeService.create(loanType))
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createLoanType(@RequestBody @Valid loanTypeRequest : LoanTypeRequest) : LoanTypeResponse =
+         loanTypeService.create(loanTypeRequest)
 
 }

@@ -14,9 +14,9 @@ class LoanType(
         name = "loan_type_seq_gen",
         sequenceName = "loan_type_id_seq",
         allocationSize = 1)
-    var id : Long,
+    var id : Long = 0,
     @field:NotBlank(message = "Name is mandatory")
     val name: String,
     val description: String?,
-    val status: Int) {
+    val status: Int = 0) {
 }
