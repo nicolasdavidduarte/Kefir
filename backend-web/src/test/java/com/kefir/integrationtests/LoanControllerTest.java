@@ -13,28 +13,37 @@ import com.kefir.repositories.IdempotentRequestRepository;
 import com.kefir.services.LoanService;
 import com.kefir.web.DTOs.LoanResponse;
 import com.kefir.web.controllers.LoanController;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import java.time.LocalDate;
 import java.util.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+@AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(LoanController.class)
 class LoanControllerTest {
   @Autowired private MockMvc mockMvc;
 
   @Autowired private ObjectMapper objectMapper;
 
-  @MockBean private LoanService loanService;
+  @MockitoBean private LoanService loanService;
 
-  @MockBean private LoanOrchestrator loanOrchestrator;
+  @MockitoBean private LoanOrchestrator loanOrchestrator;
 
-  @MockBean private IdempotentRequestRepository idempotentRepo;
+  @MockitoBean private IdempotentRequestRepository idempotentRepo;
 
-  @MockBean private JwtService jwtService;
+  @MockitoBean private JwtService jwtService;
 
-  // @Test
+  @MockitoBean private MeterRegistry meterRegistry;
+
+  @MockitoBean private Timer timer;
+
+  @Test
   void testGetAllLoans() throws Exception {
 
     Loan loan =
@@ -94,7 +103,7 @@ class LoanControllerTest {
             .status(1)
             .build();
 
-    when(loanOrchestrator.getLoanData(Long.valueOf(loan.getId()))).thenReturn(loanDetails);
+    when(loanOrchestrator.getLoanData(loan.getId())).thenReturn(loanDetails);
 
     mockMvc
         .perform(get("/api/loans/1"))

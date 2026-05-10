@@ -19,26 +19,20 @@ public class JwtService {
   private SecretKey cachedKey;
 
   public String generateToken(String username, List<String> roles) {
-
-    Map<String, Object> claims = new HashMap<>();
-    claims.put("roles", roles);
-
     return Jwts.builder()
-        .setClaims(claims)
-        .setSubject(username)
-        .setIssuedAt(new Date())
-        .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+        .claims() // Replacement for setClaims
+        .add("roles", roles)
+        .and()
+        .subject(username) // setSubject -> subject
+        .issuedAt(new Date()) // setIssuedAt -> issuedAt
+        .expiration(
+            new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // setExpiration -> expiration
         .signWith(getSecretKey())
         .compact();
   }
 
   public String extractUsername(String token) {
-    return Jwts.parserBuilder()
-        .setSigningKey(getSecretKey())
-        .build()
-        .parseClaimsJws(token)
-        .getBody()
-        .getSubject();
+    return extractAllClaims(token).getSubject();
   }
 
   private SecretKey getSecretKey() {
@@ -68,16 +62,15 @@ public class JwtService {
   }
 
   private Claims extractAllClaims(String token) {
-    return Jwts.parserBuilder()
-        .setSigningKey(getSecretKey())
+    return Jwts.parser() // parserBuilder() -> parser()
+        .verifyWith(getSecretKey()) // setSigningKey() -> verifyWith()
         .build()
-        .parseClaimsJws(token)
-        .getBody();
+        .parseSignedClaims(token) // parseClaimsJws() -> parseSignedClaims()
+        .getPayload(); // getBody() -> getPayload()
   }
 
   public List<String> extractRoles(String token) {
     Claims claims = extractAllClaims(token);
-
     Object rolesObject = claims.get("roles");
 
     if (rolesObject instanceof List<?> list) {

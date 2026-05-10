@@ -21,6 +21,7 @@ plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("com.diffplug.spotless")
+    id("com.github.ben-manes.versions") version "0.51.0"
     kotlin("jvm")
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
@@ -40,36 +41,53 @@ repositories {
 }
 
 dependencies {
+    // Project Modules
     implementation(project(":domain"))
+
+    // Spring Boot Starters (Versions managed by Parent/BOM)
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
-    testImplementation("org.junit.jupiter:junit-jupiter")
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
-    implementation("org.glassfish.jaxb:jaxb-runtime:3.0.2")
-    implementation("software.amazon.awssdk:sns:2.25.25")
-    implementation("io.swagger.core.v3:swagger-annotations:2.2.20")
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
-    implementation("io.micrometer:micrometer-registry-prometheus")
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
-    runtimeOnly("org.postgresql:postgresql")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("com.fasterxml.jackson.core:jackson-databind")
-    testImplementation("org.assertj:assertj-core")
-    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
-    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
-    implementation("io.micrometer:micrometer-tracing-bridge-otel")
-    //implementation("io.opentelemetry:opentelemetry-exporter-otlp")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
-    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+    // Database & Infrastructure
+    runtimeOnly("org.postgresql:postgresql")
     implementation("org.liquibase:liquibase-core")
-    implementation(kotlin("stdlib-jdk8"))
+
+    // AWS
+    implementation("software.amazon.awssdk:sns:2.34.0")
+
+    // Monitoring
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("io.micrometer:micrometer-tracing-bridge-otel")
+    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
+    //implementation("io.opentelemetry:opentelemetry-exporter-otlp")
+
+    // API Documentation (OpenAPI 3)
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
+
+    // Security & JWT
+    implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+
+    // XML Support
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.5")
+
+    // Utilities
+    compileOnly("org.projectlombok:lombok:1.18.34")
+    annotationProcessor("org.projectlombok:lombok:1.18.34")
+    implementation(kotlin("stdlib"))
+
+    // Testing
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testImplementation("org.springframework.security:spring-security-test")
+
 }
 
 tasks.test {
@@ -95,4 +113,9 @@ sourceSets {
     }
 }
 
-
+tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
+    rejectVersionIf {
+        val unstableKeywords = listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea")
+        unstableKeywords.any { candidate.version.lowercase().contains(it) }
+    }
+}
