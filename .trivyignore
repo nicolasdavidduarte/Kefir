@@ -1,0 +1,51 @@
+# Trivy ignore file for Kefir project
+# This file specifies files and directories to ignore during scanning
+
+# Build artifacts
+**/build/
+**/target/
+**/out/
+**/bin/
+**/dist/
+
+# Dependency directories
+**/node_modules/
+**/.gradle/
+**/gradle/
+**/.m2/
+
+# IDE files
+**/.idea/
+**/.vscode/
+**/*.iml
+**/*.ipr
+**/*.iws
+
+# OS files
+**/.DS_Store
+**/Thumbs.db
+
+# Cache directories
+**/.cache/
+**/cache/
+
+# Log files
+**/*.log
+**/logs/
+
+# Temporary files
+**/tmp/
+**/temp/
+**/*.tmp
+
+# Test outputs
+**/test-results/
+**/coverage/
+
+# Documentation that doesn't need security scanning
+**/docs/_build/
+**/site/
+
+# Generated files
+**/generated/
+**/auto-generated/

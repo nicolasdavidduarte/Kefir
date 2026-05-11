@@ -1,0 +1,28 @@
+# Trivy configuration file for Kefir project
+# This file configures Trivy for vulnerability scanning
+
+# Output format
+format: table
+
+# Severity levels to report
+severity: 
+  - UNKNOWN
+  - LOW
+  - MEDIUM
+  - HIGH
+  - CRITICAL
+
+# Ignore file paths that don't need scanning
+skip-dirs:
+  - .git
+  - .gradle
+  - build
+  - node_modules
+  - .cache
+  - target
+  - out
+  - bin
+  - dist
+  - logs
+  - tmp
+  - temp

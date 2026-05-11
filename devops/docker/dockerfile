@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 
 # Update and install curl, ping, telnet, then clean apt cache
 RUN apt-get update && \

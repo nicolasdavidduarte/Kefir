@@ -13,6 +13,9 @@ spec:
       labels:
         app: kefir-backend
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
         - name: kefir-backend
           image: nduarte93/kefir-backend:latest
@@ -44,6 +47,18 @@ spec:
               port: 8080
             initialDelaySeconds: 20
             periodSeconds: 5
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            readOnlyRootFilesystem: true
       imagePullSecrets:
         - name: regcred
 ---

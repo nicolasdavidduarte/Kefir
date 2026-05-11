@@ -7,10 +7,9 @@ plugins {
 
     id("org.springframework.boot") version "3.5.14" apply false
 
-    // I noticed domain had 1.1.4 and backend-web had 1.1.2. 
-    // We'll standardize on 1.1.4 here.
     id("io.spring.dependency-management") version "1.1.7" apply false
 
-    // From your backend-web file
     id("com.diffplug.spotless") version "6.25.0" apply false
+
+    id("com.github.ben-manes.versions") version "0.51.0" apply false
 }
