@@ -1,7 +1,6 @@
-import org.gradle.api.tasks.*
-
 plugins {
     id("java")
+    kotlin("jvm")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("com.diffplug.spotless")
@@ -22,29 +21,27 @@ repositories {
 
 dependencies {
     implementation(project(":domain"))
+
     // Core Spring Batch + JPA
     implementation("org.springframework.boot:spring-boot-starter-batch")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter")
 
     // Kotlin
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
 
     // Logging
-    implementation("ch.qos.logback:logback-classic:1.4.11")
-    implementation("ch.qos.logback:logback-core:1.4.11")
-    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.20.0")
+    implementation("ch.qos.logback:logback-classic:1.5.25")
+    implementation("ch.qos.logback:logback-core:1.5.25")
 
     // Hibernate
     implementation("org.hibernate.orm:hibernate-core:6.2.11.Final")
     implementation("org.hibernate:hibernate-validator:6.2.0.Final")
 
-    // Base de datos
-    runtimeOnly("org.postgresql:postgresql:42.7.2")
-    implementation("com.mchange:c3p0:0.10.2")
+    // Data Base
+    runtimeOnly("org.postgresql:postgresql:42.7.11")
 
-    // JAXB (si usás XML en algún lado)
+    // JAXB
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
     implementation("org.glassfish.jaxb:jaxb-runtime:3.0.2")
 

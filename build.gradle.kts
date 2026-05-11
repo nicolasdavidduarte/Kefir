@@ -2,10 +2,10 @@
 plugins {
     // These match the versions from your snippets
     kotlin("jvm") version "2.2.0" apply false
-    kotlin("plugin.spring") version "2.0.21" apply false
-    kotlin("plugin.jpa") version "2.0.21" apply false
+    kotlin("plugin.spring") version "2.2.0" apply false
+    kotlin("plugin.jpa") version "2.2.0" apply false
 
-    id("org.springframework.boot") version "3.4.9" apply false
+    id("org.springframework.boot") version "3.5.14" apply false
 
     // I noticed domain had 1.1.4 and backend-web had 1.1.2. 
     // We'll standardize on 1.1.4 here.

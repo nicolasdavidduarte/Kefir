@@ -23,7 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))

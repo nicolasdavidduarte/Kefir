@@ -1,30 +1,14 @@
 import org.gradle.api.tasks.*
 
-import org.springframework.boot.gradle.tasks.run.BootRun
-
-//tasks.withType<BootRun> {
-//    jvmArgs(
-//        "-javaagent:/opt/datadog/dd-java-agent.jar",
-//        "-Ddd.agent.host=127.0.0.1",
-//        "-Ddd.service=kefir",
-//        "-Ddd.env=dev",
-//        "-Ddd.version=1.0",
-//        "-Ddd.trace.otlp.enabled=false",
-//        "-Ddd.debugger.enabled=false",
-//        "-Ddd.dynamic.instrumentation.enabled=false",
-//        "-Ddd.logs.injection=true"
-//    )
-//}
-
 plugins {
     id("java")
+    kotlin("jvm")
+    kotlin("plugin.spring")
+    kotlin("plugin.jpa")
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("com.diffplug.spotless")
     id("com.github.ben-manes.versions") version "0.51.0"
-    kotlin("jvm")
-    kotlin("plugin.spring")
-    kotlin("plugin.jpa")
 }
 
 java {
@@ -41,6 +25,22 @@ repositories {
 }
 
 dependencies {
+    constraints {
+        // Fixes High Severity Netty Smuggling & Resource Allocation
+        val secureNettyVersion = "4.1.133.Final"
+        implementation("io.netty:netty-codec:$secureNettyVersion")
+        implementation("io.netty:netty-codec-http:$secureNettyVersion")
+        implementation("io.netty:netty-codec-http2:$secureNettyVersion")
+        implementation("io.netty:netty-handler:$secureNettyVersion")
+        implementation("io.netty:netty-common:$secureNettyVersion")
+        implementation("io.netty:netty-buffer:$secureNettyVersion")
+        implementation("io.netty:netty-transport:$secureNettyVersion")
+        implementation("io.netty:netty-resolver:$secureNettyVersion")
+
+        // Fixes High Severity Uncontrolled Recursion in Commons Lang
+        implementation("org.apache.commons:commons-lang3:3.18.0")
+    }
+
     // Project Modules
     implementation(project(":domain"))
 
@@ -54,11 +54,11 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     // Database & Infrastructure
-    runtimeOnly("org.postgresql:postgresql")
-    implementation("org.liquibase:liquibase-core")
+    runtimeOnly("org.postgresql:postgresql:42.7.11")
+    implementation("org.liquibase:liquibase-core:5.0.2")
 
     // AWS
-    implementation("software.amazon.awssdk:sns:2.34.0")
+    implementation("software.amazon.awssdk:sns:2.44.4")
 
     // Monitoring
     implementation("io.micrometer:micrometer-registry-prometheus")
@@ -117,5 +117,18 @@ tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("
     rejectVersionIf {
         val unstableKeywords = listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea")
         unstableKeywords.any { candidate.version.lowercase().contains(it) }
+    }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.netty") {
+            useVersion("4.1.133.Final")
+            because("fixes High Severity Netty Smuggling and DoS vulnerabilities")
+        }
+        if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {
+            useVersion("3.18.0")
+            because("fixes High Severity Uncontrolled Recursion")
+        }
     }
 }
