@@ -1,5 +1,3 @@
-import org.gradle.api.tasks.*
-
 plugins {
     id("java")
     kotlin("jvm")
@@ -101,6 +99,7 @@ tasks.processResources {
 spotless {
     java {
         googleJavaFormat("1.17.0")
+        removeUnusedImports()
         target("src/**/*.java")
     }
 }

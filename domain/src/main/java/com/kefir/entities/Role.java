@@ -1,10 +1,9 @@
 package com.kefir.entities;
 
 import jakarta.persistence.*;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Entity
 @Getter
@@ -12,17 +11,18 @@ import java.util.Set;
 @Table(name = "role")
 public class Role {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
 
-    @ManyToMany(mappedBy = "roles")
-    private Set<CoreUser> users;
+  private String name;
 
-    public Role(){}
+  @ManyToMany(mappedBy = "roles")
+  private Set<CoreUser> users;
 
-    public Role(String name){
-        this.name = name;
-    }
+  public Role() {}
+
+  public Role(String name) {
+    this.name = name;
+  }
 }

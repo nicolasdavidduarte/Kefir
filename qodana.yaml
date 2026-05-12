@@ -18,5 +18,8 @@ licenseRules:
       - "Apache-2.0"
       - "MIT"
       - "BSD-3-Clause"
+      - "BSD-2-Clause"
+      - "BSD-3-CLAUSE-NO-TRADEMARK"
+      - "Public-Domain"
       - "EPL-2.0"
       - "CDDL-1.1"

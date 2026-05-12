@@ -20,5 +20,4 @@ public class Currency {
 
   private String name;
   private boolean enabled;
-
 }
