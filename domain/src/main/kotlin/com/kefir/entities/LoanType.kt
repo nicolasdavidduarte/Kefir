@@ -18,5 +18,4 @@ class LoanType(
     @field:NotBlank(message = "Name is mandatory")
     val name: String,
     val description: String?,
-    val status: Int = 0) {
-}
+    val status: Int = 0)

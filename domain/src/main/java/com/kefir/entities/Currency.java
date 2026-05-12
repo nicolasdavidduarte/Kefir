@@ -1,9 +1,17 @@
 package com.kefir.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "currency")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Currency {
 
   @Id
@@ -13,36 +21,4 @@ public class Currency {
   private String name;
   private boolean enabled;
 
-  // Constructors
-  public Currency() {}
-
-  public Currency(int id, String name, boolean enabled) {
-    this.id = id;
-    this.name = name;
-    this.enabled = enabled;
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public boolean isEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
 }

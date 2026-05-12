@@ -1,9 +1,17 @@
 package com.kefir.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "status")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Status {
 
   @Id
@@ -12,27 +20,4 @@ public class Status {
 
   private String name;
 
-  // Constructors
-  public Status() {}
-
-  public Status(int id, String name) {
-    this.id = id;
-    this.name = name;
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
 }

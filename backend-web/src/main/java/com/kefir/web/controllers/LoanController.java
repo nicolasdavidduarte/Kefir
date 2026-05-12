@@ -37,9 +37,16 @@ public class LoanController {
 
   private final LoanService loanService;
   private final LoanOrchestrator loanOrchestrator;
+
+  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private final IdempotentRequestRepository idempotentRepo;
+
+  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private final ObjectMapper objectMapper;
+
+  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private final MeterRegistry meterRegistry;
+
   private final Timer timer;
 
   public LoanController(
