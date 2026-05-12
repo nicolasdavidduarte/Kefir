@@ -12,17 +12,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-  private final AuthenticationManager authenticationManager;
+  private final AuthenticationManager authManager;
   private final JwtService jwtService;
   private final RefreshTokenService refreshTokenService;
   private final CoreUserRepository userRepository;
 
   public AuthService(
-      AuthenticationManager authenticationManager,
+      AuthenticationManager authManager,
       JwtService jwtService,
       RefreshTokenService refreshTokenService,
       CoreUserRepository userRepository) {
-    this.authenticationManager = authenticationManager;
+    this.authManager = authManager;
     this.jwtService = jwtService;
     this.refreshTokenService = refreshTokenService;
     this.userRepository = userRepository;
@@ -30,32 +30,34 @@ public class AuthService {
 
   public AuthResponse login(String username, String password) {
 
-    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+    authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-    CoreUser user = userRepository.findByUsername(username).orElseThrow();
+    final CoreUser user = userRepository.findByUsername(username).orElseThrow();
 
-    List<String> roles = user.getRoles().stream().map(role -> "ROLE_" + role.getName()).toList();
+    final List<String> roles =
+        user.getRoles().stream().map(role -> "ROLE_" + role.getName()).toList();
 
-    String accessToken = jwtService.generateToken(username, roles);
+    final String accessToken = jwtService.generateToken(username, roles);
 
-    RefreshToken refreshToken = refreshTokenService.createToken(user);
+    final RefreshToken refreshToken = refreshTokenService.createToken(user);
 
     return new AuthResponse(accessToken, refreshToken.getToken());
   }
 
   public AuthResponse refresh(String refreshToken) {
 
-    RefreshToken oldToken = refreshTokenService.verify(refreshToken);
+    final RefreshToken oldToken = refreshTokenService.verify(refreshToken);
 
-    CoreUser user = oldToken.getUser();
+    final CoreUser user = oldToken.getUser();
 
     refreshTokenService.revoke(oldToken);
 
-    RefreshToken newToken = refreshTokenService.createToken(user);
+    final RefreshToken newToken = refreshTokenService.createToken(user);
 
-    List<String> roles = user.getRoles().stream().map(role -> "ROLE_" + role.getName()).toList();
+    final List<String> roles =
+        user.getRoles().stream().map(role -> "ROLE_" + role.getName()).toList();
 
-    String newAccessToken = jwtService.generateToken(user.getUsername(), roles);
+    final String newAccessToken = jwtService.generateToken(user.getUsername(), roles);
 
     return new AuthResponse(newAccessToken, newToken.getToken());
   }

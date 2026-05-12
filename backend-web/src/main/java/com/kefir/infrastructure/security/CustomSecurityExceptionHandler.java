@@ -19,7 +19,7 @@ public class CustomSecurityExceptionHandler implements AccessDeniedHandler {
     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     response.setContentType("application/json");
 
-    String json =
+    final String json =
         "{\"error\": \"Forbidden\", \"message\": \"User has no access allowed to this endpoint\", \"status\": 403}";
     response.getWriter().write(json);
   }

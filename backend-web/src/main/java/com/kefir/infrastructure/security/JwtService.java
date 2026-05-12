@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class JwtService {
 
   @Value("${jwt.secret}")
-  private String SECRET_KEY;
+  private String secretKey;
 
   private SecretKey cachedKey;
 
@@ -37,7 +37,7 @@ public class JwtService {
 
   private SecretKey getSecretKey() {
     if (cachedKey == null) {
-      byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+      byte[] keyBytes = Decoders.BASE64.decode(secretKey);
       cachedKey = Keys.hmacShaKeyFor(keyBytes);
     }
     return cachedKey;

@@ -21,12 +21,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
   @Override
   public UserDetails loadUserByUsername(String username) {
-    CoreUser coreUser =
+    final CoreUser coreUser =
         coreUserRepository
             .findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    List<GrantedAuthority> authorities =
+    final List<GrantedAuthority> authorities =
         coreUser.getRoles().stream()
             .map(role -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + role.getName()))
             .toList();

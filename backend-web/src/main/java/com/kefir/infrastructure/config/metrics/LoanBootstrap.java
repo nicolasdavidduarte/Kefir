@@ -21,8 +21,8 @@ public class LoanBootstrap {
 
   @EventListener(ApplicationReadyEvent.class)
   public void init() {
-    int active = repository.countByStatus(1);
-    int inactive = repository.countByStatus(2);
+    final int active = repository.countByStatus(1);
+    final int inactive = repository.countByStatus(2);
     state.set(active);
     inactiveState.set(inactive);
   }

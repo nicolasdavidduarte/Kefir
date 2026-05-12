@@ -2,6 +2,7 @@ package com.kefir.loanreport;
 
 import com.kefir.entities.Loan;
 import jakarta.persistence.EntityManagerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+@Slf4j
 @Configuration
 public class LoanReportJobConfig {
 
@@ -65,15 +67,19 @@ public class LoanReportJobConfig {
   @Bean
   public ItemWriter<Loan> loanWriter() {
     return items -> {
-      System.out.println(">>> Reporte de Préstamos:");
+      if (log.isInfoEnabled()) {
+        log.info(">>> Loans report:");
+      }
       for (Loan loan : items) {
-        System.out.printf(
-            "ID: %d | Cliente: %d | Monto: %.2f | Fecha: %s | Estado: %d%n",
-            loan.getId(),
-            loan.getCustomer(),
-            loan.getTotalOperationAmount(),
-            loan.getOpeningDate(),
-            loan.getStatus());
+        if (log.isInfoEnabled()) {
+          log.info(
+              "ID: {} | Customer: {} | Amount: {} | Date: {} | Status: {}}",
+              loan.getId(),
+              loan.getCustomer(),
+              loan.getTotalOperationAmount(),
+              loan.getOpeningDate(),
+              loan.getStatus());
+        }
       }
     };
   }

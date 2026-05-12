@@ -44,6 +44,7 @@ class LoanControllerTest {
   @MockitoBean private Timer timer;
 
   @Test
+  @SuppressWarnings("PMD")
   void testGetAllLoans() throws Exception {
 
     Loan loan =

@@ -37,7 +37,7 @@ public class CustomerService {
   public Customer createCustomer(CustomerDTO customerDTO) {
 
     Customer newCustomer = new Customer();
-    String fullname = setFullname(customerDTO);
+    String fullname = generateFullname(customerDTO);
 
     newCustomer.setName1(customerDTO.name1());
     newCustomer.setName2(customerDTO.name2());
@@ -59,7 +59,7 @@ public class CustomerService {
     return customerSaved;
   }
 
-  private String setFullname(CustomerDTO customerDTO) {
+  private String generateFullname(CustomerDTO customerDTO) {
     String fullname = customerDTO.name1();
     if ((customerDTO.name2() != null)) fullname = fullname + " " + customerDTO.name2();
     if ((customerDTO.name3() != null)) fullname = fullname + " " + customerDTO.name3();

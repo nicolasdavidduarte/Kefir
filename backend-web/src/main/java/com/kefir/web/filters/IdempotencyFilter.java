@@ -29,6 +29,7 @@ public class IdempotencyFilter extends OncePerRequestFilter {
   private final IdempotentRequestRepository repository;
   private final ObjectMapper objectMapper =
       new ObjectMapper().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+  static final String IDEMPOTENCY_ERROR = "Idempotency Error";
 
   public IdempotencyFilter(IdempotentRequestRepository repository) {
     this.repository = repository;
@@ -38,8 +39,6 @@ public class IdempotencyFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-
-    final String IDEMPOTENCY_ERROR = "Idempotency Error";
 
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -82,7 +81,7 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     if (existingOpt.isPresent()) {
       IdempotentRequest existing = existingOpt.get();
 
-      if (IdempotencyState.COMPLETED.equals(existing.getState())) {
+      if (IdempotencyState.COMPLETED == existing.getState()) {
 
         if (!existing.getEndpoint().equals(request.getRequestURI())) {
           writeErrorResponse(
@@ -111,7 +110,7 @@ public class IdempotencyFilter extends OncePerRequestFilter {
         return;
       }
 
-      if (IdempotencyState.PROCESSING.equals(existing.getState())) {
+      if (IdempotencyState.PROCESSING == existing.getState()) {
         writeErrorResponse(
             response,
             HttpServletResponse.SC_CONFLICT,

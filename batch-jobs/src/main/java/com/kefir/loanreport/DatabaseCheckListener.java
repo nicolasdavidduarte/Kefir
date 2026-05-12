@@ -2,10 +2,12 @@ package com.kefir.loanreport;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class DatabaseCheckListener implements JobExecutionListener {
 
@@ -15,9 +17,13 @@ public class DatabaseCheckListener implements JobExecutionListener {
   public void beforeJob(JobExecution jobExecution) {
     try {
       em.createNativeQuery("SELECT 1").getSingleResult();
-      System.out.println("✅ Database connection verified");
+      if (log.isInfoEnabled()) {
+        log.info("✅ Database connection verified");
+      }
     } catch (Exception e) {
-      System.err.println("❌ ERROR: Cannot connect to the database");
+      if (log.isErrorEnabled()) {
+        log.error("❌ ERROR: Cannot connect to the database");
+      }
       throw new IllegalStateException("Database check failed", e);
     }
   }

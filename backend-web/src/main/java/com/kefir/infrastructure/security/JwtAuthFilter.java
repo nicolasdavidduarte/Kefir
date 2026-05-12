@@ -31,17 +31,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     final String header = request.getHeader("Authorization");
 
     if (header != null && header.startsWith("Bearer ")) {
-      String token = header.substring(7);
+      final String token = header.substring(7);
 
       try {
-        String username = jwtService.extractUsername(token);
-        List<String> roles = jwtService.extractRoles(token);
+        final String username = jwtService.extractUsername(token);
+        final List<String> roles = jwtService.extractRoles(token);
 
-        List<GrantedAuthority> authorities =
+        final List<GrantedAuthority> authorities =
             roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         if (username != null && jwtService.isTokenValid(token, username)) {
-          UsernamePasswordAuthenticationToken auth =
+          final UsernamePasswordAuthenticationToken auth =
               new UsernamePasswordAuthenticationToken(username, null, authorities);
 
           SecurityContextHolder.getContext().setAuthentication(auth);

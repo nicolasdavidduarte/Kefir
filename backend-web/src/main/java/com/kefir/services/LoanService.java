@@ -77,7 +77,7 @@ public class LoanService {
 
       registry.counter("loan.created", "status", "success").increment();
 
-      if (loanSaved.getStatus() == 1) state.increment();
+      if (loanSaved.getStatus().equals(LoanStatus.ACTIVE.getId())) state.increment();
 
       log.info("Loan successfully created - id: {}", loanSaved);
 
