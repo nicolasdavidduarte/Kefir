@@ -8,7 +8,6 @@ projectJDK: "21"
 profile:
   name: qodana.recommended
 include:
-  - name: CheckDependencyLicenses
   - name: JavaSecurityApp
   - name: KotlinInternalOracle
 licenseRules:
@@ -22,4 +21,7 @@ licenseRules:
       - "BSD-3-CLAUSE-NO-TRADEMARK"
       - "Public-Domain"
       - "EPL-2.0"
+      - "EPL-1.0"
       - "CDDL-1.1"
+      - "CDDL-1.0"
+      - "Bouncy-Castle"
