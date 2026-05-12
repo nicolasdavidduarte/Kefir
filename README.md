@@ -17,71 +17,22 @@ This project uses:
 ## Bundles
 This project use Gradle for maintaining the bundles.
 
-## Security Scanning with Trivy
-This project includes comprehensive security scanning using Trivy. Trivy scans for:
+## Security Scanning with Trivy and SNYK
+This project includes comprehensive security scanning using Trivy and SNYK. Both scans for:
 - **Vulnerabilities** in dependencies and container images
 - **Security misconfigurations** in configuration files
 - **Secrets** and sensitive data in the codebase
 - **Container image** security issues
 
-### Running Security Scans
-
 #### Quick Security Scan
+### Trivy
 ```bash
-# Run all security scans locally
-./devops/docker/trivy-scan.sh
+./trivy-scan.sh
 ```
 
-#### Individual Scans
+### SNYK
 ```bash
-# Filesystem vulnerability scan
-trivy fs --config .trivy.yaml --severity HIGH,CRITICAL .
-
-# Configuration security scan
-trivy config --severity HIGH,CRITICAL .
-
-# Secret scanning
-trivy repo --config .trivy.yaml --scanners secret .
-
-# Docker image scan (after building images)
-trivy image --severity HIGH,CRITICAL kefir-backend:latest
-```
-
-#### Gradle Integration
-```bash
-# Run security scans via Gradle
-./gradlew trivySecurityScan
-./gradlew trivyFsScan
-./gradlew trivyConfigScan
-./gradlew trivySecretScan
-./gradlew trivyImageScan  # Requires Docker images to be built
-```
-
-#### Dependency Updates Check
-```bash
-# Check for outdated dependencies (security-focused)
-./gradlew dependencyUpdates
-```
-
-### Automated Scanning
-- **GitHub Actions**: Automatic security scans run on:
-  - Push to main/master/develop branches
-  - Pull requests to main/master/develop branches
-  - Weekly schedule (Sundays at 2 AM UTC)
-- **Results**: Scan results are uploaded to GitHub Security tab as SARIF reports
-
-### Security Configuration Files
-- `.trivy.yaml`: Main Trivy configuration
-- `.trivyignore`: Files/directories to ignore during scanning
-- `.github/workflows/trivy-scan.yml`: Automated CI/CD scanning
-
-### Installation
-Install Trivy locally:
-```bash
-# macOS
-brew install trivy
-
-# Or visit: https://github.com/aquasecurity/trivy
+./snyk-scan.sh
 ```
 
 ## Setup

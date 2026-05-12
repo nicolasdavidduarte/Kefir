@@ -1,9 +1,9 @@
-FROM eclipse-temurin:17-jdk
+FROM eclipse-temurin:21-jdk-alpine
 
 # Update and install curl, ping, telnet, then clean apt cache
-RUN apt-get update && \
-    apt-get install -y iputils-ping curl telnet && \
-    rm -rf /var/lib/apt/lists/*
+RUN apk update && \
+    apk add --no-cache iputils curl busybox-extras && \
+    rm -rf /var/cache/apk/*
 
 WORKDIR /app
 

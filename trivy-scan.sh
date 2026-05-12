@@ -32,18 +32,21 @@ if ! command -v trivy &> /dev/null; then
     exit 1
 fi
 
-# Get the directory where the script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# 1. Get the directory where the script is located (The Root)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Point to the Kefir root (two levels up from devops/docker/)
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+# --- GUARD RAIL ---
+# This ensures you aren't accidentally running it from your base home directory
+if [[ "$PROJECT_ROOT" == "$HOME" ]] || [[ "$PROJECT_ROOT" == "/" ]]; then
+    print_error "Security Catch: You are running this from $PROJECT_ROOT."
+    echo "Please ensure this script is inside the 'Kefir' folder, not just loose in your Home directory."
+    exit 1
+fi
 
-# Navigate to the project root so Trivy sees the files
 cd "$PROJECT_ROOT"
+print_status "Running Snyk scan in: $PROJECT_ROOT"
 
-print_status "Scanning repository filesystem at $PROJECT_ROOT..."
-
-# Scan the current directory (.) where pom.xml/build.gradle live
+# Scan 1: The current directory (.) where build.gradle lives
 trivy fs --config "./.trivy.yaml" \
          --exit-code 1 \
          --severity HIGH,CRITICAL \
@@ -81,3 +84,4 @@ print_warning "Review any findings above and address high/critical vulnerabiliti
 cd devops/docker
 docker rmi kefir-backend:latest kefir-postgres:latest 2>/dev/null || true
 print_status "Cleaned up temporary Docker images"
+
