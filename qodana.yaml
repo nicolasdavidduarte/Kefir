@@ -11,3 +11,12 @@ include:
   - name: CheckDependencyLicenses
   - name: JavaSecurityApp
   - name: KotlinInternalOracle
+licenseRules:
+  - keys:
+      - "Apache-2.0"
+    allowed:
+      - "Apache-2.0"
+      - "MIT"
+      - "BSD-3-Clause"
+      - "EPL-2.0"
+      - "CDDL-1.1"
