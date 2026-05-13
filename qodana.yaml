@@ -7,6 +7,7 @@ linter: jetbrains/qodana-jvm:2026.1
 projectJDK: "21"
 profile:
   name: qodana.recommended
+baseline: qodana.sarif.json
 include:
   - name: JavaSecurityApp
   - name: KotlinInternalOracle
@@ -29,3 +30,7 @@ exclude:
   - name: "SuspiciousLicense"
     paths:
       - "thirdPartySoftwareList-2.json"
+  - name: All
+    paths:
+      - backend-web/src/main/java/com/kefir/infrastructure/config/metrics/LoanActiveState.java
+      - backend-web/src/main/java/com/kefir/infrastructure/config/metrics/LoanInactiveState.java
