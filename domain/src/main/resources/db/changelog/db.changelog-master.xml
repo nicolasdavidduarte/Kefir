@@ -11,5 +11,6 @@
     <include file="db/changelog/changesets/004-recreate-customer_table.xml"/>
     <include file="db/changelog/changesets/005-update-loan-type-table.xml"/>
     <include file="db/changelog/changesets/005-update-loan-type-table-2.xml"/>
+    <include file="db/changelog/changesets/006-create-account-table.xml"/>
 
 </databaseChangeLog>
