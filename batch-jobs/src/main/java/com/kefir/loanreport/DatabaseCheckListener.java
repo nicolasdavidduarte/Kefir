@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -14,7 +15,7 @@ public class DatabaseCheckListener implements JobExecutionListener {
   @PersistenceContext private EntityManager em;
 
   @Override
-  public void beforeJob(JobExecution jobExecution) {
+  public void beforeJob(@NonNull JobExecution jobExecution) {
     try {
       em.createNativeQuery("SELECT 1").getSingleResult();
       if (log.isInfoEnabled()) {
@@ -29,7 +30,7 @@ public class DatabaseCheckListener implements JobExecutionListener {
   }
 
   @Override
-  public void afterJob(JobExecution jobExecution) {
+  public void afterJob(@NonNull JobExecution jobExecution) {
     // optional
   }
 }

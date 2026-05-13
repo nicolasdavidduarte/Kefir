@@ -34,7 +34,6 @@ dependencies {
         implementation("io.netty:netty-buffer:$secureNettyVersion")
         implementation("io.netty:netty-transport:$secureNettyVersion")
         implementation("io.netty:netty-resolver:$secureNettyVersion")
-
         // Fixes High Severity Uncontrolled Recursion in Commons Lang
         implementation("org.apache.commons:commons-lang3:3.18.0")
     }
@@ -86,6 +85,7 @@ dependencies {
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.security:spring-security-test")
 
+    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 tasks.test {

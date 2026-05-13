@@ -25,3 +25,7 @@ licenseRules:
       - "CDDL-1.1"
       - "CDDL-1.0"
       - "Bouncy-Castle"
+exclude:
+  - name: "SuspiciousLicense"
+    paths:
+      - "thirdPartySoftwareList-2.json"
