@@ -8,5 +8,5 @@ import lombok.Getter;
 public enum IdempotencyState {
   PROCESSING,
   COMPLETED,
-  FAILED;
+  FAILED
 }

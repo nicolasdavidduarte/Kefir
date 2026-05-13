@@ -1,8 +1,10 @@
 package com.kefir.infrastructure.config.metrics;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
+@Getter
 @Component
 public class LoanInactiveState {
 
@@ -14,13 +16,5 @@ public class LoanInactiveState {
 
   public void set(int value) {
     inactiveLoans.set(value);
-  }
-
-  public void increment() {
-    inactiveLoans.incrementAndGet();
-  }
-
-  public void decrement() {
-    inactiveLoans.decrementAndGet();
   }
 }

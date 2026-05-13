@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -37,25 +38,12 @@ public class IdempotencyFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      @NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response,
+      @NonNull FilterChain filterChain)
       throws ServletException, IOException {
 
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-    if (auth == null) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-
-    if (!"POST".equalsIgnoreCase(request.getMethod())) {
-      filterChain.doFilter(request, response);
-      return;
-    }
-
-    if (request.getRequestURI().startsWith("/api/auth")) {
-      filterChain.doFilter(request, response);
-      return;
-    }
+    if (validatesAuth(request, response, filterChain)) return;
 
     String key = request.getHeader("Idempotency-Key");
 
@@ -84,21 +72,13 @@ public class IdempotencyFilter extends OncePerRequestFilter {
       if (IdempotencyState.COMPLETED == existing.getState()) {
 
         if (!existing.getEndpoint().equals(request.getRequestURI())) {
-          writeErrorResponse(
-              response,
-              HttpServletResponse.SC_CONFLICT,
-              IDEMPOTENCY_ERROR,
-              "Idempotency-Key used for different endpoint");
+          writeErrorResponse(response, "Idempotency-Key used for different endpoint");
           response.flushBuffer();
           return;
         }
 
         if (!existing.getRequestHash().equals(requestHash)) {
-          writeErrorResponse(
-              response,
-              HttpServletResponse.SC_CONFLICT,
-              IDEMPOTENCY_ERROR,
-              "Idempotency-Key reuse with different request body");
+          writeErrorResponse(response, "Idempotency-Key reuse with different request body");
           return;
         }
 
@@ -111,11 +91,7 @@ public class IdempotencyFilter extends OncePerRequestFilter {
       }
 
       if (IdempotencyState.PROCESSING == existing.getState()) {
-        writeErrorResponse(
-            response,
-            HttpServletResponse.SC_CONFLICT,
-            IDEMPOTENCY_ERROR,
-            "Request already in progress for this Idempotency-Key");
+        writeErrorResponse(response, "Request already in progress for this Idempotency-Key");
         return;
       }
 
@@ -153,6 +129,28 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     wrappedResponse.copyBodyToResponse();
   }
 
+  private static boolean validatesAuth(
+      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      throws IOException, ServletException {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+    if (auth == null) {
+      filterChain.doFilter(request, response);
+      return true;
+    }
+
+    if (!"POST".equalsIgnoreCase(request.getMethod())) {
+      filterChain.doFilter(request, response);
+      return true;
+    }
+
+    if (request.getRequestURI().startsWith("/api/auth")) {
+      filterChain.doFilter(request, response);
+      return true;
+    }
+    return false;
+  }
+
   private String normalizeJson(String body) {
     try {
       Object json = objectMapper.readValue(body, Object.class);
@@ -183,10 +181,9 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     }
   }
 
-  private void writeErrorResponse(
-      HttpServletResponse response, int status, String errorCode, String message)
-      throws IOException {
-    ObjectMapper objectMapper = new ObjectMapper();
+  private void writeErrorResponse(HttpServletResponse response, String message) throws IOException {
+
+    final int status = HttpServletResponse.SC_CONFLICT;
 
     response.setStatus(status);
     response.setContentType("application/json");
@@ -195,7 +192,7 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     Map<String, Object> errorDetails = new LinkedHashMap<>();
     errorDetails.put("timestamp", java.time.OffsetDateTime.now().toString());
     errorDetails.put("status", status);
-    errorDetails.put("error", errorCode);
+    errorDetails.put("error", IDEMPOTENCY_ERROR);
     errorDetails.put("message", message);
 
     String jsonResponse = objectMapper.writeValueAsString(errorDetails);
