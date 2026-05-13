@@ -7,7 +7,6 @@ linter: jetbrains/qodana-jvm:2026.1
 projectJDK: "21"
 profile:
   name: qodana.recommended
-baseline: qodana.sarif.json
 include:
   - name: JavaSecurityApp
   - name: KotlinInternalOracle
