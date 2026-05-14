@@ -1,9 +1,9 @@
 // /build.gradle.kts (Root)
 plugins {
     // These match the versions from your snippets
-    kotlin("jvm") version "2.2.0" apply false
-    kotlin("plugin.spring") version "2.2.0" apply false
-    kotlin("plugin.jpa") version "2.2.0" apply false
+    kotlin("jvm") version "2.3.0" apply false
+    kotlin("plugin.spring") version "2.3.0" apply false
+    kotlin("plugin.jpa") version "2.3.0" apply false
 
     id("org.springframework.boot") version "3.5.14" apply false
 

@@ -1,5 +1,6 @@
 package com.kefir.entities
 
+import com.kefir.enums.AccountStatus
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -23,9 +24,17 @@ class Account(
     val bank: Long,
     var CBU: String,
     val balance: BigDecimal = BigDecimal.ZERO,
-    val status: Int = 0,
+    var status: Long = 0,
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "updated_at", nullable = false, updatable = true)
     val updatedAt: OffsetDateTime = OffsetDateTime.now()
     )
+
+fun Account.open(){
+    status = AccountStatus.OPENED.id
+}
+
+fun Account.close(){
+    status = AccountStatus.CLOSED.id
+}

@@ -65,7 +65,7 @@ tasks.processResources {
 
 spotless {
     java {
-        googleJavaFormat("1.17.0")
+        googleJavaFormat("1.35.0")
         target("src/**/*.java")
     }
 }

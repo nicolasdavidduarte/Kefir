@@ -1,18 +1,23 @@
 package com.kefir.services
 
 import com.kefir.entities.Account
+import com.kefir.entities.open
 import com.kefir.exceptions.AccountNotFoundException
 import com.kefir.repositories.AccountRepository
 import com.kefir.web.DTOs.AccountRequest
 import com.kefir.web.DTOs.AccountResponse
+import com.kefir.web.DTOs.EntityApprovalResponse
 import com.kefir.web.DTOs.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 @Transactional
 @Service
 class AccountService(val accountRepository: AccountRepository) {
+
+    fun getAllAccounts(): List<AccountResponse> = accountRepository.findAll().map(Account::toResponse).toList().ifEmpty { throw AccountNotFoundException("No accounts found") }
 
     fun createAccount(accountRequest : AccountRequest) : AccountResponse {
 
@@ -25,7 +30,14 @@ class AccountService(val accountRepository: AccountRepository) {
         return accountRepository.save(savedAccount).toResponse()
     }
 
-    fun getAllAccounts(): List<AccountResponse> = accountRepository.findAll().map(Account::toResponse).toList().ifEmpty { throw AccountNotFoundException("No accounts found") }
+    fun approve(id: Long) : EntityApprovalResponse {
+        val account = accountRepository.findById(id).orElseThrow{throw AccountNotFoundException("Account not found") }
+        account.open()
+        accountRepository.save(account)
+
+        return EntityApprovalResponse("Account opened!", "Account", id, LocalDateTime.now())
+    }
+
 
     fun generateCBUFirstBlock(bank: Long, branch : Long) : String {
         // 1st block: Bank code (3) + Branch code (4) + Verification number (1)

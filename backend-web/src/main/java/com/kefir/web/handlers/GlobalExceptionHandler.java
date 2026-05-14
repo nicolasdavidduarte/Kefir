@@ -17,7 +17,8 @@ public class GlobalExceptionHandler {
   @ExceptionHandler({
     LoanNotFoundException.class,
     CustomerNotFoundException.class,
-    AccountNotFoundException.class
+    AccountNotFoundException.class,
+    BankNotFoundException.class
   })
   public ResponseEntity<Map<String, Object>> handleAllNotFound(RuntimeException ex) {
     return buildResponse(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage());
