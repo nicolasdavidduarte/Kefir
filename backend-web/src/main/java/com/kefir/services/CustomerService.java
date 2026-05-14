@@ -4,7 +4,7 @@ import com.kefir.entities.Customer;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.exceptions.CustomerNotFoundException;
 import com.kefir.repositories.CustomerRepository;
-import com.kefir.web.DTOs.CustomerDTO;
+import com.kefir.web.dtos.CustomerDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;

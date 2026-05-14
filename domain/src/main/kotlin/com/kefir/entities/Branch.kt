@@ -11,7 +11,7 @@ import java.time.OffsetDateTime
 
 @Entity
 @Table(name = "branch")
-class Branch (
+class Branch(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "branch_id_seq_gen")
     @SequenceGenerator(name = "branch_id_seq_gen", sequenceName = "branch_id_seq", allocationSize = 1)
@@ -22,4 +22,5 @@ class Branch (
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "updated_at", nullable = false, updatable = true)
-    val updatedAt: OffsetDateTime = OffsetDateTime.now())
+    val updatedAt: OffsetDateTime = OffsetDateTime.now(),
+)

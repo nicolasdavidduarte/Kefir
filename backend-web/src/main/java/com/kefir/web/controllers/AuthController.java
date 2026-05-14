@@ -1,9 +1,9 @@
 package com.kefir.web.controllers;
 
 import com.kefir.infrastructure.security.AuthService;
-import com.kefir.web.DTOs.AuthResponse;
-import com.kefir.web.DTOs.LoginRequest;
-import com.kefir.web.DTOs.RefreshRequest;
+import com.kefir.web.dtos.AuthResponse;
+import com.kefir.web.dtos.LoginRequest;
+import com.kefir.web.dtos.RefreshRequest;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

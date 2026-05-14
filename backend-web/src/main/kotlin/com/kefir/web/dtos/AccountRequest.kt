@@ -1,4 +1,4 @@
-package com.kefir.web.DTOs
+package com.kefir.web.dtos
 
 import jakarta.validation.constraints.NotNull
 import java.math.BigDecimal
@@ -14,5 +14,5 @@ data class AccountRequest(
     val bank: Long?,
     @field:NotNull("Bank branch is required")
     val bankBranch: Long?,
-    val initialBalance: BigDecimal? = BigDecimal.ZERO
+    val initialBalance: BigDecimal? = BigDecimal.ZERO,
 )

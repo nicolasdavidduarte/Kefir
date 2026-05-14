@@ -63,13 +63,6 @@ tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-spotless {
-    java {
-        googleJavaFormat("1.35.0")
-        target("src/**/*.java")
-    }
-}
-
 sourceSets {
     main {
         resources {

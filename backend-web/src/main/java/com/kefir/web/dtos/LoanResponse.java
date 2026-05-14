@@ -1,4 +1,4 @@
-package com.kefir.web.DTOs;
+package com.kefir.web.dtos;
 
 import java.time.LocalDate;
 import lombok.*;

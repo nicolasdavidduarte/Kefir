@@ -37,11 +37,3 @@ tasks.test {
 tasks.getByName<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
     enabled = false
 }
-
-spotless {
-    java {
-        googleJavaFormat("1.35.0")
-        removeUnusedImports()
-        target("src/**/*.java")
-    }
-}

@@ -6,7 +6,7 @@ plugins {
     id("org.springframework.boot")
     id("io.spring.dependency-management")
     id("com.diffplug.spotless")
-    id("com.github.ben-manes.versions") version "0.51.0"
+    id("com.github.ben-manes.versions")
 }
 
 java {
@@ -96,13 +96,13 @@ tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-spotless {
-    java {
-        googleJavaFormat("1.17.0")
-        removeUnusedImports()
-        target("src/**/*.java")
-    }
-}
+//spotless {
+//    java {
+//        googleJavaFormat("1.35.0")
+//        removeUnusedImports()
+//        target("src/**/*.java")
+//    }
+//}
 
 sourceSets {
     main {

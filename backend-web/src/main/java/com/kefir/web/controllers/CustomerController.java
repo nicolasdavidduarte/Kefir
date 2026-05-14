@@ -2,7 +2,7 @@ package com.kefir.web.controllers;
 
 import com.kefir.entities.Customer;
 import com.kefir.services.CustomerService;
-import com.kefir.web.DTOs.CustomerDTO;
+import com.kefir.web.dtos.CustomerDTO;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;

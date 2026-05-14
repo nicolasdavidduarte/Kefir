@@ -12,7 +12,7 @@ import java.time.OffsetDateTime
 
 @Entity
 @Table(name = "bank")
-class Bank (
+class Bank(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bank_id_seq_gen")
     @SequenceGenerator(name = "bank_id_seq_gen", sequenceName = "bank_id_seq", allocationSize = 1)
@@ -22,13 +22,13 @@ class Bank (
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "updated_at", nullable = false, updatable = true)
-    val updatedAt: OffsetDateTime = OffsetDateTime.now()
+    val updatedAt: OffsetDateTime = OffsetDateTime.now(),
 )
 
-fun Bank.enable(){
+fun Bank.enable() {
     status = BankStatus.VALID.id
 }
 
-fun Bank.disable(){
+fun Bank.disable() {
     status = BankStatus.INVALID.id
 }

@@ -1,3 +1,3 @@
-package com.kefir.web.DTOs;
+package com.kefir.web.dtos;
 
 public record RefreshRequest(String refreshToken) {}

@@ -1,4 +1,4 @@
-package com.kefir.web.DTOs;
+package com.kefir.web.dtos;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

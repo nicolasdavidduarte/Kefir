@@ -7,7 +7,6 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.SequenceGenerator
-
 import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.time.OffsetDateTime
@@ -28,13 +27,13 @@ class Account(
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "updated_at", nullable = false, updatable = true)
-    val updatedAt: OffsetDateTime = OffsetDateTime.now()
-    )
+    val updatedAt: OffsetDateTime = OffsetDateTime.now(),
+)
 
-fun Account.open(){
+fun Account.open() {
     status = AccountStatus.OPENED.id
 }
 
-fun Account.close(){
+fun Account.close() {
     status = AccountStatus.CLOSED.id
 }

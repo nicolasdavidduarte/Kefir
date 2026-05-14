@@ -3,7 +3,7 @@ package com.kefir.infrastructure.security;
 import com.kefir.entities.CoreUser;
 import com.kefir.entities.RefreshToken;
 import com.kefir.repositories.CoreUserRepository;
-import com.kefir.web.DTOs.AuthResponse;
+import com.kefir.web.dtos.AuthResponse;
 import java.util.List;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -7,7 +7,7 @@ import com.kefir.exceptions.LoanNotFoundException;
 import com.kefir.infrastructure.config.metrics.LoanActiveState;
 import com.kefir.infrastructure.messaging.SnsPublisher;
 import com.kefir.repositories.LoanRepository;
-import com.kefir.web.DTOs.LoanRequest;
+import com.kefir.web.dtos.LoanRequest;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
 import java.time.LocalDate;

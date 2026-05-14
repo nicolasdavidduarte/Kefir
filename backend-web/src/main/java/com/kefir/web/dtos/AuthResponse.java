@@ -1,4 +1,4 @@
-package com.kefir.web.DTOs;
+package com.kefir.web.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
