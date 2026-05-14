@@ -6,26 +6,20 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.SequenceGenerator
-
 import jakarta.persistence.Table
-import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 @Entity
-@Table(name = "account")
-class Account(
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_id_seq_gen")
-    @SequenceGenerator(name = "account_id_seq_gen", sequenceName = "account_id_seq", allocationSize = 1)
+@Table(name = "branch")
+class Branch (
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "branch_id_seq_gen")
+    @SequenceGenerator(name = "branch_id_seq_gen", sequenceName = "branch_id_seq", allocationSize = 1)
     val id: Long = 0,
-    val type: Long,
-    val customer: Long,
-    val currency: Long,
     val bank: Long,
-    var CBU: String,
-    val balance: BigDecimal = BigDecimal.ZERO,
-    val status: Int = 0,
+    val name: String,
+    val address: String,
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "updated_at", nullable = false, updatable = true)
-    val updatedAt: OffsetDateTime = OffsetDateTime.now()
-    )
+    val updatedAt: OffsetDateTime = OffsetDateTime.now())

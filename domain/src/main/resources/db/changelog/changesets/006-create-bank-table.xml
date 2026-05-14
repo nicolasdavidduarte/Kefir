@@ -1,0 +1,46 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="006" author="ndd">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="bank"/>
+            </not>
+        </preConditions>
+
+        <createSequence
+                sequenceName="bank_id_seq"
+                startValue="1"
+                incrementBy="1"/>
+
+        <createTable tableName="bank">
+            <column name="id" type="BIGINT" defaultValueComputed="nextval('bank_id_seq')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="status" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addDefaultValue
+                tableName="bank"
+                columnName="id"
+                defaultValueSequenceNext="bank_id_seq"/>
+
+    </changeSet>
+
+</databaseChangeLog>
