@@ -8,7 +8,7 @@ plugins {
     kotlin("plugin.jpa")
 }
 
-group = "org.kefir" // Usá el mismo groupId que en los demás módulos
+group = "org.kefir"
 version = "1.0-SNAPSHOT"
 
 repositories {

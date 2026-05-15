@@ -9,10 +9,9 @@ data class LoanTypeResponse(
     val status: Int,
 )
 
-fun LoanType.toResponse() =
-    LoanTypeResponse(
-        id = this.id,
-        name = this.name,
-        description = this.description,
-        status = this.status,
-    )
+fun LoanType.toResponse() = LoanTypeResponse(
+    id = this.id,
+    name = this.name,
+    description = this.description,
+    status = this.status,
+)

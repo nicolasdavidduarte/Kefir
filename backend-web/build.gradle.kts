@@ -11,7 +11,7 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21) // Change to 21 if using Java 21
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -95,14 +95,6 @@ tasks.test {
 tasks.processResources {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
-
-//spotless {
-//    java {
-//        googleJavaFormat("1.35.0")
-//        removeUnusedImports()
-//        target("src/**/*.java")
-//    }
-//}
 
 sourceSets {
     main {

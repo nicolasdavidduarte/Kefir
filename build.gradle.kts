@@ -1,8 +1,4 @@
-import com.diffplug.gradle.spotless.SpotlessExtension
-
-// /build.gradle.kts (Root)
 plugins {
-    // These match the versions from your snippets
     kotlin("jvm") version "2.3.0" apply false
     kotlin("plugin.spring") version "2.3.0" apply false
     kotlin("plugin.jpa") version "2.3.0" apply false
@@ -14,21 +10,20 @@ plugins {
 }
 
 subprojects {
-    // This is the modern way to apply a plugin by ID inside a subprojects block
     pluginManager.apply("com.diffplug.spotless")
 
-    // We use the extension class directly to be safe
     extensions.configure<com.diffplug.gradle.spotless.SpotlessExtension>("spotless") {
         kotlin {
             target("src/**/*.kt")
             targetExclude("**/build/**/*.kt")
-            ktlint("1.8.0")
+            ktlint("1.8.0").editorConfigOverride(mapOf(
+                "ktlint_standard_no-unused-imports" to "enabled"))
+
         }
         java {
             target("src/**/*.java")
             targetExclude("**/build/**/*.java")
-            googleJavaFormat("1.35.0")
-            removeUnusedImports()
+            googleJavaFormat("1.35.0").reflowLongStrings()
         }
     }
 }

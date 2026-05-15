@@ -10,10 +10,9 @@ data class BankResponse(
     val createdAt: OffsetDateTime,
 )
 
-fun Bank.toResponse() =
-    BankResponse(
-        id = this.id,
-        name = this.name,
-        status = this.status,
-        createdAt = this.createdAt,
-    )
+fun Bank.toResponse() = BankResponse(
+    id = this.id,
+    name = this.name,
+    status = this.status,
+    createdAt = this.createdAt,
+)

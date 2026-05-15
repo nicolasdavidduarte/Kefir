@@ -21,7 +21,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     response.setContentType("application/json");
 
     final String json =
-        "{\"error\": \"Unauthorized\", \"message\": \"User is not authenticated\", \"status\": 401}";
+        "{\"error\": \"Unauthorized\", \"message\": \"User is not authenticated\", \"status\":"
+            + " 401}";
     response.getWriter().write(json);
   }
 }

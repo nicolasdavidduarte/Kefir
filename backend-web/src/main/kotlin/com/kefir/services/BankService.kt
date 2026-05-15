@@ -17,12 +17,11 @@ import java.time.LocalDateTime
 class BankService(
     val bankRepository: BankRepository,
 ) {
-    fun findAll(): List<BankResponse> =
-        bankRepository
-            .findAll()
-            .map(Bank::toResponse)
-            .toList()
-            .ifEmpty { throw BankNotFoundException("No banks found") }
+    fun findAll(): List<BankResponse> = bankRepository
+        .findAll()
+        .map(Bank::toResponse)
+        .toList()
+        .ifEmpty { throw BankNotFoundException("No banks found") }
 
     fun create(bankRequest: BankRequest): BankResponse = bankRepository.save(Bank(name = requireNotNull(bankRequest.name))).toResponse()
 
