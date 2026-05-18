@@ -22,10 +22,20 @@ class AccountService(
     val auxAuthService: AuxAuthService,
     val approvalLogService: ApprovalLogService,
 ) {
+
+    /**
+     * Obtains all accounts from the database
+     * @return list of accounts
+     */
     fun getAllAccounts(): List<AccountResponse> = accountRepository.findAll().map(Account::toResponse).toList().ifEmpty {
         throw AccountNotFoundException("No accounts found")
     }
 
+    /**
+     * Creates a new account
+     * @param account request
+     * @return account response
+     */
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
         val cbu = generateCBUFirstBlock(requireNotNull(accountRequest.bank), requireNotNull(accountRequest.bankBranch))
 
