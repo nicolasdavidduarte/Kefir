@@ -26,6 +26,7 @@ subprojects {
             target("src/**/*.java")
             targetExclude("**/build/**/*.java")
             googleJavaFormat("1.35.0").reflowLongStrings()
+            removeUnusedImports()
         }
     }
 }

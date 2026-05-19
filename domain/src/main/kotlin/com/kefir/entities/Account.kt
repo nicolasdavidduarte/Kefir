@@ -21,7 +21,7 @@ class Account(
     val customer: Long,
     val currency: Long,
     val bank: Long,
-    var CBU: String,
+    var cbu: String,
     val balance: BigDecimal = BigDecimal.ZERO,
     var status: Long = 0,
     @Column(name = "created_at", nullable = false, updatable = false)

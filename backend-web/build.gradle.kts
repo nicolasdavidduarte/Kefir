@@ -22,6 +22,8 @@ repositories {
     mavenCentral()
 }
 
+extra["junit-jupiter.version"] = "6.0.3"
+extra["tomcat.version"] = "10.1.55"
 dependencies {
     constraints {
         // Fixes High Severity Netty Smuggling & Resource Allocation

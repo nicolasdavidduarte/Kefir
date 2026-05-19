@@ -9,7 +9,6 @@ import com.kefir.web.dtos.LoanRequest;
 import com.kefir.web.dtos.LoanResponse;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -47,21 +46,17 @@ public class LoanController {
   @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private final MeterRegistry meterRegistry;
 
-  private final Timer timer;
-
   public LoanController(
       LoanService loanService,
       LoanOrchestrator loanOrchestrator,
       IdempotentRequestRepository idempotentRequestRepository,
       ObjectMapper objectMapper,
-      MeterRegistry meterRegistry,
-      Timer timer) {
+      MeterRegistry meterRegistry) {
     this.loanService = loanService;
     this.loanOrchestrator = loanOrchestrator;
     this.idempotentRepo = idempotentRequestRepository;
     this.objectMapper = objectMapper;
     this.meterRegistry = meterRegistry;
-    this.timer = timer;
   }
 
   @GetMapping
@@ -89,7 +84,10 @@ public class LoanController {
         @ApiResponse(responseCode = "409", description = "Invalid loan"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
       })
-  // @Timed(value = "loan.get", percentiles = {0.5, 0.9, 0.95, 0.99}, histogram = true)
+  @Timed(
+      value = "loan.get",
+      percentiles = {0.5, 0.9, 0.95, 0.99},
+      histogram = true)
   public ResponseEntity<LoanResponse> getById(
       @Parameter(
               name = "loanId",
@@ -98,36 +96,7 @@ public class LoanController {
               example = "12345")
           @PathVariable
           Long loanId) {
-
-    //    Timer.Sample sample = Timer.start(meterRegistry);
-    //
-    //    try {
-    //      LoanDataDTO data = loanDataOrchestrator.getLoanData(loanId);
-    //
-    //      sample.stop(
-    //              Timer.builder("loan.get")
-    //                      .tag("status", "success")
-    //                      .register(meterRegistry)
-    //      );
-    //
-    //      return ResponseEntity.ok(data);
-    //
-    //    } catch (Exception e) {
-    //
-    //      sample.stop(
-    //              Timer.builder("loan.get")
-    //                      .tag("status", "error")
-    //                      .register(meterRegistry)
-    //      );
-    //
-    //      throw e;
-    //    }
-
-    //    Timer.builder("loan.get")
-    //            .register(meterRegistry)
-    //            .record(() -> return ResponseEntity.ok(loanDataOrchestrator.getLoanData(loanId)));
-
-    return timer.record(() -> ResponseEntity.ok(loanOrchestrator.getLoanData(loanId)));
+    return ResponseEntity.ok(loanOrchestrator.getLoanData(loanId));
   }
 
   // Endpoint to create a new loan

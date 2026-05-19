@@ -4,7 +4,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kefir.entities.Loan;
 import com.kefir.exceptions.LoanNotFoundException;
 import com.kefir.infrastructure.security.JwtService;
@@ -28,8 +27,6 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(LoanController.class)
 class LoanControllerTest {
   @Autowired private MockMvc mockMvc;
-
-  @Autowired private ObjectMapper objectMapper;
 
   @MockitoBean private LoanService loanService;
 
@@ -71,7 +68,7 @@ class LoanControllerTest {
         .andExpect(jsonPath("$[0].totalOperationAmount").value(1000.0));
   }
 
-  // @Test
+  @Test
   void testWhenGetLoanByExistentId_RetrieveLoan() throws Exception {
     Loan loan =
         new Loan(
@@ -114,7 +111,7 @@ class LoanControllerTest {
         .andExpect(jsonPath("$.totalOperationAmount").value(1000.0));
   }
 
-  // @Test
+  @Test
   void testWhenGetLoanByNonExistentId_ThrowErrorMessage() throws Exception {
     when(loanOrchestrator.getLoanData(anyLong())).thenThrow(new LoanNotFoundException(122L));
 

@@ -8,7 +8,7 @@ data class AccountResponse(
     val customer: Long,
     val currency: Long,
     val bank: Long,
-    val CBU: String,
+    val cbu: String,
     val balance: BigDecimal,
     val status: Long,
 )
@@ -18,7 +18,7 @@ fun Account.toResponse() = AccountResponse(
     customer = this.customer,
     currency = this.currency,
     bank = this.bank,
-    CBU = this.CBU,
+    cbu = this.cbu,
     balance = this.balance,
     status = this.status,
 )

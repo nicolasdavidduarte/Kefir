@@ -45,13 +45,13 @@ class AccountService(
                     type = requireNotNull(accountRequest.type),
                     customer = requireNotNull(accountRequest.customer),
                     currency = requireNotNull(accountRequest.currency),
-                    CBU = cbu,
+                    cbu = cbu,
                     bank = requireNotNull(accountRequest.bank),
                     balance = requireNotNull(accountRequest.initialBalance),
                 ),
             )
 
-        savedAccount.CBU = generateCBUSecondBlock(savedAccount.CBU, savedAccount.id)
+        savedAccount.cbu = generateCBUSecondBlock(savedAccount.cbu, savedAccount.id)
 
         return accountRepository.save(savedAccount).toResponse()
     }
