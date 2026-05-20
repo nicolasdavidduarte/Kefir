@@ -1,4 +1,4 @@
-package com.kefir.integrationtests;
+package com.kefir.integration;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -25,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @AutoConfigureMockMvc(addFilters = false)
 @WebMvcTest(LoanController.class)
-class LoanControllerTest {
+class LoanControllerIT {
   @Autowired private MockMvc mockMvc;
 
   @MockitoBean private LoanService loanService;
@@ -40,13 +40,15 @@ class LoanControllerTest {
 
   @MockitoBean private Timer timer;
 
+  final Long idTarget = 999L;
+
   @Test
   @SuppressWarnings("PMD")
   void testGetAllLoans() throws Exception {
 
     Loan loan =
         Loan.builder()
-            .id(1L)
+            .id(idTarget)
             .customer(123L)
             .loanType(1)
             .totalOperationAmount(1000.0)
@@ -72,7 +74,7 @@ class LoanControllerTest {
   void testWhenGetLoanByExistentId_RetrieveLoan() throws Exception {
     Loan loan =
         new Loan(
-            1L,
+                idTarget,
             123L,
             1,
             1000.0,
@@ -90,7 +92,7 @@ class LoanControllerTest {
 
     LoanResponse loanDetails =
         LoanResponse.builder()
-            .id(1L)
+            .id(idTarget)
             .customer(123L)
             .loanType(1)
             .totalOperationAmount(1000.0)
@@ -104,9 +106,9 @@ class LoanControllerTest {
     when(loanOrchestrator.getLoanData(loan.getId())).thenReturn(loanDetails);
 
     mockMvc
-        .perform(get("/api/loans/1"))
+        .perform(get("/api/loans/" + idTarget))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.id").value(idTarget))
         .andExpect(jsonPath("$.customer").value(123))
         .andExpect(jsonPath("$.totalOperationAmount").value(1000.0));
   }
