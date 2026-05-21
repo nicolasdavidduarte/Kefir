@@ -9,7 +9,7 @@ data class AccountResponse(
     val currency: Long,
     val bank: Long,
     val cbu: String,
-    val balance: BigDecimal,
+    val balance: BigDecimal?,
     val status: Long,
 )
 

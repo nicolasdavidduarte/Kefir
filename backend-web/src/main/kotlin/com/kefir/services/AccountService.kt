@@ -5,6 +5,7 @@ import com.kefir.entities.close
 import com.kefir.entities.open
 import com.kefir.exceptions.AccountNotFoundException
 import com.kefir.repositories.AccountRepository
+import com.kefir.services.aux.account.CBUGenerator
 import com.kefir.web.dtos.AccountRequest
 import com.kefir.web.dtos.AccountResponse
 import com.kefir.web.dtos.ApprovalLogRequest
@@ -14,6 +15,7 @@ import com.kefir.web.dtos.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import kotlin.Long
 
 @Transactional
 @Service
@@ -37,21 +39,18 @@ class AccountService(
      * @return account response
      */
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
-        val cbu = generateCBUFirstBlock(requireNotNull(accountRequest.bank), requireNotNull(accountRequest.bankBranch))
-
         val savedAccount =
             accountRepository.save(
                 Account(
                     type = requireNotNull(accountRequest.type),
                     customer = requireNotNull(accountRequest.customer),
                     currency = requireNotNull(accountRequest.currency),
-                    cbu = cbu,
                     bank = requireNotNull(accountRequest.bank),
-                    balance = requireNotNull(accountRequest.initialBalance),
+                    balance = accountRequest.initialBalance,
                 ),
             )
 
-        savedAccount.cbu = generateCBUSecondBlock(savedAccount.cbu, savedAccount.id)
+        savedAccount.cbu = CBUGenerator.generateCBU(savedAccount.bank, requireNotNull(accountRequest.bankBranch), savedAccount.id)
 
         return accountRepository.save(savedAccount).toResponse()
     }
@@ -79,33 +78,5 @@ class AccountService(
         approvalLogService.create(approvalLogRequest)
 
         return EntityApprovalResponse("Account opened!", "Account", id, LocalDateTime.now())
-    }
-
-    fun generateCBUFirstBlock(
-        bank: Long,
-        branch: Long,
-    ): String {
-        // 1st block: Bank code (3) + Branch code (4) + Verification number (1)
-
-        val cbu: String =
-            bank.toString().padStart(3, '0') +
-                branch.toString().padStart(4, '0') +
-                (0..9).random().toString()
-
-        return cbu
-    }
-
-    fun generateCBUSecondBlock(
-        cbuFirstBlock: String,
-        id: Long,
-    ): String {
-        // 2nd block: Account number (13) + Verification number (1)
-
-        val cbu =
-            cbuFirstBlock +
-                id.toString().padStart(13, '0') +
-                (0..9).random().toString()
-
-        return cbu
     }
 }

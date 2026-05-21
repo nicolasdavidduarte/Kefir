@@ -65,8 +65,8 @@ class LoanControllerIT {
     mockMvc
         .perform(get("/api/loans"))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].id").value(1))
-        .andExpect(jsonPath("$[0].customer").value(123))
+        .andExpect(jsonPath("$[0].id").value(idTarget))
+        .andExpect(jsonPath("$[0].customer").value(123L))
         .andExpect(jsonPath("$[0].totalOperationAmount").value(1000.0));
   }
 
@@ -74,7 +74,7 @@ class LoanControllerIT {
   void testWhenGetLoanByExistentId_RetrieveLoan() throws Exception {
     Loan loan =
         new Loan(
-                idTarget,
+            idTarget,
             123L,
             1,
             1000.0,
@@ -109,7 +109,7 @@ class LoanControllerIT {
         .perform(get("/api/loans/" + idTarget))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.id").value(idTarget))
-        .andExpect(jsonPath("$.customer").value(123))
+        .andExpect(jsonPath("$.customer").value(123L))
         .andExpect(jsonPath("$.totalOperationAmount").value(1000.0));
   }
 

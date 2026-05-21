@@ -89,6 +89,9 @@ dependencies {
     testImplementation("io.mockk:mockk:1.14.9")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
 tasks.test {
