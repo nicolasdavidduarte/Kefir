@@ -10,16 +10,19 @@ class OperationLogService(
     val operationLogRepository: OperationLogRepository,
     val auxAuthService: AuxAuthService,
 ) {
-    fun create(operationLogCommand: OperationLogCommand) {
+
+    fun log(
+        operationLogCommand: OperationLogCommand,
+    ) {
         val user: Int = auxAuthService.retrieveUserIdFromAuth()
 
         val operationLog =
             OperationLog(
-                entity = requireNotNull(operationLogCommand.entity),
+                operation = operationLogCommand.operation.name,
+                entity = operationLogCommand.entity.name,
                 entityId = requireNotNull(operationLogCommand.entityId),
-                operation = requireNotNull(operationLogCommand.operation),
                 comments = requireNotNull(operationLogCommand.comments),
-                actionedBy = requireNotNull(user.toLong()),
+                actionedBy = user.toLong(),
             )
 
         operationLogRepository.save(operationLog)

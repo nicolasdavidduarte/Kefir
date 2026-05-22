@@ -3,6 +3,8 @@ package com.kefir.services
 import com.kefir.entities.Account
 import com.kefir.entities.close
 import com.kefir.entities.open
+import com.kefir.enums.EntityName
+import com.kefir.enums.LogOperation
 import com.kefir.exceptions.AccountNotFoundException
 import com.kefir.repositories.AccountRepository
 import com.kefir.services.aux.account.CBUGenerator
@@ -14,6 +16,7 @@ import com.kefir.web.dtos.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import kotlin.Long
 
 @Transactional
@@ -50,6 +53,15 @@ class AccountService(
 
         savedAccount.cbu = CBUGenerator.generate(savedAccount.bank, requireNotNull(accountRequest.bankBranch), savedAccount.id)
 
+        operationLogService.log(
+            OperationLogCommand(
+                operation = LogOperation.CREATION,
+                entity = EntityName.ACCOUNT,
+                entityId = savedAccount.id,
+                comments = "Account with id: ${savedAccount.id} created",
+            ),
+        )
+
         return accountRepository.save(savedAccount).toResponse()
     }
 
@@ -57,10 +69,18 @@ class AccountService(
         val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException("Account not found") }
 
         account.open()
+        account.updatedAt = OffsetDateTime.now()
 
         accountRepository.save(account)
 
-        createOperationLogFor("Opening", id, "Closing of account")
+        operationLogService.log(
+            OperationLogCommand(
+                operation = LogOperation.OPENING,
+                entity = EntityName.ACCOUNT,
+                entityId = account.id,
+                comments = "Account with id: ${account.id} opened",
+            ),
+        )
 
         return EntityOperationResponse(operation = "Opening", entity = "Account", id = id, message = "Account opened!", timestamp = LocalDateTime.now())
     }
@@ -69,23 +89,19 @@ class AccountService(
         val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException("Account not found") }
 
         account.close()
+        account.updatedAt = OffsetDateTime.now()
 
         accountRepository.save(account)
 
-        createOperationLogFor("Closing", id, "Opening of account")
+        operationLogService.log(
+            OperationLogCommand(
+                operation = LogOperation.CLOSING,
+                entity = EntityName.ACCOUNT,
+                entityId = account.id,
+                comments = "Account with id: ${account.id} closed",
+            ),
+        )
 
         return EntityOperationResponse(operation = "Closing", entity = "Account", id = id, message = "Account closed!", timestamp = LocalDateTime.now())
-    }
-
-    fun createOperationLogFor(operation: String, id: Long, comments: String) {
-        val operationLogCommand =
-            OperationLogCommand(
-                operation = operation,
-                entity = "Account",
-                entityId = id,
-                comments = comments,
-            )
-
-        operationLogService.create(operationLogCommand)
     }
 }
