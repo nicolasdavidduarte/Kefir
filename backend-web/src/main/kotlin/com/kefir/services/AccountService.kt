@@ -13,6 +13,7 @@ import com.kefir.web.dtos.AccountResponse
 import com.kefir.web.dtos.EntityOperationResponse
 import com.kefir.web.dtos.OperationLogCommand
 import com.kefir.web.dtos.toResponse
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -30,6 +31,7 @@ class AccountService(
      * Obtains all accounts from the database
      * @return list of accounts
      */
+    @Cacheable("accounts")
     fun getAllAccounts(): List<AccountResponse> = accountRepository.findAll().map(Account::toResponse).toList().ifEmpty {
         throw AccountNotFoundException("No accounts found")
     }
