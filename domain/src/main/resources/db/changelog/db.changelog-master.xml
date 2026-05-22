@@ -16,5 +16,8 @@
     <include file="db/changelog/changesets/008-create-account-type-table.xml"/>
     <include file="db/changelog/changesets/009-create-account-table.xml"/>
     <include file="/db/changelog/changesets/010-create-operation-log-table.xml"/>
+    <include file="db/changelog/changesets/011-create-loan-installment-table.xml"/>
+    <include file="db/changelog/changesets/012-create-payment-method-table.xml"/>
+    <include file="/db/changelog/changesets/013-create-loan-installment-payment-table.xml"/>
 
 </databaseChangeLog>

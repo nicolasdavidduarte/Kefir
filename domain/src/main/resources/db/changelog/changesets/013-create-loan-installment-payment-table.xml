@@ -1,0 +1,55 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="013-1" author="ndd">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="loan_installment_payment"/>
+            </not>
+        </preConditions>
+
+        <createSequence
+                sequenceName="loan_installment_payment_id_seq"
+                startValue="1"
+                incrementBy="1"/>
+
+        <createTable tableName="loan_installment_payment">
+            <column name="id" type="BIGINT" defaultValueComputed="nextval('loan_installment_payment_id_seq')">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="loan_installment" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_loan_installment_payment_loan_installment"
+                referencedTableName="loan_installment"
+                referencedColumnNames="id"/>
+            </column>
+            <column name="amount_paid" type="NUMERIC(19,4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_date" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+            <column name="payment_method" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_loan_installment_payment_payment_method"
+                referencedTableName="payment_method"
+                referencedColumnNames="id"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+
+    <changeSet id="013-2" author="ndd">
+        <createIndex indexName="idx_payment_loan_installment"
+                     tableName="loan_installment_payment">
+            <column name="loan_installment"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
