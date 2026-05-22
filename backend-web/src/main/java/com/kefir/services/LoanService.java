@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoanService {
 
   private final LoanRepository loanRepository;
+  private final LoanInstallmentService loanInstallmentService;
   private final AuxAuthService auxAuthService;
   private final MeterRegistry registry;
   private final LoanActiveState state;
@@ -35,12 +36,14 @@ public class LoanService {
       LoanRepository loanRepository,
       AuxAuthService auxAuthService,
       MeterRegistry registry,
-      LoanActiveState state) {
+      LoanActiveState state,
+      LoanInstallmentService loanInstallmentService) {
     this.snsPublisher = snsPublisher;
     this.loanRepository = loanRepository;
     this.registry = registry;
     this.state = state;
     this.auxAuthService = auxAuthService;
+    this.loanInstallmentService = loanInstallmentService;
   }
 
   @Cacheable("loans")
@@ -57,25 +60,11 @@ public class LoanService {
   @Transactional
   public Loan create(LoanRequest loanRequest) {
 
-    Integer user = auxAuthService.retrieveUserIdFromAuth();
-
     try {
-      Loan loan =
-          Loan.builder()
-              .customer(loanRequest.getCustomer())
-              .loanType(loanRequest.getLoanType())
-              .totalOperationAmount(loanRequest.getTotalOperationAmount())
-              .openingDate(loanRequest.getOpeningDate())
-              .currency(loanRequest.getCurrency())
-              .closedCode(loanRequest.getClosedCode())
-              .closedDate(loanRequest.getClosedDate())
-              .nextInstallmentDate(loanRequest.getNextInstallmentDate())
-              .status(LoanStatus.ACTIVE.getId())
-              .lastModificationDate(LocalDate.now())
-              .coreUser(user)
-              .build();
 
-      Loan loanSaved = loanRepository.save(loan);
+      Loan loanSaved = createLoan(loanRequest);
+
+      createLoanInstallment(loanSaved);
 
       registry.counter("loan.created", "status", "success").increment();
 
@@ -83,7 +72,7 @@ public class LoanService {
 
       log.info("Loan successfully created - id: {}", loanSaved);
 
-      snsPublisher.publishLoanCreated(loan.getId(), loan.getTotalOperationAmount());
+      snsPublisher.publishLoanCreated(loanSaved.getId(), loanSaved.getTotalOperationAmount());
 
       return loanSaved;
     } catch (Exception e) {
@@ -116,5 +105,33 @@ public class LoanService {
     loanRepository.save(loan);
 
     log.info("Loan successfully updated: {}", loan);
+  }
+
+  private Loan createLoan(LoanRequest loanRequest) {
+
+    Integer user = auxAuthService.retrieveUserIdFromAuth();
+
+    Loan loan =
+        Loan.builder()
+            .customer(loanRequest.getCustomer())
+            .loanType(loanRequest.getLoanType())
+            .totalOperationAmount(loanRequest.getTotalOperationAmount())
+            .openingDate(loanRequest.getOpeningDate())
+            .currency(loanRequest.getCurrency())
+            .numberOfInstallments(loanRequest.getNumberOfInstallments())
+            .closedCode(loanRequest.getClosedCode())
+            .closedDate(loanRequest.getClosedDate())
+            .nextInstallmentDate(loanRequest.getNextInstallmentDate())
+            .status(LoanStatus.ACTIVE.getId())
+            .lastModificationDate(LocalDate.now())
+            .coreUser(user)
+            .build();
+
+    return loanRepository.save(loan);
+  }
+
+  private void createLoanInstallment(Loan loan) {
+    loanInstallmentService.createInstallments(
+        loan.getTotalOperationAmount(), loan.getNumberOfInstallments());
   }
 }

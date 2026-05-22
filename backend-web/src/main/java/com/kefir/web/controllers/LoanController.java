@@ -107,8 +107,8 @@ public class LoanController {
       description = "Time taken to create loan",
       percentiles = {0.5, 0.9, 0.95, 0.99},
       histogram = true)
-  public ResponseEntity<Loan> createLoan(@RequestBody @Valid LoanRequest loan) {
-    return ResponseEntity.ok(loanOrchestrator.createLoan(loan));
+  public ResponseEntity<Loan> createLoan(@RequestBody @Valid LoanRequest loanRequest) {
+    return ResponseEntity.ok(loanOrchestrator.createLoan(loanRequest));
   }
 
   // Endpoint to delete a loan

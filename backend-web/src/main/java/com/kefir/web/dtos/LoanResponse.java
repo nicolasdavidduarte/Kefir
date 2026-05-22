@@ -15,7 +15,7 @@ public class LoanResponse {
   LocalDate openingDate;
   Integer currency;
   LocalDate expirationDate;
-  Integer totalTermDays;
+  Integer numberOfInstallments;
   LocalDate closedDate;
   Integer closedCode;
   LocalDate nextInstallmentDate;

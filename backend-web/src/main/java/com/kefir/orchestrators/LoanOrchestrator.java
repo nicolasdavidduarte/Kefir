@@ -30,11 +30,11 @@ public class LoanOrchestrator {
         .orElseThrow(() -> new LoanNotFoundException(loanId));
   }
 
-  public Loan createLoan(LoanRequest loan) {
-    Customer customer = customerService.findById(loan.getCustomer());
+  public Loan createLoan(LoanRequest loanRequest) {
+    Customer customer = customerService.findById(loanRequest.getCustomer());
     if (!customer.getStatus().equals(CustomerStatus.ACTIVE.getId()))
       throw new CustomerNotValidException("The customer is not allowed for a new loan");
-    return loanService.create(loan);
+    return loanService.create(loanRequest);
   }
 
   private LoanResponse toLoanDataDTO(Loan loan) {
@@ -46,7 +46,7 @@ public class LoanOrchestrator {
         .openingDate(LocalDate.now())
         .currency(loan.getCurrency())
         .expirationDate(loan.getExpirationDate())
-        .totalTermDays(loan.getTotalTermDays())
+        .numberOfInstallments(loan.getNumberOfInstallments())
         .closedDate(loan.getClosedDate())
         .closedCode(loan.getClosedCode())
         .nextInstallmentDate(loan.getNextInstallmentDate())

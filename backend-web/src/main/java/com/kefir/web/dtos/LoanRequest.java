@@ -29,7 +29,7 @@ public class LoanRequest {
 
   private final LocalDate expirationDate;
 
-  @NotNull private final int totalTermDays;
+  @NotNull private final int numberOfInstallments;
 
   private final LocalDate closedDate;
   private final int closedCode;
@@ -48,7 +48,7 @@ public class LoanRequest {
       LocalDate openingDate,
       int currency,
       LocalDate expirationDate,
-      int totalTermDays,
+      int numberOfInstallments,
       LocalDate closedDate,
       int closedCode,
       LocalDate nextInstallmentDate,
@@ -62,7 +62,7 @@ public class LoanRequest {
     this.openingDate = openingDate;
     this.currency = currency;
     this.expirationDate = expirationDate;
-    this.totalTermDays = totalTermDays;
+    this.numberOfInstallments = numberOfInstallments;
     this.closedDate = closedDate;
     this.closedCode = closedCode;
     this.nextInstallmentDate = nextInstallmentDate;

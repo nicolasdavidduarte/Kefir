@@ -23,7 +23,7 @@ public class Loan {
   private LocalDate openingDate;
   private Integer currency;
   private LocalDate expirationDate;
-  private Integer totalTermDays;
+  private Integer numberOfInstallments;
   private LocalDate closedDate;
   private Integer closedCode;
   private LocalDate nextInstallmentDate;

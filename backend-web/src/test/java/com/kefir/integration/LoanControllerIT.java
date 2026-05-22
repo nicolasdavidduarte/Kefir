@@ -55,7 +55,7 @@ class LoanControllerIT {
             .openingDate(LocalDate.now())
             .currency(1)
             .expirationDate(LocalDate.now())
-            .totalTermDays(90)
+            .numberOfInstallments(4)
             .status(1)
             .build();
 
@@ -99,7 +99,7 @@ class LoanControllerIT {
             .openingDate(LocalDate.now())
             .currency(1)
             .lastModificationDate(LocalDate.now())
-            .totalTermDays(90)
+            .numberOfInstallments(4)
             .status(1)
             .build();
 
