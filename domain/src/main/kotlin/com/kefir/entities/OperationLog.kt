@@ -9,15 +9,15 @@ import jakarta.persistence.Table
 import java.time.OffsetDateTime
 
 @Entity
-@Table(name = "approval_log")
-class ApprovalLog(
+@Table(name = "operation_log")
+class OperationLog(
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "approval_log_id_seq_gen")
-    @SequenceGenerator(name = "approval_log_id_seq_gen", sequenceName = "approval_log_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "operation_log_id_seq_gen")
+    @SequenceGenerator(name = "operation_log_id_seq_gen", sequenceName = "operation_log_id_seq", allocationSize = 1)
     val id: Long = 0,
     val entity: String,
-    val approvableId: Long,
-    val status: Long,
+    val entityId: Long,
+    val operation: String,
     val comments: String,
     val actionedBy: Long,
     val operationDate: OffsetDateTime = OffsetDateTime.now(),

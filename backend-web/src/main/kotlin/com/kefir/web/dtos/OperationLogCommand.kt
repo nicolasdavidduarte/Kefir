@@ -3,10 +3,9 @@ package com.kefir.web.dtos
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
 
-data class ApprovalLogRequest(
+data class OperationLogCommand(
     @field:NotBlank val entity: String?,
-    @field:NotNull val approvableId: Long?,
-    @field:NotNull val status: Long?,
+    @field:NotNull val entityId: Long?,
+    @field:NotBlank val operation: String?,
     @field:NotBlank val comments: String?,
-    @field:NotNull val actionedBy: Long?,
 )

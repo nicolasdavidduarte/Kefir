@@ -9,7 +9,7 @@ class CBUGeneratorTest {
     @Test
     @DisplayName("Generate CBU for account")
     fun generate_cbu_for_account() {
-        val cbu = CBUGenerator.generateCBU(bank = 321L, branch = 123L, id = 987L)
+        val cbu = CBUGenerator.generate(bank = 321L, branch = 123L, id = 987L)
 
         assert(cbu.length == 22)
 

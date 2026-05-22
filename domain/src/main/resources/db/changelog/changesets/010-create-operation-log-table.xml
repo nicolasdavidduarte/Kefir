@@ -9,26 +9,26 @@
 
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="approval_log"/>
+                <tableExists tableName="operation_log"/>
             </not>
         </preConditions>
 
         <createSequence
-                sequenceName="approval_log_id_seq"
+                sequenceName="operation_log_id_seq"
                 startValue="1"
                 incrementBy="1"/>
 
-        <createTable tableName="approval_log">
-            <column name="id" type="BIGINT" defaultValueComputed="nextval('approval_log_id_seq')">
+        <createTable tableName="operation_log">
+            <column name="id" type="BIGINT" defaultValueComputed="nextval('operation_log_id_seq')">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="entity" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="approvable_id" type="BIGINT">
+            <column name="entity_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="INTEGER">
+            <column name="operation" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
             <column name="comments" type="VARCHAR(255)">
@@ -36,7 +36,7 @@
             </column>
             <column name="actioned_by" type="BIGINT">
                 <constraints nullable="false"
-                    foreignKeyName="fk_approval_log_core_user"
+                    foreignKeyName="fk_operation_log_core_user"
                     referencedTableName="core_user"
                     referencedColumnNames="id"/>
             </column>

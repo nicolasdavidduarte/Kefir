@@ -15,6 +15,6 @@
     <include file="db/changelog/changesets/007-create-branch-table.xml"/>
     <include file="db/changelog/changesets/008-create-account-type-table.xml"/>
     <include file="db/changelog/changesets/009-create-account-table.xml"/>
-    <include file="db/changelog/changesets/010-create-approval-log-table.xml"/>
+    <include file="/db/changelog/changesets/010-create-operation-log-table.xml"/>
 
 </databaseChangeLog>

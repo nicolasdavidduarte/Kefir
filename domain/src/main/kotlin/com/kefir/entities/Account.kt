@@ -23,7 +23,7 @@ class Account(
     val bank: Long,
     var cbu: String = "",
     val balance: BigDecimal,
-    var status: Long = 0,
+    var status: Long = AccountStatus.PENDING.id,
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "updated_at", nullable = false, updatable = true)

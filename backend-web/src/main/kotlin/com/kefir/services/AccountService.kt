@@ -8,9 +8,8 @@ import com.kefir.repositories.AccountRepository
 import com.kefir.services.aux.account.CBUGenerator
 import com.kefir.web.dtos.AccountRequest
 import com.kefir.web.dtos.AccountResponse
-import com.kefir.web.dtos.ApprovalLogRequest
-import com.kefir.web.dtos.EntityApprovalRequest
-import com.kefir.web.dtos.EntityApprovalResponse
+import com.kefir.web.dtos.EntityOperationResponse
+import com.kefir.web.dtos.OperationLogCommand
 import com.kefir.web.dtos.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,8 +20,7 @@ import kotlin.Long
 @Service
 class AccountService(
     val accountRepository: AccountRepository,
-    val auxAuthService: AuxAuthService,
-    val approvalLogService: ApprovalLogService,
+    val operationLogService: OperationLogService,
 ) {
 
     /**
@@ -35,7 +33,7 @@ class AccountService(
 
     /**
      * Creates a new account
-     * @param account request
+     * @param [accountRequest] account request
      * @return account response
      */
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
@@ -50,33 +48,44 @@ class AccountService(
                 ),
             )
 
-        savedAccount.cbu = CBUGenerator.generateCBU(savedAccount.bank, requireNotNull(accountRequest.bankBranch), savedAccount.id)
+        savedAccount.cbu = CBUGenerator.generate(savedAccount.bank, requireNotNull(accountRequest.bankBranch), savedAccount.id)
 
         return accountRepository.save(savedAccount).toResponse()
     }
 
-    fun approve(
-        id: Long,
-        request: EntityApprovalRequest,
-    ): EntityApprovalResponse {
+    fun open(id: Long): EntityOperationResponse {
         val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException("Account not found") }
 
-        if (request.approve!!) account.open() else account.close()
+        account.open()
+
         accountRepository.save(account)
 
-        val user: Int? = auxAuthService.retrieveUserIdFromAuth()
+        createOperationLogFor("Opening", id, "Closing of account")
 
-        val approvalLogRequest =
-            ApprovalLogRequest(
-                entity = "ACCOUNT",
-                approvableId = id,
-                comments = request.comments,
-                status = account.status,
-                actionedBy = user?.toLong(),
+        return EntityOperationResponse(operation = "Opening", entity = "Account", id = id, message = "Account opened!", timestamp = LocalDateTime.now())
+    }
+
+    fun close(id: Long): EntityOperationResponse {
+        val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException("Account not found") }
+
+        account.close()
+
+        accountRepository.save(account)
+
+        createOperationLogFor("Closing", id, "Opening of account")
+
+        return EntityOperationResponse(operation = "Closing", entity = "Account", id = id, message = "Account closed!", timestamp = LocalDateTime.now())
+    }
+
+    fun createOperationLogFor(operation: String, id: Long, comments: String) {
+        val operationLogCommand =
+            OperationLogCommand(
+                operation = operation,
+                entity = "Account",
+                entityId = id,
+                comments = comments,
             )
 
-        approvalLogService.create(approvalLogRequest)
-
-        return EntityApprovalResponse("Account opened!", "Account", id, LocalDateTime.now())
+        operationLogService.create(operationLogCommand)
     }
 }

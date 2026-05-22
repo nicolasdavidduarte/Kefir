@@ -3,7 +3,6 @@ package com.kefir.web.controllers
 import com.kefir.services.AccountService
 import com.kefir.web.dtos.AccountRequest
 import com.kefir.web.dtos.AccountResponse
-import com.kefir.web.dtos.EntityApprovalRequest
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,9 +28,13 @@ class AccountController(
         @RequestBody @Valid accountRequest: AccountRequest,
     ) = accountService.createAccount(accountRequest)
 
-    @PatchMapping("/{id}/approve")
-    fun approveAccount(
+    @PatchMapping("/{id}/open")
+    fun openAccount(
         @PathVariable id: Long,
-        @RequestBody @Valid entityApprovalRequest: EntityApprovalRequest,
-    ) = accountService.approve(id, entityApprovalRequest)
+    ) = accountService.open(id)
+
+    @PatchMapping("/{id}/close")
+    fun closeAccount(
+        @PathVariable id: Long,
+    ) = accountService.close(id)
 }
