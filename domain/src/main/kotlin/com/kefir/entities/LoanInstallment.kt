@@ -1,5 +1,6 @@
 package com.kefir.entities
 
+import com.kefir.enums.LoanInstallmentStatus
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -16,14 +17,32 @@ class LoanInstallment(
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "loan_installment_id_seq_gen")
     @SequenceGenerator(name = "loan_installment_id_seq_gen", sequenceName = "loan_installment_id_seq", allocationSize = 1)
-    val id: Long,
+    val id: Long = 0,
     val loan: Long,
     val number: Int,
     val amount: BigDecimal,
     val paymentDueDate: OffsetDateTime,
-    val status: Long,
+    var status: Long,
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
     @Column(name = "updated_at", nullable = false, updatable = true)
-    val updatedAt: OffsetDateTime = OffsetDateTime.now(),
-)
+    var updatedAt: OffsetDateTime = OffsetDateTime.now(),
+) {
+    companion object {
+        @JvmStatic
+        fun createNew(
+            loan: Long,
+            number: Int,
+            amount: BigDecimal,
+        ): LoanInstallment {
+            val now = OffsetDateTime.now()
+            return LoanInstallment(
+                loan = loan,
+                number = number,
+                amount = amount,
+                paymentDueDate = now.plusMonths(1),
+                status = LoanInstallmentStatus.PAYMENT_PENDING.id,
+            )
+        }
+    }
+}

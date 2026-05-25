@@ -34,7 +34,13 @@ public class LoanOrchestrator {
     Customer customer = customerService.findById(loanRequest.getCustomer());
     if (!customer.getStatus().equals(CustomerStatus.ACTIVE.getId()))
       throw new CustomerNotValidException("The customer is not allowed for a new loan");
-    return loanService.create(loanRequest);
+
+    return switch (loanRequest.getLoanType()) {
+      case 1 -> loanService.createFrench(loanRequest);
+      case 2 -> loanService.createGerman();
+      case 3 -> loanService.createAmerican();
+      default -> throw new IllegalStateException("Unexpected value: " + loanRequest.getLoanType());
+    };
   }
 
   private LoanResponse toLoanDataDTO(Loan loan) {

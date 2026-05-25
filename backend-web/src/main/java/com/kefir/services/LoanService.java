@@ -58,7 +58,9 @@ public class LoanService {
   }
 
   @Transactional
-  public Loan create(LoanRequest loanRequest) {
+  public Loan createFrench(LoanRequest loanRequest) {
+
+    // TODO: Add interest rate mode (fixed or variable)
 
     try {
 
@@ -79,6 +81,14 @@ public class LoanService {
       registry.counter("loan.created", "status", "error").increment();
       throw new CustomerCreationException(e);
     }
+  }
+
+  public Loan createGerman() {
+    return new Loan();
+  }
+
+  public Loan createAmerican() {
+    return new Loan();
   }
 
   @Transactional
@@ -131,7 +141,10 @@ public class LoanService {
   }
 
   private void createLoanInstallment(Loan loan) {
-    loanInstallmentService.createInstallments(
-        loan.getTotalOperationAmount(), loan.getNumberOfInstallments());
+    loanInstallmentService.createInstallmentsSchedule(
+        loan.getId(),
+        loan.getTotalOperationAmount(),
+        loan.getNumberOfInstallments(),
+        loan.getLoanType());
   }
 }
