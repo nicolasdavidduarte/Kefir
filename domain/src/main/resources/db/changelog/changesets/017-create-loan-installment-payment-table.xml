@@ -5,9 +5,8 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="013-1" author="ndd">
-
-        <preConditions onFail="MARK_RAN">
+    <changeSet id="017a" author="ndd">
+        <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="loan_installment_payment"/>
             </not>
@@ -19,10 +18,10 @@
                 incrementBy="1"/>
 
         <createTable tableName="loan_installment_payment">
-            <column name="id" type="BIGINT" defaultValueComputed="nextval('loan_installment_payment_id_seq')">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="loan_installment" type="BIGINT">
+            <column name="loan_installment_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_loan_installment_payment_loan_installment"
                 referencedTableName="loan_installment"
                 referencedColumnNames="id"/>
@@ -33,22 +32,27 @@
             <column name="payment_date" type="TIMESTAMPTZ">
                 <constraints nullable="false"/>
             </column>
-            <column name="payment_method" type="SMALLINT">
+            <column name="user_id" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_loan_installment_payment_core_user"
+                             referencedTableName="core_user"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="payment_method_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_loan_installment_payment_payment_method"
                 referencedTableName="payment_method"
                 referencedColumnNames="id"/>
             </column>
-            <column name="created_at" type="TIMESTAMPTZ">
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
     </changeSet>
 
-    <changeSet id="013-2" author="ndd">
+    <changeSet id="017b" author="ndd">
         <createIndex indexName="idx_payment_loan_installment"
                      tableName="loan_installment_payment">
-            <column name="loan_installment"/>
+            <column name="loan_installment_id"/>
         </createIndex>
     </changeSet>
 

@@ -5,19 +5,24 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <include file="db/changelog/changesets/001-insert-external_id-in-loan.xml"/>
-    <include file="db/changelog/changesets/002-add-external_id-unique-constraint-in-loan.xml"/>
-    <include file="db/changelog/changesets/003-recreate-idempotent-request.xml"/>
-    <include file="db/changelog/changesets/004-recreate-customer_table.xml"/>
-    <include file="db/changelog/changesets/005-update-loan-type-table.xml"/>
-    <include file="db/changelog/changesets/005-update-loan-type-table-2.xml"/>
-    <include file="db/changelog/changesets/006-create-bank-table.xml"/>
-    <include file="db/changelog/changesets/007-create-branch-table.xml"/>
-    <include file="db/changelog/changesets/008-create-account-type-table.xml"/>
-    <include file="db/changelog/changesets/009-create-account-table.xml"/>
-    <include file="/db/changelog/changesets/010-create-operation-log-table.xml"/>
-    <include file="db/changelog/changesets/011-create-loan-installment-table.xml"/>
-    <include file="db/changelog/changesets/012-create-payment-method-table.xml"/>
-    <include file="/db/changelog/changesets/013-create-loan-installment-payment-table.xml"/>
+    <include file="/db/changelog/changesets/000-create-idempotent-request.xml"/>
+    <include file="db/changelog/changesets/001-create-core-user-table.xml"/>
+    <include file="/db/changelog/changesets/002-create-role-table.xml"/>
+    <include file="/db/changelog/changesets/003-create-user-role-table.xml"/>
+    <include file="db/changelog/changesets/004-create-document-type-table.xml"/>
+    <include file="db/changelog/changesets/005-create-person-type-table.xml"/>
+    <include file="/db/changelog/changesets/006-create-customer-type-table.xml"/>
+    <include file="/db/changelog/changesets/007-create-currency-table.xml"/>
+    <include file="/db/changelog/changesets/008-create-customer-table.xml"/>
+    <include file="/db/changelog/changesets/009-create-bank-table.xml"/>
+    <include file="/db/changelog/changesets/010-create-bank-branch-table.xml"/>
+    <include file="/db/changelog/changesets/011-create-account-type-table.xml"/>
+    <include file="/db/changelog/changesets/012-create-account-table.xml"/>
+    <include file="/db/changelog/changesets/013-create-payment-method-table.xml"/>
+    <include file="/db/changelog/changesets/014-create-loan-type-table.xml"/>
+    <include file="/db/changelog/changesets/015-create-loan-table.xml"/>
+    <include file="/db/changelog/changesets/016-create-loan-installment-table.xml"/>
+    <include file="/db/changelog/changesets/017-create-loan-installment-payment-table.xml"/>
+    <include file="/db/changelog/changesets/018-create-operation-log-table.xml"/>
 
 </databaseChangeLog>

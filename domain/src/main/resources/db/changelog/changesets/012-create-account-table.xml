@@ -5,9 +5,30 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="009" author="ndd">
+    <changeSet id="012a" author="ndd">
+        <preConditions onFail="HALT">
+            <not>
+                <tableExists tableName="account_status"/>
+            </not>
+        </preConditions>
 
-        <preConditions onFail="MARK_RAN">
+        <createSequence
+                sequenceName="account_status_id_seq"
+                startValue="1"
+                incrementBy="1"/>
+
+        <createTable tableName="account_status">
+            <column name="id" type="SMALLINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(20)">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="012b" author="ndd">
+        <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="account"/>
             </not>
@@ -19,25 +40,25 @@
                 incrementBy="1"/>
 
         <createTable tableName="account">
-            <column name="id" type="BIGINT" defaultValueComputed="nextval('account_id_seq')">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="type" type="BIGINT">
+            <column name="type_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_account_account_type"
                 referencedTableName="account_type"
                 referencedColumnNames="id"/>
             </column>
-            <column name="customer" type="BIGINT">
+            <column name="customer_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_account_customer"
                 referencedTableName="customer"
                 referencedColumnNames="id"/>
             </column>
-            <column name="currency" type="BIGINT">
+            <column name="currency_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_account_currency"
                 referencedTableName="currency"
                 referencedColumnNames="id"/>
             </column>
-            <column name="bank" type="BIGINT">
+            <column name="bank_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_account_bank"
                 referencedTableName="bank"
                 referencedColumnNames="id"/>
@@ -45,24 +66,27 @@
             <column name="CBU" type="VARCHAR(22)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="uk_account_cbu"/>
             </column>
-            <column name="balance" type="NUMERIC(12,2)">
+            <column name="balance" type="NUMERIC(19,4)">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="INTEGER">
+            <column name="status_id" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_account_account_status"
+                             referencedTableName="account_status"
+                             referencedColumnNames="id"
+                />
+            </column>
+            <column name="user_id" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_account_core_user"
+                             referencedTableName="core_user"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_at" type="TIMESTAMPTZ">
-                <constraints nullable="false"/>
-            </column>
-            <column name="updated_at" type="TIMESTAMPTZ">
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
-        <addDefaultValue
-                tableName="account"
-                columnName="id"
-                defaultValueSequenceNext="account_id_seq"/>
 
     </changeSet>
 

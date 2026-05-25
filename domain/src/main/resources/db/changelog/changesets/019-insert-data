@@ -1,0 +1,359 @@
+--role
+INSERT INTO public."role"
+(id, "name")
+VALUES(1, 'ADMIN');
+INSERT INTO public."role"
+(id, "name")
+VALUES(2, 'USER');
+INSERT INTO public."role"
+(id, "name")
+VALUES(3, 'VIEWER');
+
+--core_user
+INSERT INTO public.core_user
+(id, username, "password", full_name, enabled)
+VALUES(1, 'admin', '$2a$12$yR0/hohoNqS.OZ1UmlGi6ObZKjguvZQvE9BOXMNsDasVR/6Expm5C', 'Core Administrator', true);
+INSERT INTO public.core_user
+(id, username, "password", full_name, enabled)
+VALUES(2, 'nicodd', '$2a$12$TREGK9z69BWkHefhdEPBpu/EZm/NU4uhSMtuDMFP.k81XXtR7NQue', 'Nicolas David Duarte', true);
+INSERT INTO public.core_user
+(id, username, "password", full_name, enabled)
+VALUES(3, 'readuser', '$2a$12$z0CDIlR4JGfcFU.TFT8k8udcmy3fihJFkprvLq4S0zxRHALeggZyK', 'John Doe', true);
+
+INSERT INTO public.user_role
+(user_id, role_id)
+VALUES(1, 1);
+INSERT INTO public.user_role
+(user_id, role_id)
+VALUES(2, 2);
+INSERT INTO public.user_role
+(user_id, role_id)
+VALUES(3, 3);
+
+--account_type
+INSERT INTO public.account_type
+(id, "name", status, created_at, updated_at)
+VALUES(1, 'Savings Account', 1, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
+INSERT INTO public.account_type
+(id, "name", status, created_at, updated_at)
+VALUES(2, 'Checking Account', 1, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
+
+--bank
+INSERT INTO public.bank
+(id, "name", status, created_at, updated_at)
+VALUES(1, 'Kefir Bank', 1, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
+
+--bank_branch
+INSERT INTO public.branch
+(id, bank, "name", address, status, created_at, updated_at)
+VALUES(1, 1, 'Main Branch', 'Maure 2262', 1, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
+
+
+
+--currency
+INSERT INTO public.currency
+(id, "name", enabled)
+VALUES(2, 'US Dollar', true);
+INSERT INTO public.currency
+(id, "name", enabled)
+VALUES(3, 'Euro', false);
+INSERT INTO public.currency
+(id, "name", enabled)
+VALUES(1, 'Argentine Pesos', true);
+
+
+--customer_type
+INSERT INTO public.customer_type
+(id, "name")
+VALUES(1, 'Retail');
+INSERT INTO public.customer_type
+(id, "name")
+VALUES(2, 'Corporate');
+
+--document_type
+INSERT INTO public.document_type
+(id, "name", creation_date, last_modification_date)
+VALUES(1, 'DNI', '2025-03-04 18:34:59.354', '2025-03-04 18:34:59.354');
+INSERT INTO public.document_type
+(id, "name", creation_date, last_modification_date)
+VALUES(2, 'Passport', '2025-03-04 18:34:59.354', '2025-03-04 18:34:59.354');
+
+
+--loan_type
+INSERT INTO public.loan_type
+(id, "name", description, status)
+VALUES(1, 'FRENCH', 'Fully amortized loan where each installment (payment) remains fixed over the loan period, but the composition of principal and interest changes over time', 1);
+INSERT INTO public.loan_type
+(id, "name", description, status)
+VALUES(2, 'GERMAN', 'Has low or no payments during the term, with the full principal repaid in a single lump sum at the end.', 1);
+INSERT INTO public.loan_type
+(id, "name", description, status)
+VALUES(3, 'AMERICAN', 'Focus on periodic interest payments with a single principal repayment at the end.', 1);
+
+
+--payment_method
+INSERT INTO public.payment_method
+(id, "name", status, created_at, updated_at)
+VALUES(1, 'Homebanking', 1, '2026-05-25 00:00:00.000', '2026-05-25 00:00:00.000');
+INSERT INTO public.payment_method
+(id, "name", status, created_at, updated_at)
+VALUES(2, 'ATM', 1, '2026-05-25 00:00:00.000', '2026-05-25 00:00:00.000');
+INSERT INTO public.payment_method
+(id, "name", status, created_at, updated_at)
+VALUES(3, 'Cash', 1, '2026-05-25 00:00:00.000', '2026-05-25 00:00:00.000');
+INSERT INTO public.payment_method
+(id, "name", status, created_at, updated_at)
+VALUES(4, 'Check', 1, '2026-05-25 00:00:00.000', '2026-05-25 00:00:00.000');
+
+
+--person_type
+INSERT INTO public.person_type
+(id, "name")
+VALUES(1, 'Natural');
+INSERT INTO public.person_type
+(id, "name")
+VALUES(2, 'Juridical');
+
+
+
+--refresh_token
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(72, '0023750d-1703-43f1-90df-b8e69c713298', 2, '2026-05-22 14:53:07.682', false, '2026-05-15 14:53:07.682');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(73, 'af4b7131-8634-4efc-b7a1-35573ec0d1a6', 2, '2026-05-22 15:14:20.716', false, '2026-05-15 15:14:20.716');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(1, '825a8844-070a-4ad6-ae87-29e85c64ccd4', 2, '2026-04-06 12:33:44.380', true, '2026-03-30 12:33:44.380');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(2, '4a06a6ca-36ae-4326-878e-7d430544abad', 2, '2026-04-06 13:45:27.154', false, '2026-03-30 13:45:27.153');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(3, '7b540317-76b5-4f91-9d31-30ea6664f69c', 2, '2026-04-06 13:51:40.855', true, '2026-03-30 13:51:40.855');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(4, 'a3de401d-ee76-4a86-be4b-31518c262eed', 2, '2026-04-06 13:52:26.208', false, '2026-03-30 13:52:26.208');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(5, '28e740d2-c566-4b07-9d95-1b17c481785a', 2, '2026-04-21 13:47:38.847', false, '2026-04-14 13:47:38.847');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(6, 'b6727add-7305-4b72-a0e8-63bd8c9724d9', 1, '2026-04-21 17:44:13.611', false, '2026-04-14 17:44:13.611');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(7, 'd784bbfa-00b8-4bca-a670-f5f12b9454d3', 1, '2026-04-21 18:54:20.621', false, '2026-04-14 18:54:20.620');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(8, 'ad50d0b6-97bc-4d37-9073-5140a89e131c', 1, '2026-04-22 14:20:45.577', false, '2026-04-15 14:20:45.577');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(9, '77bed8e6-c245-4f7c-b204-3c86348d16a2', 1, '2026-04-23 14:36:27.621', false, '2026-04-16 14:36:27.621');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(10, '7d57750a-c8ab-4835-8261-c17c0c1be0eb', 1, '2026-04-23 17:46:27.018', false, '2026-04-16 17:46:27.018');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(11, 'cf4f6b5b-50e5-4dfa-bc26-0a89504d9790', 1, '2026-04-24 12:14:35.523', false, '2026-04-17 12:14:35.523');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(12, '2a68a7f3-45a0-4407-b135-f7628db3ff94', 1, '2026-04-24 13:44:29.293', false, '2026-04-17 13:44:29.293');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(13, '26180909-84f1-4d39-84f2-f42a61a22778', 1, '2026-04-24 17:16:29.537', false, '2026-04-17 17:16:29.537');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(14, '8a67285c-2d68-407b-836a-1d7d570e85d5', 1, '2026-04-27 12:25:45.585', false, '2026-04-20 12:25:45.585');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(15, 'cf0f7386-8256-4d3b-b9d2-c0d91ff54340', 1, '2026-04-27 13:34:03.231', false, '2026-04-20 13:34:03.231');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(16, 'a692c692-a389-4619-ab64-b86270f0a993', 1, '2026-04-27 14:51:23.935', false, '2026-04-20 14:51:23.935');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(17, '30bdb4b4-e370-4e02-aa48-733c3dab27e8', 1, '2026-04-27 16:02:17.300', false, '2026-04-20 16:02:17.300');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(18, '5306c51a-1308-46cb-ae5f-ed2d53c40a3c', 1, '2026-04-27 20:22:14.508', false, '2026-04-20 20:22:14.508');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(19, 'edf04ad0-4878-4c6a-aab4-046dc47d158c', 1, '2026-04-28 12:49:27.711', false, '2026-04-21 12:49:27.711');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(20, '9f6acf22-9b7e-438f-9ae4-4f6d8f9565e1', 1, '2026-04-28 13:52:16.401', false, '2026-04-21 13:52:16.401');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(21, '3df8fa45-2b2d-484b-a1ae-a7baa7963f42', 1, '2026-04-28 14:57:40.085', false, '2026-04-21 14:57:40.085');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(22, '4ef62364-e7bf-4674-aab8-47539a75cddc', 1, '2026-04-28 17:33:58.103', false, '2026-04-21 17:33:58.103');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(23, '0635d776-f038-42fc-ae9f-8a8b57d25b63', 1, '2026-04-28 20:39:51.647', false, '2026-04-21 20:39:51.647');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(24, '39de6d8e-dc35-4a8f-9b7f-d691f878ac88', 1, '2026-04-29 17:15:09.812', false, '2026-04-22 17:15:09.812');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(25, 'dd899153-853e-4bdf-9b2c-c8f8318de133', 1, '2026-04-29 18:48:43.481', false, '2026-04-22 18:48:43.481');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(26, 'b3edfb8e-55a7-4fe5-b1cb-a1ea269e3794', 1, '2026-04-30 17:04:09.048', false, '2026-04-23 17:04:09.048');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(27, 'dd96e7b2-18d2-41cd-85c4-8b4c744fa436', 1, '2026-04-30 17:24:06.118', false, '2026-04-23 17:24:06.118');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(28, 'a93e200d-9eb7-4d82-b195-0a16c2189199', 2, '2026-04-30 18:04:59.925', false, '2026-04-23 18:04:59.925');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(29, '088dab2b-07bc-4d73-bcc6-30eb223b981f', 2, '2026-04-30 19:23:02.847', false, '2026-04-23 19:23:02.847');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(30, 'b2db1e6c-d363-420c-8496-84b06a569fdb', 2, '2026-04-30 20:49:50.353', false, '2026-04-23 20:49:50.353');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(31, 'c31ba4f8-87e3-4802-8774-fd74d1d6c360', 2, '2026-05-01 12:47:07.074', false, '2026-04-24 12:47:07.074');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(32, '2cf20de4-4ccf-4108-b595-7f2e42247c5b', 2, '2026-05-01 13:26:01.504', false, '2026-04-24 13:26:01.504');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(33, '3abbb890-0cf8-4a6a-9266-71266d433e50', 2, '2026-05-01 17:51:19.546', false, '2026-04-24 17:51:19.546');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(34, '9f299e17-7bb2-4113-9e27-cfb40460e951', 2, '2026-05-01 18:38:55.026', false, '2026-04-24 18:38:55.026');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(35, '5dfa9f0d-2b3d-4561-ab1b-fe629c161c52', 2, '2026-05-04 12:10:23.480', false, '2026-04-27 12:10:23.480');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(36, '3ee1786f-d8f4-44a5-b3b7-365b97a2bdf6', 2, '2026-05-04 12:14:05.141', false, '2026-04-27 12:14:05.141');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(37, '19e77cb0-0e1c-4e87-9d2d-e7364628dfe8', 2, '2026-05-04 13:56:03.639', false, '2026-04-27 13:56:03.639');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(38, '46853ab3-6014-4baa-b896-0fce5f5e8966', 2, '2026-05-04 15:01:43.009', false, '2026-04-27 15:01:43.009');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(39, '36a9e3a0-ece5-4958-a9d4-55b87d053c52', 2, '2026-05-05 12:15:08.382', false, '2026-04-28 12:15:08.382');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(40, '00b7e308-4e43-42f6-9d06-eaecfe8a19f3', 2, '2026-05-05 12:26:48.156', false, '2026-04-28 12:26:48.156');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(41, '49b899c6-909b-4637-89ba-fc429fac8f8a', 2, '2026-05-05 13:45:26.047', false, '2026-04-28 13:45:26.047');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(42, '841aee56-cabd-43cf-8ccd-fb6a61c78b61', 2, '2026-05-05 13:46:14.646', false, '2026-04-28 13:46:14.646');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(43, '1995393c-67c5-430e-a754-458d9df92d62', 2, '2026-05-05 14:49:25.772', false, '2026-04-28 14:49:25.772');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(44, 'ad055f43-743d-4e20-855a-2d927dcd5cbd', 2, '2026-05-05 14:59:33.865', false, '2026-04-28 14:59:33.863');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(45, '8ad92788-75cf-4239-b4e6-41336212a4bc', 2, '2026-05-05 17:26:47.779', false, '2026-04-28 17:26:47.779');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(46, 'e4a7e62d-b424-4df4-8744-cf0a53128cd7', 2, '2026-05-05 18:27:40.980', false, '2026-04-28 18:27:40.980');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(47, 'd7350bce-8b1e-41a6-a58a-a8f930e96a03', 2, '2026-05-06 12:14:48.923', false, '2026-04-29 12:14:48.923');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(48, 'd003a573-791f-4444-95c1-a7525fbb85bf', 2, '2026-05-06 13:28:00.243', false, '2026-04-29 13:28:00.243');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(49, '3d8e9690-6c11-4c42-80fa-a530b654c864', 2, '2026-05-06 13:48:55.886', false, '2026-04-29 13:48:55.886');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(50, '27c20727-2e0d-47e8-a899-6bd8fdce4410', 2, '2026-05-06 15:00:24.777', false, '2026-04-29 15:00:24.777');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(51, 'dea97708-ae14-48d5-9f64-bfbd7a512b3a', 2, '2026-05-07 13:32:49.605', false, '2026-04-30 13:32:49.605');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(52, 'f5223eaa-5640-4bdf-8828-8f314a694ac3', 1, '2026-05-07 13:44:45.329', false, '2026-04-30 13:44:45.329');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(53, 'ab17ae91-e3c6-4464-8bb3-f44c9cce3f48', 2, '2026-05-07 13:57:24.524', false, '2026-04-30 13:57:24.524');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(54, '2811473d-d388-4bde-ab77-80f015108f7e', 2, '2026-05-13 17:16:36.526', false, '2026-05-06 17:16:36.526');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(55, 'ad80343b-850a-4039-a8f4-c67c85904b9a', 2, '2026-05-13 17:55:51.330', false, '2026-05-06 17:55:51.330');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(56, '12cd5345-2de6-4b8b-bce2-0bc771f64c49', 2, '2026-05-13 18:25:32.573', false, '2026-05-06 18:25:32.573');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(57, 'd1eb21d7-c974-4420-b885-d0bb124dfea1', 2, '2026-05-14 13:34:15.534', false, '2026-05-07 13:34:15.534');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(58, 'a75be512-b59c-4a4a-b767-f1ed03c7716f', 2, '2026-05-14 14:48:55.827', false, '2026-05-07 14:48:55.827');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(59, '3de09e54-790f-44dd-8df0-3c840e2e55a0', 2, '2026-05-17 14:02:50.084', false, '2026-05-10 14:02:50.084');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(60, '690985b8-955d-4ea5-a5ec-e3d716ae56eb', 2, '2026-05-17 17:10:52.656', false, '2026-05-10 17:10:52.656');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(61, 'bdb06f8b-b75b-4362-8721-3e724182386a', 2, '2026-05-18 13:46:08.036', false, '2026-05-11 13:46:08.036');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(62, '742350c6-90fe-47e4-bfa0-62ed2867e4ac', 2, '2026-05-18 15:55:12.188', false, '2026-05-11 15:55:12.188');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(63, '441fa57b-a07c-4fca-8864-5c3c48d9468a', 2, '2026-05-18 18:05:28.844', false, '2026-05-11 18:05:28.844');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(64, '884f82a9-e9e6-40e9-b2a9-ed5c826b8446', 2, '2026-05-19 15:08:27.262', false, '2026-05-12 15:08:27.262');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(65, '7ea02a27-60e5-4a07-9f13-0a3cbf93b238', 2, '2026-05-20 12:31:18.298', false, '2026-05-13 12:31:18.298');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(66, 'cb115f93-5e28-4e90-a530-2f8677cb0dd5', 2, '2026-05-21 12:30:11.168', false, '2026-05-14 12:30:11.168');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(67, 'c39dbf26-3637-4da0-863c-2d61cded8d0e', 2, '2026-05-21 15:35:45.118', false, '2026-05-14 15:35:45.118');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(68, '167ec31d-5c59-4481-8067-ddc3467f150e', 2, '2026-05-21 17:56:50.930', false, '2026-05-14 17:56:50.930');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(69, 'baccbbb3-f0ee-4873-b868-d831c45cc4a3', 2, '2026-05-21 18:36:22.577', false, '2026-05-14 18:36:22.577');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(70, 'f80e9e66-8536-4cdb-b976-5c559eebab80', 2, '2026-05-21 19:37:26.381', false, '2026-05-14 19:37:26.381');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(71, '6be2b9d5-45c9-4da5-8d04-b279f1ade9f9', 2, '2026-05-22 13:36:57.078', false, '2026-05-15 13:36:57.078');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(74, 'b8febed7-a065-4364-b15d-826c3aadc2e5', 2, '2026-05-26 19:26:04.441', false, '2026-05-19 19:26:04.441');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(75, 'ee8b52f1-c438-4a8a-a1cb-62ef7cb0fec5', 2, '2026-05-28 18:41:31.579', false, '2026-05-21 18:41:31.579');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(76, 'ecb7b9c7-cf64-4126-b023-501a61faad15', 2, '2026-05-29 13:24:33.921', false, '2026-05-22 13:24:33.921');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(77, '60f33dc8-daf9-49cc-988f-ba7787109926', 2, '2026-05-29 14:59:56.208', false, '2026-05-22 14:59:56.208');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(78, '816f9b29-b296-4d40-8fe8-4386a80fa0fa', 2, '2026-05-29 18:17:35.962', false, '2026-05-22 18:17:35.962');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(79, '9e83acfe-47d0-4547-a9f1-65a165c791d1', 2, '2026-05-29 20:19:02.531', false, '2026-05-22 20:19:02.531');
+INSERT INTO public.refresh_token
+(id, "token", user_id, expiry_date, revoked, created_at)
+VALUES(80, 'ab31e4ed-bea6-4dd0-8bf6-376d0bd3b506', 2, '2026-06-01 13:21:10.964', false, '2026-05-25 13:21:10.964');
