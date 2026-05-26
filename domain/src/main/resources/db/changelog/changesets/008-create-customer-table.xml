@@ -5,40 +5,13 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="008a" author="ndd">
-        <preConditions onFail="HALT">
-            <not>
-                <tableExists tableName="customer_status"/>
-            </not>
-        </preConditions>
-
-        <createSequence
-                sequenceName="customer_status_id_seq"
-                startValue="1"
-                incrementBy="1"/>
-
-        <createTable tableName="customer_status">
-            <column name="id" type="SMALLINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="VARCHAR(20)">
-                <constraints nullable="true"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="008b" author="ndd">
+    <changeSet id="008" author="ndd">
 
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="customer"/>
             </not>
         </preConditions>
-
-        <createSequence
-                sequenceName="customer_id_seq"
-                startValue="1"
-                incrementBy="1"/>
 
         <createTable tableName="customer">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -76,10 +49,8 @@
                              referencedColumnNames="id"
                 />
             </column>
-            <column name="status_id" type="SMALLINT">
-                <constraints nullable="false" foreignKeyName="fk_customer_customer_status"
-                referencedTableName="customer_status"
-                referencedColumnNames="id"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
             </column>
             <column name="user_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_customer_core_user"

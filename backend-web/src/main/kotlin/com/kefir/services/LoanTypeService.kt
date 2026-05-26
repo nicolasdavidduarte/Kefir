@@ -12,12 +12,17 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class LoanTypeService(
     private val loanTypeRepository: LoanTypeRepository,
+    private val auxAuthService: AuxAuthService,
 ) {
     fun getAllLoanTypes(): List<LoanType> = loanTypeRepository.findAll()
 
     @Transactional
     fun create(loanTypeRequest: LoanTypeRequest): LoanTypeResponse {
-        val loanType = LoanType(name = loanTypeRequest.name, description = loanTypeRequest.description)
+        val loanType = LoanType(
+            name = loanTypeRequest.name,
+            description = loanTypeRequest.description,
+            user = auxAuthService.retrieveUserFromAuth(),
+        )
 
         val savedLoanType = loanTypeRepository.save(loanType)
 

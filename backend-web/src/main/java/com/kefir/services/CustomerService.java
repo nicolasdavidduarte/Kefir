@@ -1,24 +1,33 @@
 package com.kefir.services;
 
 import com.kefir.entities.Customer;
+import com.kefir.entities.DocumentType;
+import com.kefir.enums.CustomerDocumentType;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.exceptions.CustomerNotFoundException;
 import com.kefir.repositories.CustomerRepository;
+import com.kefir.repositories.CustomerTypeRepository;
+import com.kefir.repositories.DocumentTypeRepository;
 import com.kefir.web.dtos.CustomerDTO;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.swing.text.Document;
 
 @Slf4j
 @Service
 public class CustomerService {
 
   private final CustomerRepository customerRepository;
+  private final DocumentTypeRepository documentTypeRepository;
 
-  public CustomerService(CustomerRepository customerRepository) {
+  public CustomerService(CustomerRepository customerRepository,
+                         DocumentTypeRepository documentTypeRepository) {
     this.customerRepository = customerRepository;
+    this.documentTypeRepository = documentTypeRepository;
   }
 
   public List<Customer> findAll() {
@@ -39,6 +48,8 @@ public class CustomerService {
     Customer newCustomer = new Customer();
     String fullname = generateFullname(customerDTO);
 
+    DocumentType documentType = documentTypeRepository.findByNameIgnoreCase(customerDTO.documentType());
+
     newCustomer.setName1(customerDTO.name1());
     newCustomer.setName2(customerDTO.name2());
     newCustomer.setName3(customerDTO.name3());
@@ -47,11 +58,11 @@ public class CustomerService {
     newCustomer.setLastname3(customerDTO.lastname3());
     newCustomer.setFullname(fullname);
     newCustomer.setPersonType(customerDTO.personType());
-    newCustomer.setDocumentType(customerDTO.documentType());
+    newCustomer.setDocumentType(documentType);
     newCustomer.setDocumentNumber(customerDTO.documentNumber());
     newCustomer.setCustomerType(customerDTO.customerType());
-    newCustomer.setStatus(CustomerStatus.ACTIVE.getId());
-    newCustomer.setLastModificationDate(LocalDateTime.now());
+    newCustomer.setStatus(CustomerStatus.ACTIVE);
+    newCustomer.setUpdatedAt(OffsetDateTime.now());
 
     Customer customerSaved = customerRepository.saveAndFlush(newCustomer);
 

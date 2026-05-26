@@ -5,40 +5,13 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="016a" author="ndd">
-        <preConditions onFail="HALT">
-            <not>
-                <tableExists tableName="loan_installment_status"/>
-            </not>
-        </preConditions>
-
-        <createSequence
-                sequenceName="loan_installment_status_id_seq"
-                startValue="1"
-                incrementBy="1"/>
-
-        <createTable tableName="loan_installment_status">
-            <column name="id" type="SMALLINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="VARCHAR(20)">
-                <constraints nullable="true"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="016b" author="ndd">
+    <changeSet id="016" author="ndd">
 
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="loan_installment"/>
             </not>
         </preConditions>
-
-        <createSequence
-                sequenceName="loan_installment_id_seq"
-                startValue="1"
-                incrementBy="1"/>
 
         <createTable tableName="loan_installment">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -58,10 +31,8 @@
             <column name="payment_due_date" type="TIMESTAMPTZ">
                 <constraints nullable="false"/>
             </column>
-            <column name="status_id" type="SMALLINT">
-                <constraints nullable="false" foreignKeyName="fk_loan_installment_loan_installment_status"
-                referencedTableName="loan_installment_status"
-                referencedColumnNames="id"/>
+            <column name="status_id" type="VARCHAR(20)">
+                <constraints nullable="false"/>
             </column>
             <column name="user_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_loan_installment_core_user"

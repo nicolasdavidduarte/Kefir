@@ -1,24 +1,24 @@
 --role
 INSERT INTO public."role"
-(id, "name")
-VALUES(1, 'ADMIN');
+(id, "name", description, enabled, created_at, updated_at)
+VALUES(1, 'ADMIN', 'Administrator', true, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
 INSERT INTO public."role"
-(id, "name")
-VALUES(2, 'USER');
+(id, "name", description, enabled, created_at, updated_at)
+VALUES(2, 'USER', 'System User', true, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
 INSERT INTO public."role"
-(id, "name")
-VALUES(3, 'VIEWER');
+(id, "name", description, enabled, created_at, updated_at)
+VALUES(3, 'VIEWER', 'Read-Only User', true, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
 
 --core_user
 INSERT INTO public.core_user
-(id, username, "password", full_name, enabled)
-VALUES(1, 'admin', '$2a$12$yR0/hohoNqS.OZ1UmlGi6ObZKjguvZQvE9BOXMNsDasVR/6Expm5C', 'Core Administrator', true);
+(id, username, "password", full_name, enabled, user_id, created_at, updated_at)
+VALUES(1, 'admin', '$2a$12$yR0/hohoNqS.OZ1UmlGi6ObZKjguvZQvE9BOXMNsDasVR/6Expm5C', 'Core Administrator', true, null, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
 INSERT INTO public.core_user
-(id, username, "password", full_name, enabled)
-VALUES(2, 'nicodd', '$2a$12$TREGK9z69BWkHefhdEPBpu/EZm/NU4uhSMtuDMFP.k81XXtR7NQue', 'Nicolas David Duarte', true);
+(id, username, "password", full_name, enabled, user_id, created_at, updated_at)
+VALUES(2, 'nicodd', '$2a$12$TREGK9z69BWkHefhdEPBpu/EZm/NU4uhSMtuDMFP.k81XXtR7NQue', 'Nicolas David Duarte', true, 1, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
 INSERT INTO public.core_user
-(id, username, "password", full_name, enabled)
-VALUES(3, 'readuser', '$2a$12$z0CDIlR4JGfcFU.TFT8k8udcmy3fihJFkprvLq4S0zxRHALeggZyK', 'John Doe', true);
+(id, username, "password", full_name, enabled, user_id. created_at, updated_at)
+VALUES(3, 'readuser', '$2a$12$z0CDIlR4JGfcFU.TFT8k8udcmy3fihJFkprvLq4S0zxRHALeggZyK', 'John Doe', true, 1, '2026-05-14 00:00:00.000', '2026-05-14 00:00:00.000');
 
 INSERT INTO public.user_role
 (user_id, role_id)

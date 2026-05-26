@@ -1,5 +1,6 @@
 package com.kefir.infrastructure.config.metrics;
 
+import com.kefir.enums.LoanStatus;
 import com.kefir.repositories.LoanRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -21,8 +22,8 @@ public class LoanBootstrap {
 
   @EventListener(ApplicationReadyEvent.class)
   public void init() {
-    final int active = repository.countByStatus(1);
-    final int inactive = repository.countByStatus(2);
+    final int active = repository.countByStatus(LoanStatus.ACTIVE);
+    final int inactive = repository.countByStatus(LoanStatus.INACTIVE);
     state.set(active);
     inactiveState.set(inactive);
   }

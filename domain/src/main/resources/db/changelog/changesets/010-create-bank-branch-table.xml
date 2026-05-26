@@ -13,11 +13,6 @@
             </not>
         </preConditions>
 
-        <createSequence
-                sequenceName="bank_branch_id_seq"
-                startValue="1"
-                incrementBy="1"/>
-
         <createTable tableName="bank_branch">
             <column name="id" type="SMALLINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -33,10 +28,8 @@
             <column name="address" type="VARCHAR(100)">
                 <constraints nullable="false" />
             </column>
-            <column name="status_id" type="SMALLINT">
-                <constraints nullable="false" foreignKeyName="fk_bank_branch_bank_status"
-                referencedTableName="bank_status"
-                referencedColumnNames="id"/>
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
             </column>
             <column name="user_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_bank_branch_core_user"

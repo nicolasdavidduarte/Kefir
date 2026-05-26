@@ -19,12 +19,16 @@ public class CoreUserService {
     this.coreUserRepository = coreUserRepository;
   }
 
-  public List<CoreUser> findAll() {
+  public List<CoreUser> fetchAll() {
     return coreUserRepository.findAll();
   }
 
-  public Optional<CoreUser> findById(Long id) {
+  public Optional<CoreUser> fetchById(Integer id) {
     return coreUserRepository.findById(id);
+  }
+
+  public Optional<CoreUser> fetchByUsername(String username) {
+    return coreUserRepository.findByUsername(username);
   }
 
   @Cacheable(value = "usersByUsername", key = "#username")

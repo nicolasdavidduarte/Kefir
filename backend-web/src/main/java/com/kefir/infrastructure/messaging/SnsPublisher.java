@@ -1,5 +1,6 @@
 package com.kefir.infrastructure.messaging;
 
+import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
@@ -23,7 +24,7 @@ public class SnsPublisher {
   }
 
   @Async
-  public void publishLoanCreated(Long loanId, Double amount) {
+  public void publishLoanCreated(Long loanId, BigDecimal amount) {
     log.info("publishLoanCreated called with id={} amount={}", loanId, amount);
 
     final String message = String.format("New loan created: ID=%d, amount=%.2f", loanId, amount);

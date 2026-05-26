@@ -1,6 +1,7 @@
 package com.kefir.services
 
 import com.kefir.entities.Account
+import com.kefir.entities.CoreUser
 import com.kefir.entities.close
 import com.kefir.entities.open
 import com.kefir.enums.EntityName
@@ -18,13 +19,13 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
-import kotlin.Long
 
 @Transactional
 @Service
 class AccountService(
     val accountRepository: AccountRepository,
     val operationLogService: OperationLogService,
+    val auxAuthService: AuxAuthService,
 ) {
 
     /**
@@ -42,6 +43,8 @@ class AccountService(
      * @return account response
      */
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
+        val user: CoreUser = auxAuthService.retrieveUserFromAuth()
+
         val savedAccount =
             accountRepository.save(
                 Account(
@@ -50,10 +53,11 @@ class AccountService(
                     currency = requireNotNull(accountRequest.currency),
                     bank = requireNotNull(accountRequest.bank),
                     balance = accountRequest.initialBalance,
+                    user = user,
                 ),
             )
 
-        savedAccount.cbu = CBUGenerator.generate(savedAccount.bank, requireNotNull(accountRequest.bankBranch), savedAccount.id)
+        savedAccount.cbu = CBUGenerator.generate(savedAccount.bank.id, requireNotNull(accountRequest.bankBranch!!.id), savedAccount.id)
 
         operationLogService.log(
             OperationLogCommand(

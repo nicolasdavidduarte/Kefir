@@ -12,11 +12,6 @@
             </not>
         </preConditions>
 
-        <createSequence
-                sequenceName="loan_installment_payment_id_seq"
-                startValue="1"
-                incrementBy="1"/>
-
         <createTable tableName="loan_installment_payment">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>

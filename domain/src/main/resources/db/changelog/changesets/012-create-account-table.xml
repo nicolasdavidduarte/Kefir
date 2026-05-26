@@ -5,39 +5,12 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="012a" author="ndd">
-        <preConditions onFail="HALT">
-            <not>
-                <tableExists tableName="account_status"/>
-            </not>
-        </preConditions>
-
-        <createSequence
-                sequenceName="account_status_id_seq"
-                startValue="1"
-                incrementBy="1"/>
-
-        <createTable tableName="account_status">
-            <column name="id" type="SMALLINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="VARCHAR(20)">
-                <constraints nullable="true"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="012b" author="ndd">
+    <changeSet id="012" author="ndd">
         <preConditions onFail="HALT">
             <not>
                 <tableExists tableName="account"/>
             </not>
         </preConditions>
-
-        <createSequence
-                sequenceName="account_id_seq"
-                startValue="1"
-                incrementBy="1"/>
 
         <createTable tableName="account">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -69,11 +42,8 @@
             <column name="balance" type="NUMERIC(19,4)">
                 <constraints nullable="false"/>
             </column>
-            <column name="status_id" type="SMALLINT">
-                <constraints nullable="false" foreignKeyName="fk_account_account_status"
-                             referencedTableName="account_status"
-                             referencedColumnNames="id"
-                />
+            <column name="status" type="VARCHAR(20)">
+                <constraints nullable="false"/>
             </column>
             <column name="user_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_account_core_user"

@@ -3,15 +3,15 @@ package com.kefir.web.dtos
 import com.kefir.entities.LoanType
 
 data class LoanTypeResponse(
-    val id: Long,
+    val id: Int,
     val name: String,
     val description: String?,
-    val status: Int,
+    val enabled: Boolean,
 )
 
 fun LoanType.toResponse() = LoanTypeResponse(
     id = this.id,
     name = this.name,
     description = this.description,
-    status = this.status,
+    enabled = this.enabled,
 )

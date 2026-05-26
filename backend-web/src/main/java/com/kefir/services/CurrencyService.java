@@ -19,7 +19,7 @@ public class CurrencyService {
     return currencyRepository.findAll();
   }
 
-  public Optional<Currency> findById(Long id) {
+  public Optional<Currency> findById(Integer id) {
     return currencyRepository.findById(id);
   }
 }

@@ -27,7 +27,7 @@ public class CurrencyController {
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
-  public Optional<Currency> getById(@PathVariable Long id) {
+  public Optional<Currency> getById(@PathVariable Integer id) {
     return currencyService.findById(id);
   }
 }

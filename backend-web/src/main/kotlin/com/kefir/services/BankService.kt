@@ -16,6 +16,7 @@ import java.time.LocalDateTime
 @Transactional
 class BankService(
     val bankRepository: BankRepository,
+    val auxAuthService: AuxAuthService,
 ) {
     fun findAll(): List<BankResponse> = bankRepository
         .findAll()
@@ -23,13 +24,18 @@ class BankService(
         .toList()
         .ifEmpty { throw BankNotFoundException("No banks found") }
 
-    fun create(bankRequest: BankRequest): BankResponse = bankRepository.save(Bank(name = requireNotNull(bankRequest.name))).toResponse()
+    fun create(bankRequest: BankRequest): BankResponse = bankRepository.save(
+        Bank(
+            name = requireNotNull(bankRequest.name),
+            user = auxAuthService.retrieveUserFromAuth(),
+        ),
+    ).toResponse()
 
-    fun enable(id: Long): EntityOperationResponse {
+    fun enable(id: Int): EntityOperationResponse {
         val bank = bankRepository.findById(id).orElseThrow { BankNotFoundException("Bank with id $id not found") }
         bank.enable()
         bankRepository.save(bank)
 
-        return EntityOperationResponse(operation = "Enable", entity = "Bank", id = id, message = "Bank enabled!", timestamp = LocalDateTime.now())
+        return EntityOperationResponse(operation = "Enable", entity = "Bank", id = id.toLong(), message = "Bank enabled!", timestamp = LocalDateTime.now())
     }
 }

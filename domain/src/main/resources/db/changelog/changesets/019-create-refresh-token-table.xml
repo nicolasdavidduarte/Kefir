@@ -5,33 +5,34 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="009" author="ndd">
+    <changeSet id="019" author="ndd">
 
         <preConditions onFail="HALT">
             <not>
-                <tableExists tableName="bank"/>
+                <tableExists tableName="refresh_token"/>
             </not>
         </preConditions>
 
-        <createTable tableName="bank">
-            <column name="id" type="SMALLINT" autoIncrement="true">
+        <createTable tableName="refresh_token">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="VARCHAR(50)">
-                <constraints nullable="false" />
-            </column>
-            <column name="status" type="VARCHAR(20)">
+            <column name="token" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="SMALLINT">
-                <constraints nullable="false" foreignKeyName="fk_bank_core_user"
+                <constraints nullable="false"
+                             foreignKeyName="fk_refresh_token_core_user"
                              referencedTableName="core_user"
                              referencedColumnNames="id"/>
             </column>
-            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="expiry_date" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
+            <column name="revoked" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>

@@ -7,16 +7,11 @@
 
     <changeSet id="001" author="ndd">
 
-        <preConditions onFail="HALT">
+        <preConditions onFail="CONTINUE">
             <not>
                 <tableExists tableName="core_user"/>
             </not>
         </preConditions>
-
-        <createSequence
-                sequenceName="core_user_id_seq"
-                startValue="1"
-                incrementBy="1"/>
 
         <createTable tableName="core_user">
             <column name="id" type="SMALLINT" autoIncrement="true">
@@ -28,7 +23,7 @@
             <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="full_name" type="VARCHAR(50)">
+            <column name="fullname" type="VARCHAR(50)">
                 <constraints nullable="false" />
             </column>
             <column name="enabled" type="BOOLEAN" defaultValueBoolean="false">

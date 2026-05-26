@@ -6,16 +6,11 @@
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="014" author="ndd">
-        <preConditions onFail="HALT">
+        <preConditions onFail="CONTINUE">
             <not>
                 <tableExists tableName="loan_type"/>
             </not>
         </preConditions>
-
-        <createSequence
-                sequenceName="loan_type_id_seq"
-                startValue="1"
-                incrementBy="1"/>
 
         <createTable tableName="loan_type">
             <column name="id" type="SMALLINT" autoIncrement="true">
@@ -24,7 +19,7 @@
             <column name="name" type="VARCHAR(15)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="VARCHAR(50)">
+            <column name="description" type="VARCHAR(200)">
                 <constraints nullable="false"/>
             </column>
             <column name="enabled" type="BOOLEAN" defaultValueBoolean="false">

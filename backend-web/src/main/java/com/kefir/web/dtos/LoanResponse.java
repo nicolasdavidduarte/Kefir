@@ -1,6 +1,8 @@
 package com.kefir.web.dtos;
 
-import java.time.LocalDate;
+import com.kefir.enums.LoanStatus;
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import lombok.*;
 
 @Getter
@@ -11,15 +13,12 @@ public class LoanResponse {
   Long id;
   Long customer;
   Integer loanType;
-  Double totalOperationAmount;
-  LocalDate openingDate;
+  BigDecimal totalOperationAmount;
+  OffsetDateTime openingDate;
   Integer currency;
-  LocalDate expirationDate;
+  OffsetDateTime expirationDate;
   Integer numberOfInstallments;
-  LocalDate closedDate;
-  Integer closedCode;
-  LocalDate nextInstallmentDate;
-  Integer status;
-  LocalDate lastModificationDate;
+  LoanStatus status;
+  OffsetDateTime updatedAt;
   Integer coreUser;
 }

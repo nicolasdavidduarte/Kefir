@@ -14,15 +14,13 @@ class OperationLogService(
     fun log(
         operationLogCommand: OperationLogCommand,
     ) {
-        val user: Int = auxAuthService.retrieveUserIdFromAuth()
-
         val operationLog =
             OperationLog(
                 operation = operationLogCommand.operation.name,
                 entity = operationLogCommand.entity.name,
                 entityId = requireNotNull(operationLogCommand.entityId),
                 comments = requireNotNull(operationLogCommand.comments),
-                actionedBy = user.toLong(),
+                user = auxAuthService.retrieveUserFromAuth(),
             )
 
         operationLogRepository.save(operationLog)

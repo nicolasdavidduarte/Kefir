@@ -1,5 +1,9 @@
 package com.kefir.web.dtos;
 
+import com.kefir.entities.CustomerType;
+import com.kefir.entities.DocumentType;
+import com.kefir.entities.PersonType;
+import com.kefir.enums.CustomerDocumentType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -10,7 +14,7 @@ public record CustomerDTO(
     @NotBlank(message = "Lastname1 is mandatory") String lastname1,
     String lastname2,
     String lastname3,
-    @NotNull(message = "Person type is mandatory") Integer personType,
-    @NotNull(message = "Document type is mandatory") Integer documentType,
-    @NotNull(message = "Document number is mandatory") Integer documentNumber,
-    @NotNull(message = "Customer type is mandatory") Integer customerType) {}
+    @NotNull(message = "Person type is mandatory") PersonType personType,
+    @NotNull(message = "Document type is mandatory") String documentType,
+    @NotNull(message = "Document number is mandatory") String documentNumber,
+    @NotNull(message = "Customer type is mandatory") CustomerType customerType) {}

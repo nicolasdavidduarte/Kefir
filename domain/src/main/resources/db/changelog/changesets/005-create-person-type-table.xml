@@ -13,11 +13,6 @@
             </not>
         </preConditions>
 
-        <createSequence
-                sequenceName="person_type_id_seq"
-                startValue="1"
-                incrementBy="1"/>
-
         <createTable tableName="person_type">
             <column name="id" type="SMALLINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>

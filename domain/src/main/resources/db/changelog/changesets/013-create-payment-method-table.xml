@@ -12,13 +12,8 @@
             </not>
         </preConditions>
 
-        <createSequence
-                sequenceName="payment_method_id_seq"
-                startValue="1"
-                incrementBy="1"/>
-
         <createTable tableName="payment_method">
-            <column name="id" type="SMALLINT" defaultValueComputed="nextval('payment_method_id_seq')">
+            <column name="id" type="SMALLINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(20)">
