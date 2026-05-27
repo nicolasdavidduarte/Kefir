@@ -58,6 +58,5 @@ dist/
 
 # Others
 gradle.properties
-gradle-wrapper.properties
 /.githooks
 CODE_IMPROVEMENT_REPORT.md
