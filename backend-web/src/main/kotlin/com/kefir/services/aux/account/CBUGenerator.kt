@@ -1,7 +1,7 @@
 package com.kefir.services.aux.account
 
 object CBUGenerator {
-    fun generate(bank: Long, branch: Long, id: Long): String {
+    fun generate(bank: Int, branch: Int, id: Long): String {
         // 1st block: Bank code (3) + Branch code (4) + Verification number (1)
 
         var cbu: String =

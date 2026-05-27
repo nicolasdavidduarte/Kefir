@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CoreUserRepository extends JpaRepository<CoreUser, Long> {
+public interface CoreUserRepository extends JpaRepository<CoreUser, Integer> {
 
   Optional<CoreUser> findByUsername(String username);
 

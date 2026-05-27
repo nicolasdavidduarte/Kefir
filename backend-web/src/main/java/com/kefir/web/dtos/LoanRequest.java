@@ -1,73 +1,14 @@
 package com.kefir.web.dtos;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.kefir.enums.LoanTypeName;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.time.LocalDate;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-@Schema(description = "Represents a loan")
-public class LoanRequest {
-  @Schema(description = "Loan identification number", example = "15001")
-  private final Long id;
+import java.math.BigDecimal;
 
-  @NotNull
-  @Schema(description = "Customer identification number", example = "1025")
-  private final Long customer;
-
-  @NotNull private final int loanType;
-
-  @NotNull
-  @Schema(description = "Loan amount requested", example = "10000.00")
-  private final double totalOperationAmount;
-
-  @NotNull private final LocalDate openingDate;
-
-  @NotNull private final int currency;
-
-  private final LocalDate expirationDate;
-
-  @NotNull private final int numberOfInstallments;
-
-  private final LocalDate closedDate;
-  private final int closedCode;
-  private final LocalDate nextInstallmentDate;
-  private final int status;
-  private final LocalDate lastModificationDate;
-
-  private final int coreUser;
-
-  // Constructor
-  public LoanRequest(
-      Long id,
-      Long customer,
-      int loanType,
-      double totalOperationAmount,
-      LocalDate openingDate,
-      int currency,
-      LocalDate expirationDate,
-      int numberOfInstallments,
-      LocalDate closedDate,
-      int closedCode,
-      LocalDate nextInstallmentDate,
-      int status,
-      LocalDate lastModificationDate,
-      int coreUser) {
-    this.id = id;
-    this.customer = customer;
-    this.loanType = loanType;
-    this.totalOperationAmount = totalOperationAmount;
-    this.openingDate = openingDate;
-    this.currency = currency;
-    this.expirationDate = expirationDate;
-    this.numberOfInstallments = numberOfInstallments;
-    this.closedDate = closedDate;
-    this.closedCode = closedCode;
-    this.nextInstallmentDate = nextInstallmentDate;
-    this.status = status;
-    this.lastModificationDate = lastModificationDate;
-    this.coreUser = coreUser;
-  }
-}
+public record LoanRequest(
+    @NotNull(message = "Customer id is mandatory") Long customerId,
+    @NotNull(message = "Loan type id is mandatory") LoanTypeName loanType,
+    @NotNull(message = "Total operation amount is mandatory") BigDecimal totalOperationAmount,
+    @NotBlank(message = "Currency ISO code is mandatory") String currencyIsoCode,
+    @NotNull(message = "Number of installments is mandatory") Integer numberOfInstallments) {}

@@ -1,6 +1,7 @@
 package com.kefir.entities;
 
 import jakarta.persistence.*;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,12 +13,26 @@ import lombok.Setter;
 public class Role {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "role_id_seq_gen")
+  @SequenceGenerator(name = "role_id_seq_gen", sequenceName = "role_id_seq", allocationSize = 1)
   private int id;
 
+  @Column(name = "name", nullable = false)
   private String name;
 
-  @ManyToMany(mappedBy = "roles")
+  @Column(name = "description", nullable = false)
+  private String description;
+
+  @Column(name = "enabled", nullable = false)
+  private boolean enabled;
+
+  @Column(name = "created_at", nullable = false)
+  private OffsetDateTime createdAt;
+
+  @Column(name = "updated_at", nullable = false)
+  private OffsetDateTime updatedAt;
+
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
   private Set<CoreUser> users;
 
   public Role() {}

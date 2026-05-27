@@ -5,7 +5,7 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="011" author="ndd">
+    <changeSet id="016" author="ndd">
 
         <preConditions onFail="MARK_RAN">
             <not>
@@ -13,16 +13,11 @@
             </not>
         </preConditions>
 
-        <createSequence
-                sequenceName="loan_installment_id_seq"
-                startValue="1"
-                incrementBy="1"/>
-
         <createTable tableName="loan_installment">
-            <column name="id" type="BIGINT" defaultValueComputed="nextval('loan_installment_id_seq')">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="loan" type="BIGINT">
+            <column name="loan_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_loan_installment_loan"
                 referencedTableName="loan"
                 referencedColumnNames="id"/>
@@ -36,24 +31,27 @@
             <column name="payment_due_date" type="TIMESTAMPTZ">
                 <constraints nullable="false"/>
             </column>
-            <column name="status" type="INTEGER">
+            <column name="status_id" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_at" type="TIMESTAMPTZ">
+            <column name="user_id" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_loan_installment_core_user"
+                             referencedTableName="core_user"
+                             referencedColumnNames="id"/>
+            </column>
+            <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_at" type="TIMESTAMPTZ">
+            <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
 
-    </changeSet>
-
-    <changeSet id="011-2" author="ndd">
         <addUniqueConstraint
                 tableName="loan_installment"
-                columnNames="loan, number"
+                columnNames="loan_id, number"
                 constraintName="uk_loan_installment_number"/>
+
     </changeSet>
 
 </databaseChangeLog>

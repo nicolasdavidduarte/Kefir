@@ -28,6 +28,6 @@ class BankController(
 
     @PutMapping("/{id}")
     fun enableBank(
-        @PathVariable id: Long,
+        @PathVariable id: Int,
     ): EntityOperationResponse = bankService.enable(id)
 }

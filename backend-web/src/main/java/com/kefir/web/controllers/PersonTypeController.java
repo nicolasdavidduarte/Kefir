@@ -27,7 +27,7 @@ public class PersonTypeController {
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
-  public Optional<PersonType> getById(@PathVariable Long id) {
+  public Optional<PersonType> getById(@PathVariable Integer id) {
     return personTypeService.findById(id);
   }
 }

@@ -27,7 +27,7 @@ public class CustomerTypeController {
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
-  public Optional<CustomerType> getById(@PathVariable Long id) {
+  public Optional<CustomerType> getById(@PathVariable Integer id) {
     return customerTypeService.findById(id);
   }
 }

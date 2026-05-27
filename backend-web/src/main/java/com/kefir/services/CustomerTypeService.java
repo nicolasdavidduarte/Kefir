@@ -19,7 +19,7 @@ public class CustomerTypeService {
     return customerTypeRepository.findAll();
   }
 
-  public Optional<CustomerType> findById(Long id) {
+  public Optional<CustomerType> findById(Integer id) {
     return customerTypeRepository.findById(id);
   }
 }

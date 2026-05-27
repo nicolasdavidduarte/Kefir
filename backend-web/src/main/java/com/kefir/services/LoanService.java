@@ -1,16 +1,15 @@
 package com.kefir.services;
 
-import com.kefir.entities.Loan;
+import com.kefir.entities.*;
 import com.kefir.enums.LoanStatus;
 import com.kefir.exceptions.CustomerCreationException;
 import com.kefir.exceptions.LoanNotFoundException;
-import com.kefir.infrastructure.config.metrics.LoanActiveState;
 import com.kefir.infrastructure.messaging.SnsPublisher;
 import com.kefir.repositories.LoanRepository;
 import com.kefir.web.dtos.LoanRequest;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
-import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +26,10 @@ public class LoanService {
   private final LoanInstallmentService loanInstallmentService;
   private final AuxAuthService auxAuthService;
   private final MeterRegistry registry;
-  private final LoanActiveState state;
   private final SnsPublisher snsPublisher;
+  private final CustomerService customerService;
+  private final LoanTypeService loanTypeService;
+  private final CurrencyService currencyService;
 
   @Autowired
   public LoanService(
@@ -36,14 +37,18 @@ public class LoanService {
       LoanRepository loanRepository,
       AuxAuthService auxAuthService,
       MeterRegistry registry,
-      LoanActiveState state,
-      LoanInstallmentService loanInstallmentService) {
+      LoanInstallmentService loanInstallmentService,
+      CustomerService customerService,
+      LoanTypeService loanTypeService,
+      CurrencyService currencyService) {
     this.snsPublisher = snsPublisher;
     this.loanRepository = loanRepository;
     this.registry = registry;
-    this.state = state;
     this.auxAuthService = auxAuthService;
     this.loanInstallmentService = loanInstallmentService;
+    this.customerService = customerService;
+    this.loanTypeService = loanTypeService;
+    this.currencyService = currencyService;
   }
 
   @Cacheable("loans")
@@ -69,8 +74,6 @@ public class LoanService {
       createLoanInstallment(loanSaved);
 
       registry.counter("loan.created", "status", "success").increment();
-
-      if (loanSaved.getStatus().equals(LoanStatus.ACTIVE.getId())) state.increment();
 
       log.info("Loan successfully created - id: {}", loanSaved);
 
@@ -99,52 +102,32 @@ public class LoanService {
     log.info("Loan successfully deleted: {}", loan);
   }
 
-  @Transactional
-  public void updateLoan(Long loanId, LoanRequest loanRequest) {
-    Loan loan =
-        loanRepository
-            .findById(loanId)
-            .orElseThrow(() -> new RuntimeException("Loan not found with id: " + loanId));
-
-    Integer user = auxAuthService.retrieveUserIdFromAuth();
-
-    loan.setTotalOperationAmount(loanRequest.getTotalOperationAmount());
-    loan.setLastModificationDate(LocalDate.now());
-    loan.setCoreUser(user);
-
-    loanRepository.save(loan);
-
-    log.info("Loan successfully updated: {}", loan);
-  }
-
   private Loan createLoan(LoanRequest loanRequest) {
 
-    Integer user = auxAuthService.retrieveUserIdFromAuth();
+    CoreUser user = auxAuthService.retrieveUserFromAuth();
+
+    Customer customer = customerService.fetchById(loanRequest.customerId());
+
+    LoanType loanType = loanTypeService.fetchByNameIgnoringCase(loanRequest.loanType());
+
+    Currency currency = currencyService.fetchByIsoCode(loanRequest.currencyIsoCode());
 
     Loan loan =
         Loan.builder()
-            .customer(loanRequest.getCustomer())
-            .loanType(loanRequest.getLoanType())
-            .totalOperationAmount(loanRequest.getTotalOperationAmount())
-            .openingDate(loanRequest.getOpeningDate())
-            .currency(loanRequest.getCurrency())
-            .numberOfInstallments(loanRequest.getNumberOfInstallments())
-            .closedCode(loanRequest.getClosedCode())
-            .closedDate(loanRequest.getClosedDate())
-            .nextInstallmentDate(loanRequest.getNextInstallmentDate())
-            .status(LoanStatus.ACTIVE.getId())
-            .lastModificationDate(LocalDate.now())
-            .coreUser(user)
+            .customer(customer)
+            .loanType(loanType)
+            .totalOperationAmount(loanRequest.totalOperationAmount())
+            .openingDate(OffsetDateTime.now())
+            .currency(currency)
+            .numberOfInstallments(loanRequest.numberOfInstallments())
+            .status(LoanStatus.ACTIVE)
+            .user(user)
             .build();
 
     return loanRepository.save(loan);
   }
 
   private void createLoanInstallment(Loan loan) {
-    loanInstallmentService.createInstallmentsSchedule(
-        loan.getId(),
-        loan.getTotalOperationAmount(),
-        loan.getNumberOfInstallments(),
-        loan.getLoanType());
+    loanInstallmentService.createInstallmentsSchedule(loan);
   }
 }

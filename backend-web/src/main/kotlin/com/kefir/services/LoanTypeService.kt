@@ -1,6 +1,8 @@
 package com.kefir.services
 
 import com.kefir.entities.LoanType
+import com.kefir.enums.LoanTypeName
+import com.kefir.exceptions.LoanTypeNotFoundException
 import com.kefir.repositories.LoanTypeRepository
 import com.kefir.web.dtos.LoanTypeRequest
 import com.kefir.web.dtos.LoanTypeResponse
@@ -12,12 +14,19 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class LoanTypeService(
     private val loanTypeRepository: LoanTypeRepository,
+    private val auxAuthService: AuxAuthService,
 ) {
     fun getAllLoanTypes(): List<LoanType> = loanTypeRepository.findAll()
 
+    fun fetchByNameIgnoringCase(name: LoanTypeName): LoanType = loanTypeRepository.findByNameIgnoringCase(name.name).orElseThrow { throw LoanTypeNotFoundException() }
+
     @Transactional
     fun create(loanTypeRequest: LoanTypeRequest): LoanTypeResponse {
-        val loanType = LoanType(name = loanTypeRequest.name, description = loanTypeRequest.description)
+        val loanType = LoanType(
+            name = loanTypeRequest.name,
+            description = loanTypeRequest.description,
+            user = auxAuthService.retrieveUserFromAuth(),
+        )
 
         val savedLoanType = loanTypeRepository.save(loanType)
 

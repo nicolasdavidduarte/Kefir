@@ -5,7 +5,7 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="010" author="ndd">
+    <changeSet id="018" author="ndd">
 
         <preConditions onFail="MARK_RAN">
             <not>
@@ -13,13 +13,8 @@
             </not>
         </preConditions>
 
-        <createSequence
-                sequenceName="operation_log_id_seq"
-                startValue="1"
-                incrementBy="1"/>
-
         <createTable tableName="operation_log">
-            <column name="id" type="BIGINT" defaultValueComputed="nextval('operation_log_id_seq')">
+            <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="entity" type="VARCHAR(50)">
@@ -34,13 +29,13 @@
             <column name="comments" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="actioned_by" type="BIGINT">
+            <column name="user_id" type="SMALLINT">
                 <constraints nullable="false"
                     foreignKeyName="fk_operation_log_core_user"
                     referencedTableName="core_user"
                     referencedColumnNames="id"/>
             </column>
-            <column name="operation_date" type="TIMESTAMPTZ">
+            <column name="operation_date" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>

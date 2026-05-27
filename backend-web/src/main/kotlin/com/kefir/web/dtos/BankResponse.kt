@@ -1,12 +1,13 @@
 package com.kefir.web.dtos
 
 import com.kefir.entities.Bank
+import com.kefir.enums.BankStatus
 import java.time.OffsetDateTime
 
 data class BankResponse(
-    val id: Long,
+    val id: Int,
     val name: String,
-    val status: Long,
+    val status: BankStatus,
     val createdAt: OffsetDateTime,
 )
 

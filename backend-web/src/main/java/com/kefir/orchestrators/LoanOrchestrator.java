@@ -10,7 +10,6 @@ import com.kefir.services.LoanService;
 import com.kefir.web.dtos.LoanRequest;
 import com.kefir.web.dtos.LoanResponse;
 import io.micrometer.observation.annotation.Observed;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,34 +30,31 @@ public class LoanOrchestrator {
   }
 
   public Loan createLoan(LoanRequest loanRequest) {
-    Customer customer = customerService.findById(loanRequest.getCustomer());
-    if (!customer.getStatus().equals(CustomerStatus.ACTIVE.getId()))
+    Customer customer = customerService.fetchById(loanRequest.customerId());
+    if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new CustomerNotValidException("The customer is not allowed for a new loan");
 
-    return switch (loanRequest.getLoanType()) {
-      case 1 -> loanService.createFrench(loanRequest);
-      case 2 -> loanService.createGerman();
-      case 3 -> loanService.createAmerican();
-      default -> throw new IllegalStateException("Unexpected value: " + loanRequest.getLoanType());
+    return switch (loanRequest.loanType()) {
+      case FRENCH -> loanService.createFrench(loanRequest);
+      case GERMAN -> loanService.createGerman();
+      case AMERICAN -> loanService.createAmerican();
+      default -> throw new IllegalStateException("Unexpected value: " + loanRequest.loanType());
     };
   }
 
   private LoanResponse toLoanDataDTO(Loan loan) {
     return LoanResponse.builder()
         .id(loan.getId())
-        .customer(loan.getCustomer())
-        .loanType(loan.getLoanType())
+        .customer(loan.getCustomer().getId())
+        .loanType(loan.getLoanType().getId())
         .totalOperationAmount(loan.getTotalOperationAmount())
-        .openingDate(LocalDate.now())
-        .currency(loan.getCurrency())
+        .openingDate(loan.getOpeningDate())
+        .currency(loan.getCurrency().getId())
         .expirationDate(loan.getExpirationDate())
         .numberOfInstallments(loan.getNumberOfInstallments())
-        .closedDate(loan.getClosedDate())
-        .closedCode(loan.getClosedCode())
-        .nextInstallmentDate(loan.getNextInstallmentDate())
         .status(loan.getStatus())
-        .lastModificationDate(loan.getLastModificationDate())
-        .coreUser(loan.getCoreUser())
+        .updatedAt(loan.getUpdatedAt())
+        .coreUser(loan.getUser().getId())
         .build();
   }
 }
