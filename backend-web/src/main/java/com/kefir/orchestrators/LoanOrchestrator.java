@@ -30,15 +30,15 @@ public class LoanOrchestrator {
   }
 
   public Loan createLoan(LoanRequest loanRequest) {
-    Customer customer = customerService.fetchById(loanRequest.getCustomer());
+    Customer customer = customerService.fetchById(loanRequest.customerId());
     if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new CustomerNotValidException("The customer is not allowed for a new loan");
 
-    return switch (loanRequest.getLoanType()) {
-      case 1 -> loanService.createFrench(loanRequest);
-      case 2 -> loanService.createGerman();
-      case 3 -> loanService.createAmerican();
-      default -> throw new IllegalStateException("Unexpected value: " + loanRequest.getLoanType());
+    return switch (loanRequest.loanType()) {
+      case FRENCH -> loanService.createFrench(loanRequest);
+      case GERMAN -> loanService.createGerman();
+      case AMERICAN -> loanService.createAmerican();
+      default -> throw new IllegalStateException("Unexpected value: " + loanRequest.loanType());
     };
   }
 

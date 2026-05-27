@@ -1,6 +1,7 @@
 package com.kefir.services;
 
 import com.kefir.entities.Currency;
+import com.kefir.exceptions.CurrencyNotFoundException;
 import com.kefir.repositories.CurrencyRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,12 @@ public class CurrencyService {
   public Currency findById(Integer id) {
     return currencyRepository
         .findById(id)
-        .orElseThrow(() -> new RuntimeException("Currency not found"));
+        .orElseThrow(() -> new CurrencyNotFoundException("Currency not found"));
+  }
+
+  public Currency fetchByIsoCode(String isoCode) {
+    return currencyRepository
+        .findByIsoCode(isoCode)
+        .orElseThrow(() -> new CurrencyNotFoundException("dsd"));
   }
 }

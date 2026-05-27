@@ -1,6 +1,8 @@
 package com.kefir.services
 
 import com.kefir.entities.LoanType
+import com.kefir.enums.LoanTypeName
+import com.kefir.exceptions.LoanTypeNotFoundException
 import com.kefir.repositories.LoanTypeRepository
 import com.kefir.web.dtos.LoanTypeRequest
 import com.kefir.web.dtos.LoanTypeResponse
@@ -15,6 +17,8 @@ class LoanTypeService(
     private val auxAuthService: AuxAuthService,
 ) {
     fun getAllLoanTypes(): List<LoanType> = loanTypeRepository.findAll()
+
+    fun fetchByNameIgnoringCase(name: LoanTypeName): LoanType = loanTypeRepository.findByNameIgnoringCase(name.name).orElseThrow { throw LoanTypeNotFoundException() }
 
     @Transactional
     fun create(loanTypeRequest: LoanTypeRequest): LoanTypeResponse {

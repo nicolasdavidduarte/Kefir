@@ -6,7 +6,6 @@ import com.kefir.exceptions.CustomerCreationException;
 import com.kefir.exceptions.LoanNotFoundException;
 import com.kefir.infrastructure.messaging.SnsPublisher;
 import com.kefir.repositories.LoanRepository;
-import com.kefir.repositories.LoanTypeRepository;
 import com.kefir.web.dtos.LoanRequest;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
@@ -29,7 +28,7 @@ public class LoanService {
   private final MeterRegistry registry;
   private final SnsPublisher snsPublisher;
   private final CustomerService customerService;
-  private final LoanTypeRepository loanTypeRepository;
+  private final LoanTypeService loanTypeService;
   private final CurrencyService currencyService;
 
   @Autowired
@@ -40,7 +39,7 @@ public class LoanService {
       MeterRegistry registry,
       LoanInstallmentService loanInstallmentService,
       CustomerService customerService,
-      LoanTypeRepository loanTypeRepository,
+      LoanTypeService loanTypeService,
       CurrencyService currencyService) {
     this.snsPublisher = snsPublisher;
     this.loanRepository = loanRepository;
@@ -48,7 +47,7 @@ public class LoanService {
     this.auxAuthService = auxAuthService;
     this.loanInstallmentService = loanInstallmentService;
     this.customerService = customerService;
-    this.loanTypeRepository = loanTypeRepository;
+    this.loanTypeService = loanTypeService;
     this.currencyService = currencyService;
   }
 
@@ -103,42 +102,24 @@ public class LoanService {
     log.info("Loan successfully deleted: {}", loan);
   }
 
-  @Transactional
-  public void updateLoan(Long loanId, LoanRequest loanRequest) {
-    Loan loan =
-        loanRepository
-            .findById(loanId)
-            .orElseThrow(() -> new RuntimeException("Loan not found with id: " + loanId));
-
-    CoreUser user = auxAuthService.retrieveUserFromAuth();
-
-    loan.setTotalOperationAmount(loanRequest.getTotalOperationAmount());
-    loan.setUpdatedAt(OffsetDateTime.now());
-    loan.setUser(user);
-
-    loanRepository.save(loan);
-
-    log.info("Loan successfully updated: {}", loan);
-  }
-
   private Loan createLoan(LoanRequest loanRequest) {
 
     CoreUser user = auxAuthService.retrieveUserFromAuth();
-    Customer customer = customerService.fetchById(loanRequest.getCustomer());
-    LoanType loanType =
-        loanTypeRepository
-            .findById(loanRequest.getLoanType())
-            .orElseThrow(() -> new RuntimeException("Loan type not found"));
-    Currency currency = currencyService.findById(loanRequest.getCurrency());
+
+    Customer customer = customerService.fetchById(loanRequest.customerId());
+
+    LoanType loanType = loanTypeService.fetchByNameIgnoringCase(loanRequest.loanType());
+
+    Currency currency = currencyService.fetchByIsoCode(loanRequest.currencyIsoCode());
 
     Loan loan =
         Loan.builder()
             .customer(customer)
             .loanType(loanType)
-            .totalOperationAmount(loanRequest.getTotalOperationAmount())
-            .openingDate(loanRequest.getOpeningDate())
+            .totalOperationAmount(loanRequest.totalOperationAmount())
+            .openingDate(OffsetDateTime.now())
             .currency(currency)
-            .numberOfInstallments(loanRequest.getNumberOfInstallments())
+            .numberOfInstallments(loanRequest.numberOfInstallments())
             .status(LoanStatus.ACTIVE)
             .user(user)
             .build();

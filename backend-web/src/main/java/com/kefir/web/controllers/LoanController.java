@@ -124,25 +124,4 @@ public class LoanController {
 
     return ResponseEntity.ok(response);
   }
-
-  // Endpoint to update a loan
-  @PutMapping("/{loanId}")
-  public ResponseEntity<Map<String, Object>> updateLoan(
-      @Parameter(
-              name = "loanId",
-              description = "Unique identifier of the loan to update",
-              required = true,
-              example = "12345")
-          @PathVariable
-          Long loanId,
-      @RequestBody LoanRequest loan) {
-    loanService.updateLoan(loanId, loan);
-
-    Map<String, Object> response = new HashMap<>();
-    response.put("message", "Loan successfully updated!");
-    response.put("loanId", loan.getId());
-    response.put("timestamp", LocalDateTime.now());
-
-    return ResponseEntity.ok(response);
-  }
 }
