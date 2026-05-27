@@ -36,7 +36,7 @@ jobs:
       run: ./gradlew build -x test
       
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@0.20.0
+      uses: aquasecurity/trivy-action@v0.20.0
       with:
         scan-type: 'fs'
         scan-ref: '.'
@@ -54,7 +54,7 @@ jobs:
       run: docker build -t kefir-backend:latest -f devops/docker/dockerfile .
         
     - name: Run Trivy on Docker image
-      uses: aquasecurity/trivy-action@trivy-action@0.20.0
+      uses: aquasecurity/trivy-action@v0.20.0
       with:
         image-ref: 'kefir-backend:latest'
         format: 'sarif'
@@ -68,7 +68,7 @@ jobs:
         sarif_file: 'trivy-docker-results.sarif'
         
     - name: Run Trivy configuration scan
-      uses: aquasecurity/trivy-action@trivy-action@0.20.0
+      uses: aquasecurity/trivy-action@v0.20.0
       with:
         scan-type: 'config'
         scan-ref: '.'
@@ -83,7 +83,7 @@ jobs:
         sarif_file: 'trivy-config-results.sarif'
         
     - name: Run Trivy secret scan
-      uses: aquasecurity/trivy-action@trivy-action@0.20.0
+      uses: aquasecurity/trivy-action@v0.20.0
       with:
         scan-type: 'repo'
         scan-ref: '.'
@@ -112,7 +112,7 @@ jobs:
         distribution: 'temurin'
         
     - name: Run Trivy dependency scan
-      uses: aquasecurity/trivy-action@trivy-action@0.20.0
+      uses: aquasecurity/trivy-action@v0.20.0
       with:
         scan-type: 'fs'
         scan-ref: '.'
