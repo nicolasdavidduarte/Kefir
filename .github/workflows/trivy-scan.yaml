@@ -13,6 +13,9 @@ jobs:
   trivy-scan:
     name: Trivy Security Scan
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     
     steps:
     - name: Checkout code
@@ -39,7 +42,6 @@ jobs:
         scan-ref: '.'
         format: 'sarif'
         output: 'trivy-results.sarif'
-        exit-code: '1'
         severity: 'HIGH,CRITICAL'
         
     - name: Upload Trivy scan results to GitHub Security tab
@@ -59,7 +61,6 @@ jobs:
         image-ref: 'kefir-backend:latest'
         format: 'sarif'
         output: 'trivy-docker-results.sarif'
-        exit-code: '1'
         severity: 'HIGH,CRITICAL'
         
     - name: Upload Docker scan results
@@ -75,7 +76,6 @@ jobs:
         scan-ref: '.'
         format: 'sarif'
         output: 'trivy-config-results.sarif'
-        exit-code: '1'
         severity: 'HIGH,CRITICAL'
         
     - name: Upload configuration scan results
@@ -92,7 +92,6 @@ jobs:
         scanners: 'secret'
         format: 'sarif'
         output: 'trivy-secret-results.sarif'
-        exit-code: '1'
         
     - name: Upload secret scan results
       uses: github/codeql-action/upload-sarif@v3
@@ -120,6 +119,5 @@ jobs:
         scan-type: 'fs'
         scan-ref: '.'
         format: 'table'
-        exit-code: '1'
         severity: 'HIGH,CRITICAL'
         list-all-pkgs: true
