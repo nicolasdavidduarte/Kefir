@@ -28,7 +28,6 @@ jobs:
         uses: gradle/gradle-build-action@v3
 
       - name: Build project
-        working-directory: backend-web
         run: ./gradlew build -x test
 
       - name: Debug generated JAR
@@ -43,7 +42,7 @@ jobs:
           output: trivy-results.sarif
           severity: HIGH,CRITICAL
 
-      - name: Upload filesystem scan results
+      - name: Upload results to GitHub Security
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: trivy-results.sarif
@@ -53,7 +52,7 @@ jobs:
           docker build \
             -f devops/docker/dockerfile \
             -t kefir-backend:latest \
-            backend-web
+            .
 
       - name: Run Trivy image scan
         uses: aquasecurity/trivy-action@v0.35.0
