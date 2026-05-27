@@ -37,7 +37,7 @@ jobs:
           docker build \
             -f devops/docker/dockerfile \
             -t kefir-backend:latest \
-            .
+            ./backend-web
 
       - name: Run Trivy image scan
         uses: aquasecurity/trivy-action@v0.35.0
