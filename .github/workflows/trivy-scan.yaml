@@ -32,6 +32,10 @@ jobs:
         with:
           sarif_file: trivy-results.sarif
 
+      - name: Build backend
+        working-directory: backend-web
+        run: ../gradlew bootJar
+
       - name: Build Docker image
         run: |
           docker build \
