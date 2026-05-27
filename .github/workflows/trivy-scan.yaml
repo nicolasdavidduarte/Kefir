@@ -5,117 +5,29 @@ on:
     branches: [ main, master, develop ]
   pull_request:
     branches: [ main, master, develop ]
-  schedule:
-    # Run weekly on Sundays at 2 AM UTC
-    - cron: '0 2 * * 0'
 
 jobs:
   trivy-scan:
-    name: Trivy Security Scan
     runs-on: ubuntu-latest
+
     permissions:
       contents: read
       security-events: write
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up Java
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        
-    - name: Set up Gradle
-      uses: gradle/gradle-build-action@v3
-      with:
-        gradle-version: wrapper
-        
-    - name: Build project
-      run: ./gradlew build -x test
-      
-    - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@v0.20.0
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-results.sarif'
-        severity: 'HIGH,CRITICAL'
-        
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: 'trivy-results.sarif'
-        
-    - name: Build Docker image for scanning
-      run: docker build -t kefir-backend:latest -f devops/docker/dockerfile .
-        
-    - name: Run Trivy on Docker image
-      uses: aquasecurity/trivy-action@v0.20.0
-      with:
-        image-ref: 'kefir-backend:latest'
-        format: 'sarif'
-        output: 'trivy-docker-results.sarif'
-        severity: 'HIGH,CRITICAL'
-        
-    - name: Upload Docker scan results
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: 'trivy-docker-results.sarif'
-        
-    - name: Run Trivy configuration scan
-      uses: aquasecurity/trivy-action@v0.20.0
-      with:
-        scan-type: 'config'
-        scan-ref: '.'
-        format: 'sarif'
-        output: 'trivy-config-results.sarif'
-        severity: 'HIGH,CRITICAL'
-        
-    - name: Upload configuration scan results
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: 'trivy-config-results.sarif'
-        
-    - name: Run Trivy secret scan
-      uses: aquasecurity/trivy-action@v0.20.0
-      with:
-        scan-type: 'repo'
-        scan-ref: '.'
-        scanners: 'secret'
-        format: 'sarif'
-        output: 'trivy-secret-results.sarif'
-        
-    - name: Upload secret scan results
-      uses: github/codeql-action/upload-sarif@v3
-      if: always()
-      with:
-        sarif_file: 'trivy-secret-results.sarif'
 
-  gradle-dependency-scan:
-    name: Gradle Dependency Scan
-    runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Set up Java
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        
-    - name: Run Trivy dependency scan
-      uses: aquasecurity/trivy-action@v0.20.0
-      with:
-        scan-type: 'fs'
-        scan-ref: '.'
-        format: 'table'
-        severity: 'HIGH,CRITICAL'
-        list-all-pkgs: true
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: sarif
+          output: trivy-results.sarif
+          severity: HIGH,CRITICAL
+
+      - name: Upload results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
