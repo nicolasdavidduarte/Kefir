@@ -37,13 +37,10 @@ public class LoanController {
   private final LoanService loanService;
   private final LoanOrchestrator loanOrchestrator;
 
-  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private final IdempotentRequestRepository idempotentRepo;
 
-  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private final ObjectMapper objectMapper;
 
-  @SuppressWarnings({"FieldCanBeLocal", "unused"})
   private final MeterRegistry meterRegistry;
 
   public LoanController(
@@ -107,7 +104,7 @@ public class LoanController {
       description = "Time taken to create loan",
       percentiles = {0.5, 0.9, 0.95, 0.99},
       histogram = true)
-  public ResponseEntity<Loan> createLoan(@RequestBody @Valid LoanRequest loanRequest) {
+  public ResponseEntity<LoanResponse> createLoan(@RequestBody @Valid LoanRequest loanRequest) {
     return ResponseEntity.ok(loanOrchestrator.createLoan(loanRequest));
   }
 

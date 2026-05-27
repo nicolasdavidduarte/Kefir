@@ -29,7 +29,7 @@ public class LoanOrchestrator {
         .orElseThrow(() -> new LoanNotFoundException(loanId));
   }
 
-  public Loan createLoan(LoanRequest loanRequest) {
+  public LoanResponse createLoan(LoanRequest loanRequest) {
     Customer customer = customerService.fetchById(loanRequest.customerId());
     if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new CustomerNotValidException("The customer is not allowed for a new loan");
@@ -38,7 +38,6 @@ public class LoanOrchestrator {
       case FRENCH -> loanService.createFrench(loanRequest);
       case GERMAN -> loanService.createGerman();
       case AMERICAN -> loanService.createAmerican();
-      default -> throw new IllegalStateException("Unexpected value: " + loanRequest.loanType());
     };
   }
 
@@ -46,15 +45,15 @@ public class LoanOrchestrator {
     return LoanResponse.builder()
         .id(loan.getId())
         .customer(loan.getCustomer().getId())
-        .loanType(loan.getLoanType().getId())
+        .loanType(loan.getLoanType().getName())
         .totalOperationAmount(loan.getTotalOperationAmount())
         .openingDate(loan.getOpeningDate())
-        .currency(loan.getCurrency().getId())
+        .currency(loan.getCurrency().getIsoCode())
         .expirationDate(loan.getExpirationDate())
         .numberOfInstallments(loan.getNumberOfInstallments())
         .status(loan.getStatus())
-        .updatedAt(loan.getUpdatedAt())
-        .coreUser(loan.getUser().getId())
+        .createdAt(loan.getCreatedAt())
+        .user(loan.getUser().getUsername())
         .build();
   }
 }

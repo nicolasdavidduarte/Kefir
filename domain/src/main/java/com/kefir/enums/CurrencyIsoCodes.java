@@ -6,8 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum CurrencyIsoCodes {
-  ACTIVE,
-  INACTIVE,
-  PENDING,
-  CLOSED
+  USD,
+  ARS,
+  EUR
 }

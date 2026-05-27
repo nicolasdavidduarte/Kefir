@@ -1,6 +1,7 @@
 package com.kefir.services;
 
 import com.kefir.entities.Currency;
+import com.kefir.enums.CurrencyIsoCodes;
 import com.kefir.exceptions.CurrencyNotFoundException;
 import com.kefir.repositories.CurrencyRepository;
 import java.util.List;
@@ -25,9 +26,9 @@ public class CurrencyService {
         .orElseThrow(() -> new CurrencyNotFoundException("Currency not found"));
   }
 
-  public Currency fetchByIsoCode(String isoCode) {
+  public Currency fetchByIsoCode(CurrencyIsoCodes isoCode) {
     return currencyRepository
-        .findByIsoCode(isoCode)
-        .orElseThrow(() -> new CurrencyNotFoundException("dsd"));
+        .findByIsoCode(isoCode.toString())
+        .orElseThrow(() -> new CurrencyNotFoundException("Currency not found"));
   }
 }

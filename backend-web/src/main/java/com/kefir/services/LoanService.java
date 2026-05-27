@@ -7,8 +7,10 @@ import com.kefir.exceptions.LoanNotFoundException;
 import com.kefir.infrastructure.messaging.SnsPublisher;
 import com.kefir.repositories.LoanRepository;
 import com.kefir.web.dtos.LoanRequest;
+import com.kefir.web.dtos.LoanResponse;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
+
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +65,7 @@ public class LoanService {
   }
 
   @Transactional
-  public Loan createFrench(LoanRequest loanRequest) {
+  public LoanResponse createFrench(LoanRequest loanRequest) {
 
     // TODO: Add interest rate mode (fixed or variable)
 
@@ -79,19 +81,33 @@ public class LoanService {
 
       snsPublisher.publishLoanCreated(loanSaved.getId(), loanSaved.getTotalOperationAmount());
 
-      return loanSaved;
+      return LoanResponse.builder()
+              .id(loanSaved.getId())
+              .customer(loanSaved.getCustomer().getId())
+              .loanType(loanSaved.getLoanType().getName())
+              .totalOperationAmount(loanSaved.getTotalOperationAmount())
+              .openingDate(loanSaved.getOpeningDate())
+              .currency(loanSaved.getCurrency().getIsoCode())
+              .expirationDate(loanSaved.getExpirationDate())
+              .numberOfInstallments(loanSaved.getNumberOfInstallments())
+              .status(loanSaved.getStatus())
+              .createdAt(loanSaved.getCreatedAt())
+              .user(loanSaved.getUser().getUsername())
+              .build();
+
+
     } catch (Exception e) {
       registry.counter("loan.created", "status", "error").increment();
       throw new CustomerCreationException(e);
     }
   }
 
-  public Loan createGerman() {
-    return new Loan();
+  public LoanResponse createGerman() {
+    return LoanResponse.builder().build();
   }
 
-  public Loan createAmerican() {
-    return new Loan();
+  public LoanResponse createAmerican() {
+    return LoanResponse.builder().build();
   }
 
   @Transactional
@@ -120,8 +136,12 @@ public class LoanService {
             .openingDate(OffsetDateTime.now())
             .currency(currency)
             .numberOfInstallments(loanRequest.numberOfInstallments())
-            .status(LoanStatus.ACTIVE)
+            .expirationDate(OffsetDateTime.now().plusMonths(loanRequest.numberOfInstallments()))
+            .status(LoanStatus.PENDING)
             .user(user)
+            .externalId(loanRequest.externalId())
+            .createdAt(OffsetDateTime.now())
+            .updatedAt(OffsetDateTime.now())
             .build();
 
     return loanRepository.save(loan);

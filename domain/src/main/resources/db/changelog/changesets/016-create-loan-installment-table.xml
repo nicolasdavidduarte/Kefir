@@ -31,7 +31,7 @@
             <column name="payment_due_date" type="TIMESTAMPTZ">
                 <constraints nullable="false"/>
             </column>
-            <column name="status_id" type="VARCHAR(20)">
+            <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
             <column name="user_id" type="SMALLINT">
