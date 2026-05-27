@@ -124,15 +124,12 @@ public class LoanService {
   private Loan createLoan(LoanRequest loanRequest) {
 
     CoreUser user = auxAuthService.retrieveUserFromAuth();
-    Customer customer = customerService.findById(loanRequest.getCustomer());
+    Customer customer = customerService.fetchById(loanRequest.getCustomer());
     LoanType loanType =
         loanTypeRepository
             .findById(loanRequest.getLoanType())
             .orElseThrow(() -> new RuntimeException("Loan type not found"));
-    Currency currency =
-        currencyService
-            .findById(loanRequest.getCurrency())
-            .orElseThrow(() -> new RuntimeException("Currency not found"));
+    Currency currency = currencyService.findById(loanRequest.getCurrency());
 
     Loan loan =
         Loan.builder()

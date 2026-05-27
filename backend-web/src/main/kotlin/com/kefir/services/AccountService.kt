@@ -1,7 +1,11 @@
 package com.kefir.services
 
 import com.kefir.entities.Account
+import com.kefir.entities.AccountType
+import com.kefir.entities.BankBranch
 import com.kefir.entities.CoreUser
+import com.kefir.entities.Currency
+import com.kefir.entities.Customer
 import com.kefir.entities.close
 import com.kefir.entities.open
 import com.kefir.enums.EntityName
@@ -26,6 +30,10 @@ class AccountService(
     val accountRepository: AccountRepository,
     val operationLogService: OperationLogService,
     val auxAuthService: AuxAuthService,
+    val customerService: CustomerService,
+    val currencyService: CurrencyService,
+    val accountTypeService: AccountTypeService,
+    val bankBranchService: BankBranchService,
 ) {
 
     /**
@@ -45,19 +53,27 @@ class AccountService(
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
         val user: CoreUser = auxAuthService.retrieveUserFromAuth()
 
+        val accountType: AccountType = accountTypeService.fetchByName(accountRequest.type)
+
+        val customer: Customer = customerService.fetchById(accountRequest.customerId)
+
+        val bankBranch: BankBranch = bankBranchService.fetchByBranchNumberAndBank(requireNotNull(accountRequest.bankBranchId), requireNotNull(accountRequest.bankId))
+
+        val currency: Currency = currencyService.findById(accountRequest.currencyId)
+
         val savedAccount =
             accountRepository.save(
                 Account(
-                    type = requireNotNull(accountRequest.type),
-                    customer = requireNotNull(accountRequest.customer),
-                    currency = requireNotNull(accountRequest.currency),
-                    bank = requireNotNull(accountRequest.bank),
+                    type = accountType,
+                    customer = customer,
+                    currency = currency,
+                    bank = bankBranch.bank,
                     balance = accountRequest.initialBalance,
                     user = user,
                 ),
             )
 
-        savedAccount.cbu = CBUGenerator.generate(savedAccount.bank.id, requireNotNull(accountRequest.bankBranch!!.id), savedAccount.id)
+        savedAccount.cbu = CBUGenerator.generate(savedAccount.bank.id, requireNotNull(accountRequest.bankBranchId), savedAccount.id)
 
         operationLogService.log(
             OperationLogCommand(

@@ -24,6 +24,9 @@ class BankBranch(
     @SequenceGenerator(name = "branch_id_seq_gen", sequenceName = "branch_id_seq", allocationSize = 1)
     val id: Int = 0,
 
+    @Column(name = "branch_number", nullable = false)
+    val branchNumber: Int,
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bank_id", nullable = false)
     val bank: Bank,

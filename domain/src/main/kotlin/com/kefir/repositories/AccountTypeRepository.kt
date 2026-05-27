@@ -3,4 +3,7 @@ package com.kefir.repositories
 import com.kefir.entities.AccountType
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface AccountTypeRepository : JpaRepository<AccountType, Int>
+interface AccountTypeRepository : JpaRepository<AccountType, Int> {
+
+    fun findByNameIgnoreCase(name: String?): AccountType?
+}

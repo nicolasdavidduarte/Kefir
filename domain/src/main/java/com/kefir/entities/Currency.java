@@ -23,7 +23,7 @@ public class Currency {
       allocationSize = 1)
   private Integer id;
 
-  @Column(name = "ISO_code", nullable = false)
+  @Column(name = "iso_code", nullable = false)
   private String isoCode;
 
   @Column(name = "description", nullable = false)

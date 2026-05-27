@@ -4,6 +4,8 @@ import com.kefir.exceptions.*;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -69,5 +71,18 @@ public class GlobalExceptionHandler {
     body.put("error", error);
     body.put("message", message);
     return new ResponseEntity<>(body, status);
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<Map<String, Object>> handleDataIntegrityViolation(
+      DataIntegrityViolationException ex) {
+
+    String constraintName = null;
+
+    if (ex.getCause() instanceof ConstraintViolationException constraintViolationException) {
+      constraintName = constraintViolationException.getConstraintName();
+    }
+
+    return buildResponse(HttpStatus.CONFLICT, "Database integrity violation", constraintName);
   }
 }

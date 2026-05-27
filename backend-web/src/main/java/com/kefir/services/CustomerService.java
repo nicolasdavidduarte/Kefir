@@ -1,21 +1,19 @@
 package com.kefir.services;
 
-import com.kefir.entities.Customer;
-import com.kefir.entities.DocumentType;
-import com.kefir.enums.CustomerDocumentType;
+import com.kefir.entities.*;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.exceptions.CustomerNotFoundException;
 import com.kefir.repositories.CustomerRepository;
 import com.kefir.repositories.CustomerTypeRepository;
 import com.kefir.repositories.DocumentTypeRepository;
-import com.kefir.web.dtos.CustomerDTO;
+import com.kefir.repositories.PersonTypeRepository;
+import com.kefir.web.dtos.CustomerRequest;
+import com.kefir.web.dtos.CustomerResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.swing.text.Document;
 
 @Slf4j
 @Service
@@ -23,18 +21,28 @@ public class CustomerService {
 
   private final CustomerRepository customerRepository;
   private final DocumentTypeRepository documentTypeRepository;
+  private final PersonTypeRepository personTypeRepository;
+  private final CustomerTypeRepository customerTypeRepository;
+  private final AuxAuthService auxAuthService;
 
-  public CustomerService(CustomerRepository customerRepository,
-                         DocumentTypeRepository documentTypeRepository) {
+  public CustomerService(
+      CustomerRepository customerRepository,
+      DocumentTypeRepository documentTypeRepository,
+      PersonTypeRepository personTypeRepository,
+      CustomerTypeRepository customerTypeRepository,
+      AuxAuthService auxAuthService) {
     this.customerRepository = customerRepository;
     this.documentTypeRepository = documentTypeRepository;
+    this.personTypeRepository = personTypeRepository;
+    this.customerTypeRepository = customerTypeRepository;
+    this.auxAuthService = auxAuthService;
   }
 
-  public List<Customer> findAll() {
-    return customerRepository.findAll();
+  public List<CustomerResponse> fetchAllWithResponse() {
+    return customerRepository.findAll().stream().map(CustomerResponse::toResponse).toList();
   }
 
-  public Customer findById(Long id) {
+  public Customer fetchById(Long id) {
     return customerRepository
         .findById(id)
         .orElseThrow(
@@ -42,41 +50,85 @@ public class CustomerService {
                 new CustomerNotFoundException(String.format("Customer with id %d not found", id)));
   }
 
+  public CustomerResponse fetchByIdWithResponse(Long id) {
+    return customerRepository
+        .findById(id)
+        .map(CustomerResponse::toResponse)
+        .orElseThrow(
+            () ->
+                new CustomerNotFoundException(String.format("Customer with id %d not found", id)));
+  }
+
   @Transactional
-  public Customer createCustomer(CustomerDTO customerDTO) {
+  public CustomerResponse createCustomer(CustomerRequest customerRequest) {
 
     Customer newCustomer = new Customer();
-    String fullname = generateFullname(customerDTO);
+    String fullname = generateFullname(customerRequest);
 
-    DocumentType documentType = documentTypeRepository.findByNameIgnoreCase(customerDTO.documentType());
+    DocumentType documentType =
+        documentTypeRepository.findByNameIgnoreCase(customerRequest.documentType());
 
-    newCustomer.setName1(customerDTO.name1());
-    newCustomer.setName2(customerDTO.name2());
-    newCustomer.setName3(customerDTO.name3());
-    newCustomer.setLastname1(customerDTO.lastname1());
-    newCustomer.setLastname2(customerDTO.lastname2());
-    newCustomer.setLastname3(customerDTO.lastname3());
+    PersonType personType =
+        personTypeRepository
+            .findByNameIgnoreCase(customerRequest.personType())
+            .orElseThrow(() -> new RuntimeException("Person type not found"));
+
+    CustomerType customerType =
+        customerTypeRepository
+            .findByNameIgnoreCase(customerRequest.customerType())
+            .orElseThrow(() -> new RuntimeException("Customer type not found"));
+
+    CoreUser coreUser = auxAuthService.retrieveUserFromAuth();
+
+    newCustomer.setName1(customerRequest.name1());
+    newCustomer.setName2(customerRequest.name2());
+    newCustomer.setName3(customerRequest.name3());
+    newCustomer.setLastname1(customerRequest.lastname1());
+    newCustomer.setLastname2(customerRequest.lastname2());
+    newCustomer.setLastname3(customerRequest.lastname3());
     newCustomer.setFullname(fullname);
-    newCustomer.setPersonType(customerDTO.personType());
+    newCustomer.setPersonType(personType);
     newCustomer.setDocumentType(documentType);
-    newCustomer.setDocumentNumber(customerDTO.documentNumber());
-    newCustomer.setCustomerType(customerDTO.customerType());
+    newCustomer.setDocumentNumber(customerRequest.documentNumber());
+    newCustomer.setCustomerType(customerType);
     newCustomer.setStatus(CustomerStatus.ACTIVE);
+    newCustomer.setUser(coreUser);
+    newCustomer.setCreatedAt(OffsetDateTime.now());
     newCustomer.setUpdatedAt(OffsetDateTime.now());
 
     Customer customerSaved = customerRepository.saveAndFlush(newCustomer);
 
+    CustomerResponse response =
+        CustomerResponse.builder()
+            .id(customerSaved.getId())
+            .name1(customerSaved.getName1())
+            .name2(customerSaved.getName2())
+            .name3(customerSaved.getName3())
+            .lastname1(customerSaved.getLastname1())
+            .lastname2(customerSaved.getLastname2())
+            .lastname3(customerSaved.getLastname3())
+            .personType(customerSaved.getPersonType().getName())
+            .documentType(customerSaved.getDocumentType().getName())
+            .documentNumber(customerSaved.getDocumentNumber())
+            .customerType(customerSaved.getCustomerType().getName())
+            .status(customerSaved.getStatus().toString())
+            .createdByUser(customerSaved.getUser().getUsername())
+            .creationDate(customerSaved.getCreatedAt())
+            .build();
+
     log.info("Customer successfully created:{}", customerSaved);
-    return customerSaved;
+    return response;
   }
 
-  private String generateFullname(CustomerDTO customerDTO) {
-    String fullname = customerDTO.name1();
-    if ((customerDTO.name2() != null)) fullname = fullname + " " + customerDTO.name2();
-    if ((customerDTO.name3() != null)) fullname = fullname + " " + customerDTO.name3();
-    fullname = fullname + " " + customerDTO.lastname1();
-    if ((customerDTO.lastname2() != null)) fullname = fullname + " " + customerDTO.lastname2();
-    if ((customerDTO.lastname3() != null)) fullname = fullname + " " + customerDTO.lastname3();
+  private String generateFullname(CustomerRequest customerRequest) {
+    String fullname = customerRequest.name1();
+    if ((customerRequest.name2() != null)) fullname = fullname + " " + customerRequest.name2();
+    if ((customerRequest.name3() != null)) fullname = fullname + " " + customerRequest.name3();
+    fullname = fullname + " " + customerRequest.lastname1();
+    if ((customerRequest.lastname2() != null))
+      fullname = fullname + " " + customerRequest.lastname2();
+    if ((customerRequest.lastname3() != null))
+      fullname = fullname + " " + customerRequest.lastname3();
     return fullname;
   }
 

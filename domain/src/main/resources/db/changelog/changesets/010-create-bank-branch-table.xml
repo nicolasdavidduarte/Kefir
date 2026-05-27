@@ -7,9 +7,9 @@
 
     <changeSet id="010" author="ndd">
 
-        <preConditions onFail="HALT">
+        <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="bank_branch"/>
+                <tableExists tableName="bank"/>
             </not>
         </preConditions>
 
@@ -17,7 +17,10 @@
             <column name="id" type="SMALLINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="bank" type="SMALLINT">
+            <column name="branch_number" type="SMALLINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="bank_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_bank_branch_bank"
                 referencedTableName="bank"
                 referencedColumnNames="id"/>
@@ -43,6 +46,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <addUniqueConstraint
+                tableName="bank_branch"
+                columnNames="branch_number, bank_id"
+                constraintName="uk_bank_branch"/>
 
     </changeSet>
 

@@ -7,7 +7,7 @@
 
     <changeSet id="002" author="ndd">
 
-        <preConditions onFail="CONTINUE">
+        <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="role"/>
             </not>

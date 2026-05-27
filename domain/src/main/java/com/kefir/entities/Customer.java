@@ -63,7 +63,7 @@ public class Customer {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private CoreUser userId;
+  private CoreUser user;
 
   @Column(name = "created_at", nullable = false)
   private OffsetDateTime createdAt;

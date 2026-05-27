@@ -7,7 +7,7 @@
 
     <changeSet id="000" author="ndd">
 
-        <preConditions onFail="HALT">
+        <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="idempotent_request"/>
             </not>

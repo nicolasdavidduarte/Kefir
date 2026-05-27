@@ -7,7 +7,7 @@
 
     <changeSet id="007" author="ndd">
 
-        <preConditions onFail="HALT">
+        <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="currency"/>
             </not>
@@ -17,7 +17,7 @@
             <column name="id" type="SMALLINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="ISO_code" type="VARCHAR(5)">
+            <column name="iso_code" type="VARCHAR(5)">
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="VARCHAR(50)">

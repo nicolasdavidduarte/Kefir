@@ -30,7 +30,7 @@ public class LoanOrchestrator {
   }
 
   public Loan createLoan(LoanRequest loanRequest) {
-    Customer customer = customerService.findById(loanRequest.getCustomer());
+    Customer customer = customerService.fetchById(loanRequest.getCustomer());
     if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new CustomerNotValidException("The customer is not allowed for a new loan");
 

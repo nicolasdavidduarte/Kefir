@@ -31,6 +31,8 @@ class BankService(
         ),
     ).toResponse()
 
+    fun fetchById(id: Int): Bank = bankRepository.findById(id).orElseThrow { BankNotFoundException("Bank with id $id not found") }
+
     fun enable(id: Int): EntityOperationResponse {
         val bank = bankRepository.findById(id).orElseThrow { BankNotFoundException("Bank with id $id not found") }
         bank.enable()
