@@ -3,6 +3,7 @@ package com.kefir.services;
 import com.kefir.entities.*;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.exceptions.CustomerNotFoundException;
+import com.kefir.exceptions.CustomerTypeNotValidException;
 import com.kefir.repositories.CustomerRepository;
 import com.kefir.repositories.CustomerTypeRepository;
 import com.kefir.repositories.DocumentTypeRepository;
@@ -76,7 +77,11 @@ public class CustomerService {
     CustomerType customerType =
         customerTypeRepository
             .findByNameIgnoreCase(customerRequest.customerType())
-            .orElseThrow(() -> new RuntimeException("Customer type not found"));
+            .orElseThrow(() -> new CustomerNotFoundException("Customer type not found"));
+
+    if(!customerType.isEnabled()){
+      throw new CustomerTypeNotValidException("Customer typer is not valid for the operation");
+    }
 
     CoreUser coreUser = auxAuthService.getUserFromAuth();
 

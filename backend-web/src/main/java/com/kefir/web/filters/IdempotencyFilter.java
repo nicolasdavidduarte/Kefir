@@ -179,7 +179,7 @@ public class IdempotencyFilter extends OncePerRequestFilter {
       return hexString.toString();
 
     } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException("Error generating hash", e);
+      throw new IllegalStateException("Error generating hash");
     }
   }
 

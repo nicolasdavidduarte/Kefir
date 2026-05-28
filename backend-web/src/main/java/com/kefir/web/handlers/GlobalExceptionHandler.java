@@ -21,7 +21,8 @@ public class GlobalExceptionHandler {
     LoanNotFoundException.class,
     CustomerNotFoundException.class,
     AccountNotFoundException.class,
-    BankNotFoundException.class
+    BankNotFoundException.class,
+          CustomerTypeNotFoundException.class
   })
   public ResponseEntity<Map<String, Object>> handleAllNotFound(RuntimeException ex) {
     return buildResponse(HttpStatus.NOT_FOUND, "Not Found", ex.getMessage());
@@ -40,6 +41,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(LoanTypeCreationException.class)
   public ResponseEntity<Map<String, Object>> handleLoanTypeCreation(LoanTypeCreationException ex) {
     return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, "Loan Type Exception", ex.getMessage());
+  }
+
+  @ExceptionHandler(CustomerTypeNotValidException.class)
+  public ResponseEntity<Map<String, Object>> handleCustomerTypeNotValid(CustomerTypeNotValidException ex) {
+    return buildResponse(HttpStatus.UNPROCESSABLE_ENTITY, "Customer Type Exception", ex.getMessage());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
