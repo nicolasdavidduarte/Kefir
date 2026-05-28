@@ -51,15 +51,15 @@ class AccountService(
      * @return account response
      */
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
-        val user: CoreUser = auxAuthService.retrieveUserFromAuth()
+        val user: CoreUser = auxAuthService.getUserFromAuth()
 
-        val accountType: AccountType = accountTypeService.fetchByName(accountRequest.type)
+        val accountType: AccountType = accountTypeService.getByName(accountRequest.type)
 
-        val customer: Customer = customerService.fetchById(accountRequest.customerId)
+        val customer: Customer = customerService.getById(accountRequest.customerId)
 
-        val bankBranch: BankBranch = bankBranchService.fetchByBranchNumberAndBank(requireNotNull(accountRequest.bankBranchId), requireNotNull(accountRequest.bankId))
+        val bankBranch: BankBranch = bankBranchService.getByBranchNumberAndBank(requireNotNull(accountRequest.bankBranchId), requireNotNull(accountRequest.bankId))
 
-        val currency: Currency = currencyService.findById(accountRequest.currencyId)
+        val currency: Currency = currencyService.getById(accountRequest.currencyId)
 
         val savedAccount =
             accountRepository.save(

@@ -21,12 +21,12 @@ public class CurrencyController {
   // Endpoint to retrieve all records from the person_type table
   @GetMapping
   public List<Currency> getAll() {
-    return currencyService.findAll();
+    return currencyService.getAll();
   }
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
   public Currency getById(@PathVariable Integer id) {
-    return currencyService.findById(id);
+    return currencyService.getById(id);
   }
 }

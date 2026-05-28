@@ -18,7 +18,7 @@ class BankService(
     val bankRepository: BankRepository,
     val auxAuthService: AuxAuthService,
 ) {
-    fun findAll(): List<BankResponse> = bankRepository
+    fun getAll(): List<BankResponse> = bankRepository
         .findAll()
         .map(Bank::toResponse)
         .toList()
@@ -27,11 +27,9 @@ class BankService(
     fun create(bankRequest: BankRequest): BankResponse = bankRepository.save(
         Bank(
             name = requireNotNull(bankRequest.name),
-            user = auxAuthService.retrieveUserFromAuth(),
+            user = auxAuthService.getUserFromAuth(),
         ),
     ).toResponse()
-
-    fun fetchById(id: Int): Bank = bankRepository.findById(id).orElseThrow { BankNotFoundException("Bank with id $id not found") }
 
     fun enable(id: Int): EntityOperationResponse {
         val bank = bankRepository.findById(id).orElseThrow { BankNotFoundException("Bank with id $id not found") }

@@ -15,11 +15,11 @@ public class CustomerTypeService {
     this.customerTypeRepository = customerTypeRepository;
   }
 
-  public List<CustomerType> findAll() {
+  public List<CustomerType> getAll() {
     return customerTypeRepository.findAll();
   }
 
-  public Optional<CustomerType> findById(Integer id) {
+  public Optional<CustomerType> getById(Integer id) {
     return customerTypeRepository.findById(id);
   }
 }

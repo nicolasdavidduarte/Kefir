@@ -19,22 +19,16 @@ public class CoreUserService {
     this.coreUserRepository = coreUserRepository;
   }
 
-  public List<CoreUser> fetchAll() {
+  public List<CoreUser> getAll() {
     return coreUserRepository.findAll();
   }
 
-  public Optional<CoreUser> fetchById(Integer id) {
+  public Optional<CoreUser> getById(Integer id) {
     return coreUserRepository.findById(id);
   }
 
-  public Optional<CoreUser> fetchByUsername(String username) {
-    return coreUserRepository.findByUsername(username);
-  }
-
   @Cacheable(value = "usersByUsername", key = "#username")
-  public Integer fetchIdByUsername(String username) {
-    return coreUserRepository
-        .findIdByUsername(username)
-        .orElseThrow(CoreUserNotFoundException::new);
+  public CoreUser getByUsername(String username) {
+    return coreUserRepository.findByUsername(username).orElseThrow(()-> new CoreUserNotFoundException("User not found"));
   }
 }

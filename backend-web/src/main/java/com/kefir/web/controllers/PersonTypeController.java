@@ -22,12 +22,12 @@ public class PersonTypeController {
   // Endpoint to retrieve all records from the person_type table
   @GetMapping
   public List<PersonType> getAll() {
-    return personTypeService.findAll();
+    return personTypeService.getAll();
   }
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
   public Optional<PersonType> getById(@PathVariable Integer id) {
-    return personTypeService.findById(id);
+    return personTypeService.getById(id);
   }
 }

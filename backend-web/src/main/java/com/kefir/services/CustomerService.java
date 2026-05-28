@@ -38,11 +38,11 @@ public class CustomerService {
     this.auxAuthService = auxAuthService;
   }
 
-  public List<CustomerResponse> fetchAllWithResponse() {
+  public List<CustomerResponse> getAllWithResponse() {
     return customerRepository.findAll().stream().map(CustomerResponse::toResponse).toList();
   }
 
-  public Customer fetchById(Long id) {
+  public Customer getById(Long id) {
     return customerRepository
         .findById(id)
         .orElseThrow(
@@ -50,7 +50,7 @@ public class CustomerService {
                 new CustomerNotFoundException(String.format("Customer with id %d not found", id)));
   }
 
-  public CustomerResponse fetchByIdWithResponse(Long id) {
+  public CustomerResponse getByIdWithResponse(Long id) {
     return customerRepository
         .findById(id)
         .map(CustomerResponse::toResponse)
@@ -78,7 +78,7 @@ public class CustomerService {
             .findByNameIgnoreCase(customerRequest.customerType())
             .orElseThrow(() -> new RuntimeException("Customer type not found"));
 
-    CoreUser coreUser = auxAuthService.retrieveUserFromAuth();
+    CoreUser coreUser = auxAuthService.getUserFromAuth();
 
     newCustomer.setName1(customerRequest.name1());
     newCustomer.setName2(customerRequest.name2());

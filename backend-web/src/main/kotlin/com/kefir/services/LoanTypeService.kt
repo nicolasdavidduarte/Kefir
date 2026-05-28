@@ -18,14 +18,14 @@ class LoanTypeService(
 ) {
     fun getAllLoanTypes(): List<LoanType> = loanTypeRepository.findAll()
 
-    fun fetchByNameIgnoringCase(name: LoanTypeName): LoanType = loanTypeRepository.findByNameIgnoringCase(name.name).orElseThrow { throw LoanTypeNotFoundException() }
+    fun getByNameIgnoringCase(name: LoanTypeName): LoanType = loanTypeRepository.findByNameIgnoringCase(name.name).orElseThrow { throw LoanTypeNotFoundException() }
 
     @Transactional
     fun create(loanTypeRequest: LoanTypeRequest): LoanTypeResponse {
         val loanType = LoanType(
             name = loanTypeRequest.name,
             description = loanTypeRequest.description,
-            user = auxAuthService.retrieveUserFromAuth(),
+            user = auxAuthService.getUserFromAuth(),
         )
 
         val savedLoanType = loanTypeRepository.save(loanType)

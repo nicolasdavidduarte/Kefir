@@ -24,13 +24,13 @@ public class LoanOrchestrator {
   @Observed(name = "loan.orchestrated.get")
   public LoanResponse getLoanData(Long loanId) {
     return loanService
-        .findById(loanId)
+        .getById(loanId)
         .map(this::toLoanDataDTO)
         .orElseThrow(() -> new LoanNotFoundException(loanId));
   }
 
   public LoanResponse createLoan(LoanRequest loanRequest) {
-    Customer customer = customerService.fetchById(loanRequest.customerId());
+    Customer customer = customerService.getById(loanRequest.customerId());
     if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new CustomerNotValidException("The customer is not allowed for a new loan");
 

@@ -15,17 +15,10 @@ public class AuxAuthService {
     this.coreUserService = coreUserService;
   }
 
-  public Integer retrieveUserIdFromAuth() {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-    return coreUserService.fetchIdByUsername(auth.getPrincipal().toString());
-  }
-
-  public CoreUser retrieveUserFromAuth() {
+  public CoreUser getUserFromAuth() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
     return coreUserService
-        .fetchByUsername(auth.getPrincipal().toString())
-        .orElseThrow(() -> new CoreUserNotFoundException("User not found"));
+        .getByUsername(auth.getPrincipal().toString());
   }
 }

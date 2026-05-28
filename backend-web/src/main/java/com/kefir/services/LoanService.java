@@ -54,12 +54,12 @@ public class LoanService {
   }
 
   @Cacheable("loans")
-  public List<Loan> findAll() {
+  public List<Loan> getAll() {
     return loanRepository.findAll();
   }
 
   @Observed(name = "loan.service.get")
-  public Optional<Loan> findById(Long id) {
+  public Optional<Loan> getById(Long id) {
     log.info("Loan search for id: {}", id);
     return loanRepository.findById(id);
   }
@@ -120,13 +120,13 @@ public class LoanService {
 
   private Loan createLoan(LoanRequest loanRequest) {
 
-    CoreUser user = auxAuthService.retrieveUserFromAuth();
+    CoreUser user = auxAuthService.getUserFromAuth();
 
-    Customer customer = customerService.fetchById(loanRequest.customerId());
+    Customer customer = customerService.getById(loanRequest.customerId());
 
-    LoanType loanType = loanTypeService.fetchByNameIgnoringCase(loanRequest.loanType());
+    LoanType loanType = loanTypeService.getByNameIgnoringCase(loanRequest.loanType());
 
-    Currency currency = currencyService.fetchByIsoCode(loanRequest.currencyIsoCode());
+    Currency currency = currencyService.getByIsoCode(loanRequest.currencyIsoCode());
 
     Loan loan =
         Loan.builder()

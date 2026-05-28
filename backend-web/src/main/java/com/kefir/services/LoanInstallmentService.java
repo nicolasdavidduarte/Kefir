@@ -31,7 +31,7 @@ public class LoanInstallmentService {
   }
 
   private void createInstallment(int number, Loan loan, BigDecimal loanTotalAmount) {
-    CoreUser user = auxAuthService.retrieveUserFromAuth();
+    CoreUser user = auxAuthService.getUserFromAuth();
     LoanInstallment loanInstallment =
         LoanInstallment.createNew(loan, number, loanTotalAmount, user);
 

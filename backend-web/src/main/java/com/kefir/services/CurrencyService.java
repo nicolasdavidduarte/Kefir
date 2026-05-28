@@ -16,17 +16,17 @@ public class CurrencyService {
     this.currencyRepository = currencyRepository;
   }
 
-  public List<Currency> findAll() {
+  public List<Currency> getAll() {
     return currencyRepository.findAll();
   }
 
-  public Currency findById(Integer id) {
+  public Currency getById(Integer id) {
     return currencyRepository
         .findById(id)
         .orElseThrow(() -> new CurrencyNotFoundException("Currency not found"));
   }
 
-  public Currency fetchByIsoCode(CurrencyIsoCodes isoCode) {
+  public Currency getByIsoCode(CurrencyIsoCodes isoCode) {
     return currencyRepository
         .findByIsoCode(isoCode.toString())
         .orElseThrow(() -> new CurrencyNotFoundException("Currency not found"));

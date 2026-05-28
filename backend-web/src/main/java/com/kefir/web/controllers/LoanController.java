@@ -58,7 +58,7 @@ public class LoanController {
 
   @GetMapping
   public List<Loan> getAll() {
-    return loanService.findAll();
+    return loanService.getAll();
   }
 
   // Endpoint to retrieve a single record by ID using a JSON request body

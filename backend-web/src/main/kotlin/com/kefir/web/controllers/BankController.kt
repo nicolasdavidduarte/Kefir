@@ -19,7 +19,7 @@ class BankController(
     val bankService: BankService,
 ) {
     @GetMapping
-    fun getAllBanks(): List<BankResponse> = bankService.findAll()
+    fun getAllBanks(): List<BankResponse> = bankService.getAll()
 
     @PostMapping
     fun createBank(

@@ -22,12 +22,12 @@ public class CoreUserController {
   // Endpoint to retrieve all records from the core_user table
   @GetMapping
   public List<CoreUser> getAll() {
-    return coreUserService.fetchAll();
+    return coreUserService.getAll();
   }
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
   public Optional<CoreUser> getById(@PathVariable Integer id) {
-    return coreUserService.fetchById(id);
+    return coreUserService.getById(id);
   }
 }

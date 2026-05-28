@@ -15,11 +15,11 @@ public class PersonTypeService {
     this.personTypeRepository = personTypeRepository;
   }
 
-  public List<PersonType> findAll() {
+  public List<PersonType> getAll() {
     return personTypeRepository.findAll();
   }
 
-  public Optional<PersonType> findById(Integer id) {
+  public Optional<PersonType> getById(Integer id) {
     return personTypeRepository.findById(id);
   }
 }

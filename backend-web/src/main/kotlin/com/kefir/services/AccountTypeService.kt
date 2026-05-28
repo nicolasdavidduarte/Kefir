@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.Transactional
 class AccountTypeService(
     val accountTypeRepository: AccountTypeRepository,
 ) {
-    fun fetchByName(name: String?): AccountType = accountTypeRepository.findByNameIgnoreCase(name) ?: throw RuntimeException("Account type not found")
+    fun getByName(name: String?): AccountType = accountTypeRepository.findByNameIgnoreCase(name) ?: throw RuntimeException("Account type not found")
 }

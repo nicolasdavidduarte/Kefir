@@ -77,7 +77,7 @@ class LoanControllerIT {
             .build();
 
     List<Loan> loans = List.of(loan);
-    when(loanService.findAll()).thenReturn(loans);
+    when(loanService.getAll()).thenReturn(loans);
 
     //    mockMvc
     //        .perform(get("/api/loans"))

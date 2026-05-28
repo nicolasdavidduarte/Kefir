@@ -25,13 +25,13 @@ public class CustomerController {
   // Endpoint to retrieve all records from the core_user table
   @GetMapping
   public List<CustomerResponse> getAll() {
-    return customerService.fetchAllWithResponse();
+    return customerService.getAllWithResponse();
   }
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
   public CustomerResponse getById(@PathVariable Long id) {
-    return customerService.fetchByIdWithResponse(id);
+    return customerService.getByIdWithResponse(id);
   }
 
   // Create a new customer
