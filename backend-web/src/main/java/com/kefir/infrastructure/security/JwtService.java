@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
@@ -19,14 +21,16 @@ public class JwtService {
   private SecretKey cachedKey;
 
   public String generateToken(String username, List<String> roles) {
+    Instant now = Instant.now();
+    Instant expiry = now.plus(1, ChronoUnit.HOURS);
+
     return Jwts.builder()
         .claims() // Replacement for setClaims
         .add("roles", roles)
         .and()
         .subject(username) // setSubject -> subject
-        .issuedAt(new Date()) // setIssuedAt -> issuedAt
-        .expiration(
-            new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // setExpiration -> expiration
+        .issuedAt(Date.from(now)) // setIssuedAt -> issuedAt
+        .expiration(Date.from(expiry)) // setExpiration -> expiration
         .signWith(getSecretKey())
         .compact();
   }
@@ -49,7 +53,7 @@ public class JwtService {
   }
 
   public boolean isTokenExpired(String token) {
-    return extractExpiration(token).before(new Date());
+    return extractExpiration(token).before(Date.from(Instant.now()));
   }
 
   public Date extractExpiration(String token) {

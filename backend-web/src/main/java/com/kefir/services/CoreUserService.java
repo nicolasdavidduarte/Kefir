@@ -5,7 +5,6 @@ import com.kefir.exceptions.CoreUserNotFoundException;
 import com.kefir.repositories.CoreUserRepository;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +26,9 @@ public class CoreUserService {
     return coreUserRepository.findById(id);
   }
 
-  @Cacheable(value = "usersByUsername", key = "#username")
   public CoreUser getByUsername(String username) {
-    return coreUserRepository.findByUsername(username).orElseThrow(()-> new CoreUserNotFoundException("User not found"));
+    return coreUserRepository
+        .findByUsername(username)
+        .orElseThrow(() -> new CoreUserNotFoundException("User not found"));
   }
 }

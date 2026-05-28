@@ -91,7 +91,7 @@ public class CustomerService {
     newCustomer.setDocumentType(documentType);
     newCustomer.setDocumentNumber(customerRequest.documentNumber());
     newCustomer.setCustomerType(customerType);
-    newCustomer.setStatus(CustomerStatus.ACTIVE);
+    newCustomer.setStatus(CustomerStatus.PENDING);
     newCustomer.setUser(coreUser);
     newCustomer.setCreatedAt(OffsetDateTime.now());
     newCustomer.setUpdatedAt(OffsetDateTime.now());
@@ -121,15 +121,21 @@ public class CustomerService {
   }
 
   private String generateFullname(CustomerRequest customerRequest) {
-    String fullname = customerRequest.name1();
-    if ((customerRequest.name2() != null)) fullname = fullname + " " + customerRequest.name2();
-    if ((customerRequest.name3() != null)) fullname = fullname + " " + customerRequest.name3();
-    fullname = fullname + " " + customerRequest.lastname1();
+    StringBuilder fullname = new StringBuilder();
+
+    fullname.append(customerRequest.name1());
+
+    if ((customerRequest.name2() != null)) fullname.append(' ').append(customerRequest.name2());
+    if ((customerRequest.name3() != null)) fullname.append(' ').append(customerRequest.name3());
+
+    fullname.append(' ').append(customerRequest.lastname1());
+
     if ((customerRequest.lastname2() != null))
-      fullname = fullname + " " + customerRequest.lastname2();
+      fullname.append(' ').append(customerRequest.lastname2());
     if ((customerRequest.lastname3() != null))
-      fullname = fullname + " " + customerRequest.lastname3();
-    return fullname;
+      fullname.append(' ').append(customerRequest.lastname3());
+
+    return fullname.toString();
   }
 
   @Transactional

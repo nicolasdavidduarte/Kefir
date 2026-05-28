@@ -1,6 +1,7 @@
 package com.kefir.web.handlers;
 
 import com.kefir.exceptions.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +50,12 @@ public class GlobalExceptionHandler {
         .forEach(err -> fieldErrors.put(err.getField(), err.getDefaultMessage()));
 
     return buildResponse(HttpStatus.BAD_REQUEST, "Validation Error", fieldErrors);
+  }
+
+  @ExceptionHandler(ExpiredJwtException.class)
+  public ResponseEntity<Map<String, Object>> handleExpiredJwtException(ExpiredJwtException ex) {
+    return buildResponse(
+        HttpStatus.UNAUTHORIZED, "Token expired. Please log again", ex.getMessage());
   }
 
   @ExceptionHandler(AccessDeniedException.class)

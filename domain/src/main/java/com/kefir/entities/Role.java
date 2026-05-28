@@ -1,5 +1,6 @@
 package com.kefir.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.Set;
@@ -33,6 +34,7 @@ public class Role {
   private OffsetDateTime updatedAt;
 
   @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
+  @JsonIgnore
   private Set<CoreUser> users;
 
   public Role() {}

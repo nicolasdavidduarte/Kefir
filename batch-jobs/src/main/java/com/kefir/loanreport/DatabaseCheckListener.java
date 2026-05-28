@@ -5,6 +5,7 @@ import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
+import org.springframework.dao.DataAccessException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +22,7 @@ public class DatabaseCheckListener implements JobExecutionListener {
       if (log.isInfoEnabled()) {
         log.info("✅ Database connection verified");
       }
-    } catch (Exception e) {
+    } catch (DataAccessException e) {
       if (log.isErrorEnabled()) {
         log.error("❌ ERROR: Cannot connect to the database");
       }

@@ -1,7 +1,6 @@
 package com.kefir.services;
 
 import com.kefir.entities.CoreUser;
-import com.kefir.exceptions.CoreUserNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ public class AuxAuthService {
   public CoreUser getUserFromAuth() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-    return coreUserService
-        .getByUsername(auth.getPrincipal().toString());
+    return coreUserService.getByUsername(auth.getPrincipal().toString());
   }
 }

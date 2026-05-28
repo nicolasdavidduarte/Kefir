@@ -3,7 +3,6 @@ package com.kefir.web.dtos;
 import com.kefir.enums.LoanStatus;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-
 import lombok.*;
 
 @Getter

@@ -1,5 +1,8 @@
 package com.kefir.infrastructure.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,6 +11,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,15 +19,20 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Slf4j
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
   private final JwtService jwtService;
+  private final HandlerExceptionResolver resolver;
 
-  public JwtAuthFilter(JwtService jwtService) {
+  public JwtAuthFilter(
+      JwtService jwtService,
+      @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
     this.jwtService = jwtService;
+    this.resolver = resolver;
   }
 
   @Override
@@ -51,10 +60,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
           SecurityContextHolder.getContext().setAuthentication(auth);
         }
+      } catch (ExpiredJwtException | SignatureException | MalformedJwtException e) {
+        // 1. Hand the exception to the GlobalExceptionHandler
+        resolver.resolveException(request, response, null, e);
+        return;
       } catch (Exception e) {
         SecurityContextHolder.clearContext();
-        log.debug("Security context cleared due to exception: {}", e.getMessage());
-        log.error("Unexpected error during authentication", e);
+        if (log.isDebugEnabled())
+          log.debug("Security context cleared due to exception: {}", e.getMessage());
+        if (log.isErrorEnabled())
+          log.error("Unexpected error during authentication: {}", e.getMessage());
       }
     }
 

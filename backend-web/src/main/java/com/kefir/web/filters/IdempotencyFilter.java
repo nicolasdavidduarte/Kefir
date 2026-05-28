@@ -1,5 +1,6 @@
 package com.kefir.web.filters;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.kefir.enums.IdempotencyState;
@@ -11,6 +12,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -155,8 +157,8 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     try {
       Object json = objectMapper.readValue(body, Object.class);
       return objectMapper.writeValueAsString(json);
-    } catch (Exception e) {
-      throw new RuntimeException("Error normalizing JSON", e);
+    } catch (JsonProcessingException e) {
+      throw new UncheckedIOException("Error normalizing JSON", e);
     }
   }
 

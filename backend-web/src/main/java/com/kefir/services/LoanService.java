@@ -10,7 +10,6 @@ import com.kefir.web.dtos.LoanRequest;
 import com.kefir.web.dtos.LoanResponse;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -82,23 +81,22 @@ public class LoanService {
       snsPublisher.publishLoanCreated(loanSaved.getId(), loanSaved.getTotalOperationAmount());
 
       return LoanResponse.builder()
-              .id(loanSaved.getId())
-              .customer(loanSaved.getCustomer().getId())
-              .loanType(loanSaved.getLoanType().getName())
-              .totalOperationAmount(loanSaved.getTotalOperationAmount())
-              .openingDate(loanSaved.getOpeningDate())
-              .currency(loanSaved.getCurrency().getIsoCode())
-              .expirationDate(loanSaved.getExpirationDate())
-              .numberOfInstallments(loanSaved.getNumberOfInstallments())
-              .status(loanSaved.getStatus())
-              .createdAt(loanSaved.getCreatedAt())
-              .user(loanSaved.getUser().getUsername())
-              .build();
+          .id(loanSaved.getId())
+          .customer(loanSaved.getCustomer().getId())
+          .loanType(loanSaved.getLoanType().getName())
+          .totalOperationAmount(loanSaved.getTotalOperationAmount())
+          .openingDate(loanSaved.getOpeningDate())
+          .currency(loanSaved.getCurrency().getIsoCode())
+          .expirationDate(loanSaved.getExpirationDate())
+          .numberOfInstallments(loanSaved.getNumberOfInstallments())
+          .status(loanSaved.getStatus())
+          .createdAt(loanSaved.getCreatedAt())
+          .user(loanSaved.getUser().getUsername())
+          .build();
 
-
-    } catch (Exception e) {
+    } catch (CustomerCreationException e) {
       registry.counter("loan.created", "status", "error").increment();
-      throw new CustomerCreationException(e);
+      throw e;
     }
   }
 

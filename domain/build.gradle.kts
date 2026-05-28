@@ -25,6 +25,7 @@ dependencies {
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlin:kotlin-reflect:2.0.21")
+    implementation("com.fasterxml.jackson.core:jackson-annotations")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
