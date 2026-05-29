@@ -7,12 +7,6 @@
 
     <changeSet id="019" author="ndd">
 
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="refresh_token"/>
-            </not>
-        </preConditions>
-
         <createTable tableName="refresh_token">
             <column name="id" type="BIGINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>

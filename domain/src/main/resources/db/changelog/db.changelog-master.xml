@@ -25,5 +25,6 @@
     <include file="/db/changelog/changesets/017-create-loan-installment-payment-table.xml"/>
     <include file="/db/changelog/changesets/018-create-operation-log-table.xml"/>
     <include file="/db/changelog/changesets/019-create-refresh-token-table.xml"/>
+    <include file="/db/changelog/changesets/020-insert-baseline-data.xml"/>
 
 </databaseChangeLog>

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
+
+    <changeSet id="020" author="ndd">
+        <insert schemaName="public" tableName="role">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="ADMIN"/>
+            <column name="description" value="Administrator"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="role">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="OPR"/>
+            <column name="description" value="Operator"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="role">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="VIEWER"/>
+            <column name="description" value="Read-Only"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="core_user">
+            <column name="id" valueNumeric="1"/>
+            <column name="username" value="ADMIN"/>
+            <column name="password" value="$2a$12$yR0/hohoNqS.OZ1UmlGi6ObZKjguvZQvE9BOXMNsDasVR/6Expm5C"/>
+            <column name="fullname" value="Core Administrator User"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="core_user">
+            <column name="id" valueNumeric="2"/>
+            <column name="username" value="OPR"/>
+            <column name="password" value="$2a$12$TREGK9z69BWkHefhdEPBpu/EZm/NU4uhSMtuDMFP.k81XXtR7NQue"/>
+            <column name="fullname" value="Operator User"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="core_user">
+            <column name="id" valueNumeric="3"/>
+            <column name="username" value="VIEWER"/>
+            <column name="password" value="$2a$12$z0CDIlR4JGfcFU.TFT8k8udcmy3fihJFkprvLq4S0zxRHALeggZyK"/>
+            <column name="fullname" value="Read-Only User"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="user_role">
+            <column name="user_id" valueNumeric="1"/>
+            <column name="role_id" valueNumeric="1"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="user_role">
+            <column name="user_id" valueNumeric="2"/>
+            <column name="role_id" valueNumeric="2"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="user_role">
+            <column name="user_id" valueNumeric="3"/>
+            <column name="role_id" valueNumeric="3"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="account_type">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Savings Account"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="account_type">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="Checking Account"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="bank">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Kefir Bank"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="bank_branch">
+            <column name="id" valueNumeric="1"/>
+            <column name="branch_number" valueNumeric="1"/>
+            <column name="bank_id" valueNumeric="1"/>
+            <column name="name" value="Main Branch"/>
+            <column name="address" value="Maure 2262"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="currency">
+            <column name="id" valueNumeric="1"/>
+            <column name="iso_code" value="USD"/>
+            <column name="description" value="United States Dollar"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="currency">
+            <column name="id" valueNumeric="2"/>
+            <column name="iso_code" value="ARS"/>
+            <column name="description" value="Argentine Peso"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="currency">
+            <column name="id" valueNumeric="3"/>
+            <column name="iso_code" value="EUR"/>
+            <column name="description" value="Euro"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="customer_type">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Retail"/>
+            <column name="description" value="Retail"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="customer_type">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="Corporate"/>
+            <column name="description" value="Corporate"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="document_type">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="DNI"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="document_type">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="Passport"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="loan_type">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="FRENCH"/>
+            <column name="description" value="Fully amortized loan where each installment (payment) remains fixed over the loan period..."/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="loan_type">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="GERMAN"/>
+            <column name="description" value="Has low or no payments during the term..."/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="loan_type">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="AMERICAN"/>
+            <column name="description" value="Focus on periodic interest payments with a single principal repayment at the end."/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="payment_method">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Homebanking"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="payment_method">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="ATM"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="payment_method">
+            <column name="id" valueNumeric="3"/>
+            <column name="name" value="Cash"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="payment_method">
+            <column name="id" valueNumeric="4"/>
+            <column name="name" value="Check"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="person_type">
+            <column name="id" valueNumeric="1"/>
+            <column name="name" value="Natural"/>
+            <column name="description" value="Natural"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
+        </insert>
+        <insert schemaName="public" tableName="person_type">
+            <column name="id" valueNumeric="2"/>
+            <column name="name" value="Juridical"/>
+            <column name="description" value="Juridical"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueNumeric="1"/>
+            <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

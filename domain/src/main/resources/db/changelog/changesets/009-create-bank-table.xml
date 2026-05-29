@@ -7,12 +7,6 @@
 
     <changeSet id="009" author="ndd">
 
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="bank"/>
-            </not>
-        </preConditions>
-
         <createTable tableName="bank">
             <column name="id" type="SMALLINT" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
