@@ -11,6 +11,7 @@ NC='\033[0m'
 
 print_status() { echo -e "${BLUE}[INFO]${NC} $1"; }
 print_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+print_warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
 
 # 1. Get the directory where the script is located (The Root)
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -38,18 +39,29 @@ snyk iac test "$PROJECT_ROOT" --severity-threshold=high
 
 # --- SCAN 3: Backend Docker Image ---
 print_status "Building and scanning backend Docker image..."
-cd devops/docker
-docker build -f dockerfile -t kefir-backend:latest ../../backend-web
+docker build \
+  -f "$PROJECT_ROOT/devops/docker/dockerfile" \
+  -t kefir-backend:latest \
+  "$PROJECT_ROOT/backend-web"
 
 # Snyk container scan uses the Dockerfile to provide base-image remediation advice
-snyk container test kefir-backend:latest --file=dockerfile --severity-threshold=high
+snyk container test \
+  kefir-backend:latest \
+  --file="$PROJECT_ROOT/devops/docker/dockerfile" \
+  --severity-threshold=high
 
 # --- SCAN 4: PostgreSQL Custom Image ---
 print_status "Building and scanning PostgreSQL custom image..."
-cd devops/docker/postgres-custom
-docker build -f dockerfile -t kefir-postgres:latest .
 
-snyk container test kefir-postgres:latest --file=dockerfile --severity-threshold=high
+docker build \
+  -f "$PROJECT_ROOT/devops/docker/postgres-custom/dockerfile" \
+  -t kefir-postgres:latest \
+  "$PROJECT_ROOT/devops/docker/postgres-custom"
+
+snyk container test \
+  kefir-postgres:latest \
+  --file="$PROJECT_ROOT/devops/docker/postgres-custom/dockerfile" \
+  --severity-threshold=high
 
 # --- SCAN 5: Code Analysis (SAST) ---
 # Scans your source code (Java/Kotlin/etc) for insecure coding patterns
@@ -61,6 +73,5 @@ print_status "Snyk security scan completed successfully!"
 print_warning "Review the findings above. Use 'snyk monitor' to track in the Snyk Dashboard."
 
 # Cleanup
-cd devops/docker
 docker rmi kefir-backend:latest kefir-postgres:latest 2>/dev/null || true
 print_status "Cleaned up temporary Docker images"
