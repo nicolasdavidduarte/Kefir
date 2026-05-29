@@ -21,12 +21,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-  private static final Map<String, String> CONSTRAINT_MESSAGES = Map.of(
+  private static final Map<String, String> CONSTRAINT_MESSAGES =
+      Map.of(
           "uk_external_id", "External id already exists",
           "uk_customer_document", "Customer document already exists",
-          "uk_account_cbu", "CBU already exists"
-  );
+          "uk_account_cbu", "CBU already exists");
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ApiErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
@@ -58,7 +57,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(DataIntegrityViolationException.class)
   public ResponseEntity<ApiErrorResponse> handleDataIntegrityViolation(
-          DataIntegrityViolationException ex) {
+      DataIntegrityViolationException ex) {
 
     String constraintName = null;
 
@@ -72,16 +71,10 @@ public class GlobalExceptionHandler {
       cause = cause.getCause();
     }
 
-    String message = CONSTRAINT_MESSAGES.getOrDefault(
-            constraintName,
-            "Database integrity violation"
-    );
+    String message =
+        CONSTRAINT_MESSAGES.getOrDefault(constraintName, "Database integrity violation");
 
-    return buildResponse(
-            HttpStatus.CONFLICT,
-            "Conflict",
-            message
-    );
+    return buildResponse(HttpStatus.CONFLICT, "Conflict", message);
   }
 
   @ExceptionHandler(ApiException.class)
@@ -91,31 +84,23 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<ApiErrorResponse> handleInvalidJson(
-          HttpMessageNotReadableException ex) {
+  public ResponseEntity<ApiErrorResponse> handleInvalidJson(HttpMessageNotReadableException ex) {
 
     Throwable cause = ex.getCause();
 
     if (cause instanceof InvalidFormatException ife && ife.getTargetType().isEnum()) {
 
-        String fieldName = ife.getPath().getFirst().getFieldName();
+      String fieldName = ife.getPath().getFirst().getFieldName();
 
-        Object[] acceptedValues = ife.getTargetType().getEnumConstants();
+      Object[] acceptedValues = ife.getTargetType().getEnumConstants();
 
-        return buildResponse(
-                HttpStatus.BAD_REQUEST,
-                "Invalid enum value",
-                "Field '%s' accepts: %s"
-                        .formatted(fieldName, java.util.Arrays.toString(acceptedValues))
-        );
-      }
+      return buildResponse(
+          HttpStatus.BAD_REQUEST,
+          "Invalid enum value",
+          "Field '%s' accepts: %s".formatted(fieldName, java.util.Arrays.toString(acceptedValues)));
+    }
 
-
-    return buildResponse(
-            HttpStatus.BAD_REQUEST,
-            "Malformed request",
-            "Invalid request body"
-    );
+    return buildResponse(HttpStatus.BAD_REQUEST, "Malformed request", "Invalid request body");
   }
 
   private ResponseEntity<ApiErrorResponse> buildResponse(
@@ -126,6 +111,4 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.status(status).body(apiErrorResponse);
   }
-
-
 }

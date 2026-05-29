@@ -39,7 +39,7 @@ snyk iac test "$PROJECT_ROOT" --severity-threshold=high
 
 # --- SCAN 3: Backend Docker Image ---
 print_status "Building and scanning backend Docker image..."
-docker build \
+docker build --pull --no-cache \
   -f "$PROJECT_ROOT/devops/docker/dockerfile" \
   -t kefir-backend:latest \
   "$PROJECT_ROOT/backend-web"
@@ -53,7 +53,7 @@ snyk container test \
 # --- SCAN 4: PostgreSQL Custom Image ---
 print_status "Building and scanning PostgreSQL custom image..."
 
-docker build \
+docker build --pull --no-cache \
   -f "$PROJECT_ROOT/devops/docker/postgres-custom/dockerfile" \
   -t kefir-postgres:latest \
   "$PROJECT_ROOT/devops/docker/postgres-custom"
