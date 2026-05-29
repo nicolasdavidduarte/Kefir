@@ -1,16 +1,5 @@
 package com.kefir.web.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.OffsetDateTime;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class AuthResponse {
-
-  private String accessToken;
-  private String refreshToken;
-}
+public record AuthResponse(String accessToken, OffsetDateTime createdAt) {}

@@ -1,5 +1,6 @@
 package com.kefir.infrastructure.security;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -8,8 +9,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;
@@ -44,33 +46,88 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     final String header = request.getHeader("Authorization");
 
-    if (header != null && header.startsWith("Bearer ")) {
-      final String token = header.substring(7);
+    if (header == null || !header.startsWith("Bearer ")) {
+      filterChain.doFilter(request, response);
+      return;
+    }
 
-      try {
-        final String username = jwtService.extractUsername(token);
-        final List<String> roles = jwtService.extractRoles(token);
+    final String token = header.substring(7);
 
-        final List<GrantedAuthority> authorities =
-            roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    try {
 
-        if (username != null && jwtService.isTokenValid(token, username)) {
-          final UsernamePasswordAuthenticationToken auth =
-              new UsernamePasswordAuthenticationToken(username, null, authorities);
+      // Parse the JWT only once
+      final Claims claims = jwtService.extractAllClaims(token);
 
-          SecurityContextHolder.getContext().setAuthentication(auth);
-        }
-      } catch (ExpiredJwtException | SignatureException | MalformedJwtException e) {
-        // 1. Hand the exception to the GlobalExceptionHandler
-        resolver.resolveException(request, response, null, e);
+      final String username = claims.getSubject();
+
+      if (username == null || username.isBlank()) {
+        filterChain.doFilter(request, response);
         return;
-      } catch (Exception e) {
-        SecurityContextHolder.clearContext();
-        if (log.isDebugEnabled())
-          log.debug("Security context cleared due to exception: {}", e.getMessage());
-        if (log.isErrorEnabled())
-          log.error("Unexpected error during authentication: {}", e.getMessage());
       }
+
+      // Validate expiration
+      final Date expiration = claims.getExpiration();
+      final Date now = Date.from(Instant.now());
+
+      if (expiration.before(now)) {
+        throw new ExpiredJwtException(null, claims, "JWT token expired");
+      }
+
+      // Extract roles safely
+      final Object rolesObject = claims.get("roles");
+
+      final List<GrantedAuthority> authorities =
+          rolesObject instanceof List<?> list
+              ? list.stream()
+                  .map(Object::toString)
+                  .map(SimpleGrantedAuthority::new)
+                  .map(GrantedAuthority.class::cast)
+                  .toList()
+              : List.of();
+
+      final UsernamePasswordAuthenticationToken auth =
+          new UsernamePasswordAuthenticationToken(username, null, authorities);
+
+      SecurityContextHolder.getContext().setAuthentication(auth);
+
+      if (log.isDebugEnabled()) {
+        log.debug(
+            "Authenticated user '{}' with roles {}. Token expires at {}",
+            username,
+            authorities,
+            expiration);
+      }
+
+    } catch (ExpiredJwtException e) {
+
+      SecurityContextHolder.clearContext();
+
+      if (log.isDebugEnabled()) {
+        log.debug("JWT token expired: {}", e.getMessage());
+      }
+
+      resolver.resolveException(request, response, null, e);
+      return;
+
+    } catch (SignatureException | MalformedJwtException e) {
+
+      SecurityContextHolder.clearContext();
+
+      if (log.isDebugEnabled()) {
+        log.debug("Invalid JWT token: {}", e.getMessage());
+      }
+
+      resolver.resolveException(request, response, null, e);
+      return;
+
+    } catch (Exception e) {
+
+      SecurityContextHolder.clearContext();
+
+      log.error("Unexpected error during JWT authentication", e);
+
+      resolver.resolveException(request, response, null, e);
+      return;
     }
 
     filterChain.doFilter(request, response);

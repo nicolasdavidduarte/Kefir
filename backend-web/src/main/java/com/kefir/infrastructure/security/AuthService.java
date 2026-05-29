@@ -4,6 +4,7 @@ import com.kefir.entities.CoreUser;
 import com.kefir.entities.RefreshToken;
 import com.kefir.repositories.CoreUserRepository;
 import com.kefir.web.dtos.AuthResponse;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,9 +40,7 @@ public class AuthService {
 
     final String accessToken = jwtService.generateToken(username, roles);
 
-    final RefreshToken refreshToken = refreshTokenService.createToken(user);
-
-    return new AuthResponse(accessToken, refreshToken.getToken());
+    return new AuthResponse(accessToken, OffsetDateTime.now());
   }
 
   public AuthResponse refresh(String refreshToken) {
@@ -59,6 +58,6 @@ public class AuthService {
 
     final String newAccessToken = jwtService.generateToken(user.getUsername(), roles);
 
-    return new AuthResponse(newAccessToken, newToken.getToken());
+    return new AuthResponse(newAccessToken, OffsetDateTime.now());
   }
 }
