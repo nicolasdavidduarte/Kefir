@@ -110,7 +110,7 @@ public class LoanService {
 
   @Transactional
   public void deleteLoan(Long id) {
-    Loan loan = loanRepository.findById(id).orElseThrow(() -> new LoanNotFoundException(id));
+    Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
     loanRepository.delete(loan);
 
     log.info("Loan successfully deleted: {}", loan);

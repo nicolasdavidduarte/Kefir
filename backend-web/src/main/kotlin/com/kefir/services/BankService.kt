@@ -22,7 +22,7 @@ class BankService(
         .findAll()
         .map(Bank::toResponse)
         .toList()
-        .ifEmpty { throw BankNotFoundException("No banks found") }
+        .ifEmpty { throw BankNotFoundException() }
 
     fun create(bankRequest: BankRequest): BankResponse = bankRepository.save(
         Bank(
@@ -32,7 +32,7 @@ class BankService(
     ).toResponse()
 
     fun enable(id: Int): EntityOperationResponse {
-        val bank = bankRepository.findById(id).orElseThrow { BankNotFoundException("Bank with id $id not found") }
+        val bank = bankRepository.findById(id).orElseThrow { BankNotFoundException() }
         bank.enable()
         bankRepository.save(bank)
 

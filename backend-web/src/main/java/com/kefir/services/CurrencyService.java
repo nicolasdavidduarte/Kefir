@@ -21,14 +21,12 @@ public class CurrencyService {
   }
 
   public Currency getById(Integer id) {
-    return currencyRepository
-        .findById(id)
-        .orElseThrow(() -> new CurrencyNotFoundException("Currency not found"));
+    return currencyRepository.findById(id).orElseThrow(CurrencyNotFoundException::new);
   }
 
   public Currency getByIsoCode(CurrencyIsoCodes isoCode) {
     return currencyRepository
         .findByIsoCode(isoCode.toString())
-        .orElseThrow(() -> new CurrencyNotFoundException("Currency not found"));
+        .orElseThrow(CurrencyNotFoundException::new);
   }
 }

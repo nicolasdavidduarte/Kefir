@@ -27,8 +27,6 @@ public class CoreUserService {
   }
 
   public CoreUser getByUsername(String username) {
-    return coreUserRepository
-        .findByUsername(username)
-        .orElseThrow(() -> new CoreUserNotFoundException("User not found"));
+    return coreUserRepository.findByUsername(username).orElseThrow(CoreUserNotFoundException::new);
   }
 }

@@ -1,14 +1,11 @@
 package com.kefir.web.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kefir.entities.Loan;
 import com.kefir.orchestrators.LoanOrchestrator;
-import com.kefir.repositories.IdempotentRequestRepository;
 import com.kefir.services.LoanService;
 import com.kefir.web.dtos.LoanRequest;
 import com.kefir.web.dtos.LoanResponse;
 import io.micrometer.core.annotation.Timed;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,23 +34,9 @@ public class LoanController {
   private final LoanService loanService;
   private final LoanOrchestrator loanOrchestrator;
 
-  private final IdempotentRequestRepository idempotentRepo;
-
-  private final ObjectMapper objectMapper;
-
-  private final MeterRegistry meterRegistry;
-
-  public LoanController(
-      LoanService loanService,
-      LoanOrchestrator loanOrchestrator,
-      IdempotentRequestRepository idempotentRequestRepository,
-      ObjectMapper objectMapper,
-      MeterRegistry meterRegistry) {
+  public LoanController(LoanService loanService, LoanOrchestrator loanOrchestrator) {
     this.loanService = loanService;
     this.loanOrchestrator = loanOrchestrator;
-    this.idempotentRepo = idempotentRequestRepository;
-    this.objectMapper = objectMapper;
-    this.meterRegistry = meterRegistry;
   }
 
   @GetMapping

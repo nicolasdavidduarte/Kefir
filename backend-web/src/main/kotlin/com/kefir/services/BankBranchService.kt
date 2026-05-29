@@ -12,5 +12,5 @@ class BankBranchService(
     val bankBranchRepository: BankBranchRepository,
 ) {
 
-    fun getByBranchNumberAndBank(branchNumber: Int, bankId: Int): BankBranch = bankBranchRepository.findByBranchNumberAndBankId(branchNumber, bankId).orElseThrow { throw BankBranchNotFoundException("Bank branch not found") }
+    fun getByBranchNumberAndBank(branchNumber: Int, bankId: Int): BankBranch = bankBranchRepository.findByBranchNumberAndBankId(branchNumber, bankId).orElseThrow { throw BankBranchNotFoundException() }
 }

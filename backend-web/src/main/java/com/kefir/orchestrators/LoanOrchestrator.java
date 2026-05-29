@@ -26,13 +26,12 @@ public class LoanOrchestrator {
     return loanService
         .getById(loanId)
         .map(this::toLoanDataDTO)
-        .orElseThrow(() -> new LoanNotFoundException(loanId));
+        .orElseThrow(LoanNotFoundException::new);
   }
 
   public LoanResponse createLoan(LoanRequest loanRequest) {
     Customer customer = customerService.getById(loanRequest.customerId());
-    if (customer.getStatus() != CustomerStatus.ACTIVE)
-      throw new CustomerNotValidException("The customer is not allowed for a new loan");
+    if (customer.getStatus() != CustomerStatus.ACTIVE) throw new CustomerNotValidException();
 
     return switch (loanRequest.loanType()) {
       case FRENCH -> loanService.createFrench(loanRequest);

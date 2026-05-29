@@ -44,20 +44,14 @@ public class CustomerService {
   }
 
   public Customer getById(Long id) {
-    return customerRepository
-        .findById(id)
-        .orElseThrow(
-            () ->
-                new CustomerNotFoundException(String.format("Customer with id %d not found", id)));
+    return customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
   }
 
   public CustomerResponse getByIdWithResponse(Long id) {
     return customerRepository
         .findById(id)
         .map(CustomerResponse::toResponse)
-        .orElseThrow(
-            () ->
-                new CustomerNotFoundException(String.format("Customer with id %d not found", id)));
+        .orElseThrow(CustomerNotFoundException::new);
   }
 
   @Transactional
@@ -77,10 +71,10 @@ public class CustomerService {
     CustomerType customerType =
         customerTypeRepository
             .findByNameIgnoreCase(customerRequest.customerType())
-            .orElseThrow(() -> new CustomerNotFoundException("Customer type not found"));
+            .orElseThrow(CustomerNotFoundException::new);
 
-    if(!customerType.isEnabled()){
-      throw new CustomerTypeNotValidException("Customer typer is not valid for the operation");
+    if (!customerType.isEnabled()) {
+      throw new CustomerTypeNotValidException();
     }
 
     CoreUser coreUser = auxAuthService.getUserFromAuth();
@@ -145,10 +139,7 @@ public class CustomerService {
 
   @Transactional
   public void deleteCustomer(Long id) {
-    Customer customer =
-        customerRepository
-            .findById(id)
-            .orElseThrow(() -> new CustomerNotFoundException("Customer not found with id: " + id));
+    Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
     customerRepository.delete(customer);
   }
 }
