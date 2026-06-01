@@ -1,7 +1,7 @@
 package com.kefir.infrastructure.security;
 
-import com.kefir.entities.CoreUser;
 import com.kefir.entities.RefreshToken;
+import com.kefir.entities.User;
 import com.kefir.repositories.RefreshTokenRepository;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -20,7 +20,7 @@ public class RefreshTokenService {
     this.repository = repository;
   }
 
-  public RefreshToken createToken(CoreUser user) {
+  public RefreshToken createToken(User user) {
     RefreshToken token = new RefreshToken();
     token.setUser(user);
     token.setToken(UUID.randomUUID().toString());

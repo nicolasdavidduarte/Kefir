@@ -1,17 +1,20 @@
 package com.kefir.repositories;
 
-import com.kefir.entities.CoreUser;
-import java.util.Optional;
+import com.kefir.entities.Role;
+import java.util.List;
+import java.util.Set;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends JpaRepository<CoreUser, Integer> {
-
-  Optional<CoreUser> findByUsername(String username);
-
-  @Query("select cu.id from CoreUser cu where cu.username = :username")
-  Optional<Integer> findIdByUsername(@Param("username") String username);
+public interface RoleRepository extends JpaRepository<Role, Integer> {
+  @Query(
+"""
+    SELECT r
+    FROM Role r
+    WHERE UPPER(r.name) IN :names
+""")
+  Set<Role> findByNamesIgnoreCase(@Param("names") List<String> names);
 }

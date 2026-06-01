@@ -5,7 +5,6 @@ import com.kefir.web.dtos.CustomerRequest;
 import com.kefir.web.dtos.CustomerResponse;
 import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,11 +41,11 @@ public class CustomerController {
   }
 
   // Endpoint to delete a loan
-  @DeleteMapping("/deleteCustomer")
-  public ResponseEntity<String> deleteCustomer(@RequestBody Map<String, Long> request) {
-    Long id = request.get("id");
+  @DeleteMapping("/{id}")
+  public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
+
     customerService.deleteCustomer(id);
-    log.info("Customer successfully deleted with id:{}", id);
+
     return ResponseEntity.ok("Customer successfully deleted!");
   }
 }

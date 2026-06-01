@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum CoreUserUsername {
-  ADMIN
+public enum UserRoles {
+  ADMIN,
+  OPR,
+  VIEWER
 }

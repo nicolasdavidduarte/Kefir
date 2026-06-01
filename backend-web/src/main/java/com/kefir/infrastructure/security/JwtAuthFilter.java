@@ -59,6 +59,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
       final Claims claims = jwtService.extractAllClaims(token);
 
       final String username = claims.getSubject();
+      final Integer userId = claims.get("userId", Integer.class);
 
       if (username == null || username.isBlank()) {
         filterChain.doFilter(request, response);
@@ -85,8 +86,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                   .toList()
               : List.of();
 
+      AuthenticatedUser principal = new AuthenticatedUser(userId, username);
+
       final UsernamePasswordAuthenticationToken auth =
-          new UsernamePasswordAuthenticationToken(username, null, authorities);
+          new UsernamePasswordAuthenticationToken(principal, null, authorities);
 
       SecurityContextHolder.getContext().setAuthentication(auth);
 

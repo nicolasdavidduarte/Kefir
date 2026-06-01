@@ -35,7 +35,7 @@ public class Role {
 
   @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
   @JsonIgnore
-  private Set<CoreUser> users;
+  private Set<User> users;
 
   public Role() {}
 

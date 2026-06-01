@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<ApiErrorResponse> handleAccessDenied(AccessDeniedException ex) {
-    return buildResponse(HttpStatus.FORBIDDEN, "Forbidden action", "Authentication token expired");
+    return buildResponse(HttpStatus.FORBIDDEN, "Forbidden action", "User has not access to complete this request");
   }
 
   @ExceptionHandler(Exception.class)

@@ -33,7 +33,7 @@ class LoanInstallmentPayment(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    val user: CoreUser,
+    val user: User,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "payment_method", nullable = false)

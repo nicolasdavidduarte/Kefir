@@ -39,7 +39,7 @@ class LoanType(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    val user: CoreUser,
+    val user: User,
 
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
@@ -52,7 +52,7 @@ class LoanType(
         fun createNew(
             name: String,
             description: String,
-            user: CoreUser,
+            user: User,
         ): LoanType = LoanType(
             name = name,
             description = description,

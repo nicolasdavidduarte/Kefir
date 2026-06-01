@@ -4,6 +4,7 @@ import com.kefir.entities.*;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.exceptions.CustomerNotFoundException;
 import com.kefir.exceptions.CustomerTypeNotValidException;
+import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.CustomerRepository;
 import com.kefir.repositories.CustomerTypeRepository;
 import com.kefir.repositories.DocumentTypeRepository;
@@ -24,23 +25,26 @@ public class CustomerService {
   private final DocumentTypeRepository documentTypeRepository;
   private final PersonTypeRepository personTypeRepository;
   private final CustomerTypeRepository customerTypeRepository;
-  private final AuxAuthService auxAuthService;
+  private final AuthService authService;
+  private final UserService userService;
 
   public CustomerService(
       CustomerRepository customerRepository,
       DocumentTypeRepository documentTypeRepository,
       PersonTypeRepository personTypeRepository,
       CustomerTypeRepository customerTypeRepository,
-      AuxAuthService auxAuthService) {
+      AuthService authService,
+      UserService userService) {
     this.customerRepository = customerRepository;
     this.documentTypeRepository = documentTypeRepository;
     this.personTypeRepository = personTypeRepository;
     this.customerTypeRepository = customerTypeRepository;
-    this.auxAuthService = auxAuthService;
+    this.authService = authService;
+    this.userService = userService;
   }
 
   public List<CustomerResponse> getAllWithResponse() {
-    return customerRepository.findAll().stream().map(CustomerResponse::toResponse).toList();
+    return customerRepository.findAll().stream().map(CustomerResponse::fromEntity).toList();
   }
 
   public Customer getById(Long id) {
@@ -50,7 +54,7 @@ public class CustomerService {
   public CustomerResponse getByIdWithResponse(Long id) {
     return customerRepository
         .findById(id)
-        .map(CustomerResponse::toResponse)
+        .map(CustomerResponse::fromEntity)
         .orElseThrow(CustomerNotFoundException::new);
   }
 
@@ -77,7 +81,7 @@ public class CustomerService {
       throw new CustomerTypeNotValidException();
     }
 
-    CoreUser coreUser = auxAuthService.getUserFromAuth();
+    User user = userService.getById(authService.getCurrentUserId());
 
     newCustomer.setName1(customerRequest.name1());
     newCustomer.setName2(customerRequest.name2());
@@ -91,7 +95,7 @@ public class CustomerService {
     newCustomer.setDocumentNumber(customerRequest.documentNumber());
     newCustomer.setCustomerType(customerType);
     newCustomer.setStatus(CustomerStatus.PENDING);
-    newCustomer.setUser(coreUser);
+    newCustomer.setUser(user);
     newCustomer.setCreatedAt(OffsetDateTime.now());
     newCustomer.setUpdatedAt(OffsetDateTime.now());
 

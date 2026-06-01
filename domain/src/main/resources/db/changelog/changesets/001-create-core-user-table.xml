@@ -36,6 +36,12 @@
             </column>
         </createTable>
 
+        <addUniqueConstraint
+                tableName="core_user"
+                columnNames="username"
+                constraintName="uk_core_user_key"/>
+
+
     </changeSet>
 
 </databaseChangeLog>

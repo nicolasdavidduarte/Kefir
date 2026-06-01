@@ -5,6 +5,7 @@ import com.kefir.enums.LoanStatus;
 import com.kefir.exceptions.CustomerCreationException;
 import com.kefir.exceptions.LoanNotFoundException;
 import com.kefir.infrastructure.messaging.SnsPublisher;
+import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
 import com.kefir.web.dtos.LoanRequest;
 import com.kefir.web.dtos.LoanResponse;
@@ -25,7 +26,8 @@ public class LoanService {
 
   private final LoanRepository loanRepository;
   private final LoanInstallmentService loanInstallmentService;
-  private final AuxAuthService auxAuthService;
+  private final AuthService authService;
+  private final UserService userService;
   private final MeterRegistry registry;
   private final SnsPublisher snsPublisher;
   private final CustomerService customerService;
@@ -36,20 +38,22 @@ public class LoanService {
   public LoanService(
       SnsPublisher snsPublisher,
       LoanRepository loanRepository,
-      AuxAuthService auxAuthService,
+      AuthService authService,
       MeterRegistry registry,
       LoanInstallmentService loanInstallmentService,
       CustomerService customerService,
       LoanTypeService loanTypeService,
-      CurrencyService currencyService) {
+      CurrencyService currencyService,
+      UserService userService) {
     this.snsPublisher = snsPublisher;
     this.loanRepository = loanRepository;
     this.registry = registry;
-    this.auxAuthService = auxAuthService;
+    this.authService = authService;
     this.loanInstallmentService = loanInstallmentService;
     this.customerService = customerService;
     this.loanTypeService = loanTypeService;
     this.currencyService = currencyService;
+    this.userService = userService;
   }
 
   @Cacheable("loans")
@@ -118,7 +122,7 @@ public class LoanService {
 
   private Loan createLoan(LoanRequest loanRequest) {
 
-    CoreUser user = auxAuthService.getUserFromAuth();
+    User user = userService.getById(authService.getCurrentUserId());
 
     Customer customer = customerService.getById(loanRequest.customerId());
 

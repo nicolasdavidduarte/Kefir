@@ -20,12 +20,13 @@ public class JwtService {
 
   private SecretKey cachedKey;
 
-  public String generateToken(String username, List<String> roles) {
+  public String generateToken(Integer userId, String username, List<String> roles) {
     Instant now = Instant.now();
     Instant expiry = now.plus(1, ChronoUnit.HOURS);
 
     return Jwts.builder()
         .claims() // Replacement for setClaims
+        .add("userId", userId)
         .add("roles", roles)
         .and()
         .subject(username) // setSubject -> subject
@@ -37,6 +38,10 @@ public class JwtService {
 
   public String extractUsername(String token) {
     return extractAllClaims(token).getSubject();
+  }
+
+  public Integer extractUserId(String token) {
+    return extractClaim(token, claims -> claims.get("userId", Integer.class));
   }
 
   private SecretKey getSecretKey() {

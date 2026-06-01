@@ -1,7 +1,7 @@
 package com.kefir.infrastructure.security;
 
-import com.kefir.entities.CoreUser;
-import com.kefir.repositories.CoreUserRepository;
+import com.kefir.entities.User;
+import com.kefir.repositories.UserRepository;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,25 +13,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-  private final CoreUserRepository coreUserRepository;
+  private final UserRepository userRepository;
 
-  public CustomUserDetailsService(CoreUserRepository coreUserRepository) {
-    this.coreUserRepository = coreUserRepository;
+  public CustomUserDetailsService(UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
   @Override
   public UserDetails loadUserByUsername(String username) {
-    final CoreUser coreUser =
-        coreUserRepository
+    final User user =
+        userRepository
             .findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
     final List<GrantedAuthority> authorities =
-        coreUser.getRoles().stream()
+        user.getRoles().stream()
             .map(role -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + role.getName()))
             .toList();
 
     return new org.springframework.security.core.userdetails.User(
-        coreUser.getUsername(), coreUser.getPassword(), authorities);
+        user.getUsername(), user.getPassword(), authorities);
   }
 }

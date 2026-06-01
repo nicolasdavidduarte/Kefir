@@ -21,7 +21,7 @@ public record CustomerResponse(
     String createdByUser,
     OffsetDateTime creationDate) {
 
-  public static CustomerResponse toResponse(Customer customer) {
+  public static CustomerResponse fromEntity(Customer customer) {
     return CustomerResponse.builder()
         .id(customer.getId())
         .name1(customer.getName1())

@@ -1,34 +1,55 @@
 package com.kefir.web.controllers;
 
-import com.kefir.entities.CoreUser;
-import com.kefir.services.CoreUserService;
-import java.util.List;
-import java.util.Optional;
-
+import com.kefir.services.UserService;
+import com.kefir.web.dtos.UserRequest;
 import com.kefir.web.dtos.UserResponse;
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
-public class CoreUserController {
+public class UserController {
 
-  private final CoreUserService coreUserService;
+  private final UserService userService;
 
-  public CoreUserController(CoreUserService coreUserService) {
-    this.coreUserService = coreUserService;
+  public UserController(UserService userService) {
+    this.userService = userService;
   }
 
   @GetMapping
   public ResponseEntity<List<UserResponse>> getAll() {
-    return coreUserService.getAll();
+    return ResponseEntity.ok(userService.getAll());
   }
 
   @GetMapping("/{id}")
-  public Optional<CoreUser> getById(@PathVariable Integer id) {
-    return coreUserService.getById(id);
+  public ResponseEntity<UserResponse> getById(@PathVariable Integer id) {
+    return ResponseEntity.ok(userService.getByIdWithResponse(id));
+  }
+
+  @PostMapping()
+  @PreAuthorize("hasAnyRole('ADMIN')")
+  public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest request) {
+    return ResponseEntity.ok(userService.create(request));
+  }
+
+  @PatchMapping("/activate/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN')")
+  public ResponseEntity<Map<String, String>> activateUser(@PathVariable Integer id) {
+    userService.activate(id);
+
+    return ResponseEntity.ok(Map.of("message", "User successfully activated!"));
+  }
+
+  @PatchMapping("/deactivate/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN')")
+  public ResponseEntity<Map<String, String>> deactivateUser(@PathVariable Integer id) {
+    userService.deactivate(id);
+
+    return ResponseEntity.ok(Map.of("message", "User successfully deactivated!"));
   }
 }

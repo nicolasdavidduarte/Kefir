@@ -4,18 +4,16 @@ import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @Table(name = "core_user")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CoreUser {
+public class User {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core_user_id_seq_gen")
@@ -39,7 +37,7 @@ public class CoreUser {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private CoreUser userId;
+  private User userId;
 
   @Column(name = "created_at", nullable = false)
   private OffsetDateTime createdAt;
@@ -48,6 +46,7 @@ public class CoreUser {
   private OffsetDateTime updatedAt;
 
   @ManyToMany(fetch = FetchType.LAZY)
+  @Builder.Default
   @JoinTable(
       name = "user_role",
       joinColumns = @JoinColumn(name = "user_id"),

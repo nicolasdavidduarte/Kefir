@@ -1,13 +1,15 @@
 package com.kefir.infrastructure.security;
 
-import com.kefir.entities.CoreUser;
 import com.kefir.entities.RefreshToken;
-import com.kefir.repositories.CoreUserRepository;
+import com.kefir.entities.User;
+import com.kefir.repositories.UserRepository;
 import com.kefir.web.dtos.AuthResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,13 +18,13 @@ public class AuthService {
   private final AuthenticationManager authManager;
   private final JwtService jwtService;
   private final RefreshTokenService refreshTokenService;
-  private final CoreUserRepository userRepository;
+  private final UserRepository userRepository;
 
   public AuthService(
       AuthenticationManager authManager,
       JwtService jwtService,
       RefreshTokenService refreshTokenService,
-      CoreUserRepository userRepository) {
+      UserRepository userRepository) {
     this.authManager = authManager;
     this.jwtService = jwtService;
     this.refreshTokenService = refreshTokenService;
@@ -33,12 +35,12 @@ public class AuthService {
 
     authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-    final CoreUser user = userRepository.findByUsername(username).orElseThrow();
+    final User user = userRepository.findByUsername(username).orElseThrow();
 
     final List<String> roles =
         user.getRoles().stream().map(role -> "ROLE_" + role.getName()).toList();
 
-    final String accessToken = jwtService.generateToken(username, roles);
+    final String accessToken = jwtService.generateToken(user.getId(), username, roles);
 
     return new AuthResponse(accessToken, OffsetDateTime.now());
   }
@@ -47,7 +49,7 @@ public class AuthService {
 
     final RefreshToken oldToken = refreshTokenService.verify(refreshToken);
 
-    final CoreUser user = oldToken.getUser();
+    final User user = oldToken.getUser();
 
     refreshTokenService.revoke(oldToken);
 
@@ -56,8 +58,25 @@ public class AuthService {
     final List<String> roles =
         user.getRoles().stream().map(role -> "ROLE_" + role.getName()).toList();
 
-    final String newAccessToken = jwtService.generateToken(user.getUsername(), roles);
+    final String newAccessToken = jwtService.generateToken(user.getId(), user.getUsername(), roles);
 
     return new AuthResponse(newAccessToken, OffsetDateTime.now());
+  }
+
+  public Integer getCurrentUserId() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+    AuthenticatedUser principal = (AuthenticatedUser) auth.getPrincipal();
+
+    return principal.id();
+  }
+
+  public String getCurrentUsername() {
+
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+    AuthenticatedUser principal = (AuthenticatedUser) auth.getPrincipal();
+
+    return principal.username();
   }
 }

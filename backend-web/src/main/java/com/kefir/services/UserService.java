@@ -1,35 +1,93 @@
 package com.kefir.services;
 
-import com.kefir.entities.CoreUser;
+import com.kefir.entities.Role;
+import com.kefir.entities.User;
 import com.kefir.exceptions.CoreUserNotFoundException;
-import com.kefir.repositories.CoreUserRepository;
-import java.util.List;
-import java.util.Optional;
-
+import com.kefir.infrastructure.security.AuthService;
+import com.kefir.repositories.UserRepository;
+import com.kefir.web.dtos.UserRequest;
 import com.kefir.web.dtos.UserResponse;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.Set;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @EnableCaching
 @Service
-public class CoreUserService {
+public class UserService {
 
-  private final CoreUserRepository coreUserRepository;
+  private final UserRepository userRepository;
+  private final AuthService authService;
+  private final RoleService roleService;
+  private final PasswordEncoder passwordEncoder;
 
-  public CoreUserService(CoreUserRepository coreUserRepository) {
-    this.coreUserRepository = coreUserRepository;
+  public UserService(
+      UserRepository userRepository,
+      AuthService authService,
+      RoleService roleService,
+      PasswordEncoder passwordEncoder) {
+    this.userRepository = userRepository;
+    this.authService = authService;
+    this.roleService = roleService;
+    this.passwordEncoder = passwordEncoder;
   }
 
   public List<UserResponse> getAll() {
-    return coreUserRepository.findAll().stream().map(UserResponse::fromEntity).toList();
+    return userRepository.findAll().stream().map(UserResponse::fromEntity).toList();
   }
 
-  public UserResponse getById(Integer id) {
-    return coreUserRepository.findById(id).map(UserResponse::fromEntity)
-            .orElseThrow(CoreUserNotFoundException::new);
+  public UserResponse getByIdWithResponse(Integer id) {
+    return userRepository
+        .findById(id)
+        .map(UserResponse::fromEntity)
+        .orElseThrow(CoreUserNotFoundException::new);
   }
 
-  public CoreUser getByUsername(String username) {
-    return coreUserRepository.findByUsername(username).orElseThrow(CoreUserNotFoundException::new);
+  public User getById(Integer id) {
+    return userRepository.findById(id).orElseThrow(CoreUserNotFoundException::new);
+  }
+
+  @Transactional
+  public UserResponse create(UserRequest request) {
+    Set<Role> roles = roleService.getRolesByName(request.roles());
+
+    User userCreator = getById(authService.getCurrentUserId());
+
+    User newUser =
+        User.builder()
+            .username(request.username())
+            .password(passwordEncoder.encode(request.password()))
+            .fullName(request.fullname())
+            .enabled(false)
+            .userId(userCreator)
+            .createdAt(OffsetDateTime.now())
+            .updatedAt(OffsetDateTime.now())
+            .roles(roles)
+            .build();
+
+    User userSaved = userRepository.save(newUser);
+
+    return UserResponse.fromEntity(userSaved);
+  }
+
+  @Transactional
+  public void activate(Integer id) {
+    User user = userRepository.findById(id).orElseThrow(CoreUserNotFoundException::new);
+
+    user.setEnabled(true);
+
+    userRepository.save(user);
+  }
+
+  @Transactional
+  public void deactivate(Integer id) {
+    User user = userRepository.findById(id).orElseThrow(CoreUserNotFoundException::new);
+
+    user.setEnabled(false);
+
+    userRepository.save(user);
   }
 }

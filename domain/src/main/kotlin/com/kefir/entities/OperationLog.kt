@@ -34,7 +34,7 @@ class OperationLog(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    val user: CoreUser,
+    val user: User,
 
     @Column(name = "operation_date", nullable = false)
     val operationDate: OffsetDateTime = OffsetDateTime.now(),

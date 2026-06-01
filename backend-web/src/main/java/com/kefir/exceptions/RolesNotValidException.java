@@ -3,10 +3,10 @@ package com.kefir.exceptions;
 import java.io.Serial;
 import org.springframework.http.HttpStatus;
 
-public class LoanTypeCreationException extends ApiException {
+public class RolesNotValidException extends ApiException {
   @Serial private static final long serialVersionUID = 1L;
 
-  public LoanTypeCreationException() {
-    super(HttpStatus.UNPROCESSABLE_ENTITY, "Error creating loan type");
+  public RolesNotValidException() {
+    super(HttpStatus.UNPROCESSABLE_ENTITY, "One or more roles are not valid");
   }
 }

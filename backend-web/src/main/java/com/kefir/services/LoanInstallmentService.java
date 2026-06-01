@@ -1,8 +1,9 @@
 package com.kefir.services;
 
-import com.kefir.entities.CoreUser;
 import com.kefir.entities.Loan;
 import com.kefir.entities.LoanInstallment;
+import com.kefir.entities.User;
+import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanInstallmentRepository;
 import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
@@ -11,12 +12,16 @@ import org.springframework.stereotype.Service;
 public class LoanInstallmentService {
 
   private final LoanInstallmentRepository loanInstallmentRepository;
-  private final AuxAuthService auxAuthService;
+  private final AuthService authService;
+  private UserService userService;
 
   public LoanInstallmentService(
-      LoanInstallmentRepository loanInstallmentRepository, AuxAuthService auxAuthService) {
+      LoanInstallmentRepository loanInstallmentRepository,
+      AuthService authService,
+      UserService userService) {
     this.loanInstallmentRepository = loanInstallmentRepository;
-    this.auxAuthService = auxAuthService;
+    this.authService = authService;
+    this.userService = userService;
   }
 
   public void createInstallmentsSchedule(Loan loan) {
@@ -31,7 +36,7 @@ public class LoanInstallmentService {
   }
 
   private void createInstallment(int number, Loan loan, BigDecimal loanTotalAmount) {
-    CoreUser user = auxAuthService.getUserFromAuth();
+    User user = userService.getById(authService.getCurrentUserId());
     LoanInstallment loanInstallment =
         LoanInstallment.createNew(loan, number, loanTotalAmount, user);
 

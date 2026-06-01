@@ -3,14 +3,15 @@ package com.kefir.services
 import com.kefir.entities.Account
 import com.kefir.entities.AccountType
 import com.kefir.entities.BankBranch
-import com.kefir.entities.CoreUser
 import com.kefir.entities.Currency
 import com.kefir.entities.Customer
+import com.kefir.entities.User
 import com.kefir.entities.close
 import com.kefir.entities.open
 import com.kefir.enums.EntityName
 import com.kefir.enums.LogOperation
 import com.kefir.exceptions.AccountNotFoundException
+import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.AccountRepository
 import com.kefir.services.aux.account.CBUGenerator
 import com.kefir.web.dtos.AccountRequest
@@ -29,7 +30,8 @@ import java.time.OffsetDateTime
 class AccountService(
     val accountRepository: AccountRepository,
     val operationLogService: OperationLogService,
-    val auxAuthService: AuxAuthService,
+    val authService: AuthService,
+    val userService: UserService,
     val customerService: CustomerService,
     val currencyService: CurrencyService,
     val accountTypeService: AccountTypeService,
@@ -51,7 +53,7 @@ class AccountService(
      * @return account response
      */
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
-        val user: CoreUser = auxAuthService.getUserFromAuth()
+        val user: User = userService.getById(authService.currentUserId)
 
         val accountType: AccountType = accountTypeService.getByName(accountRequest.type)
 

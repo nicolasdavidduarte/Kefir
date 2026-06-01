@@ -60,3 +60,6 @@ dist/
 gradle.properties
 /.githooks
 CODE_IMPROVEMENT_REPORT.md
+
+# Kotlin
+*.salive

@@ -3,6 +3,7 @@ package com.kefir.services
 import com.kefir.entities.Bank
 import com.kefir.entities.enable
 import com.kefir.exceptions.BankNotFoundException
+import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.BankRepository
 import com.kefir.web.dtos.BankRequest
 import com.kefir.web.dtos.BankResponse
@@ -16,7 +17,8 @@ import java.time.LocalDateTime
 @Transactional
 class BankService(
     val bankRepository: BankRepository,
-    val auxAuthService: AuxAuthService,
+    val userService: UserService,
+    val authService: AuthService,
 ) {
     fun getAll(): List<BankResponse> = bankRepository
         .findAll()
@@ -27,7 +29,7 @@ class BankService(
     fun create(bankRequest: BankRequest): BankResponse = bankRepository.save(
         Bank(
             name = requireNotNull(bankRequest.name),
-            user = auxAuthService.getUserFromAuth(),
+            user = userService.getById(authService.currentUserId),
         ),
     ).toResponse()
 
