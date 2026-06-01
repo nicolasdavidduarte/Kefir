@@ -81,7 +81,7 @@ public class LoanController {
 
   // Endpoint to create a new loan
   @PostMapping
-  @PreAuthorize("hasAnyRole('ADMIN','USER')")
+  @PreAuthorize("hasAnyRole('ADMIN','OPR')")
   @Timed(
       value = "loan.create.request",
       description = "Time taken to create loan",

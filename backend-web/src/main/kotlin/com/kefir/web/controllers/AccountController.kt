@@ -5,6 +5,7 @@ import com.kefir.web.dtos.AccountRequest
 import com.kefir.web.dtos.AccountResponse
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -24,16 +25,19 @@ class AccountController(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun createAccount(
         @RequestBody @Valid accountRequest: AccountRequest,
     ) = accountService.createAccount(accountRequest)
 
     @PatchMapping("/{id}/open")
+    @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun openAccount(
         @PathVariable id: Long,
     ) = accountService.open(id)
 
     @PatchMapping("/{id}/close")
+    @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun closeAccount(
         @PathVariable id: Long,
     ) = accountService.close(id)

@@ -5,6 +5,7 @@ import com.kefir.web.dtos.BankRequest
 import com.kefir.web.dtos.BankResponse
 import com.kefir.web.dtos.EntityOperationResponse
 import jakarta.validation.Valid
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -22,12 +23,14 @@ class BankController(
     fun getAllBanks(): List<BankResponse> = bankService.getAll()
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun createBank(
         @RequestBody @Valid bankRequest: BankRequest,
     ) = bankService.create(bankRequest)
 
     @PutMapping("/{id}")
-    fun enableBank(
+    @PreAuthorize("hasAnyRole('ADMIN','OPR')")
+    fun activateBank(
         @PathVariable id: Int,
     ): EntityOperationResponse = bankService.enable(id)
 }

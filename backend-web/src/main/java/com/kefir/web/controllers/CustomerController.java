@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -35,6 +36,7 @@ public class CustomerController {
 
   // Create a new customer
   @PostMapping
+  @PreAuthorize("hasAnyRole('ADMIN','OPR')")
   public ResponseEntity<CustomerResponse> createCustomer(
       @RequestBody @Valid CustomerRequest customer) {
     return ResponseEntity.ok(customerService.createCustomer(customer));
@@ -42,6 +44,7 @@ public class CustomerController {
 
   // Endpoint to delete a loan
   @DeleteMapping("/{id}")
+  @PreAuthorize("hasAnyRole('ADMIN','OPR')")
   public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
 
     customerService.deleteCustomer(id);

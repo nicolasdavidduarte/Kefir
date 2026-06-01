@@ -6,6 +6,7 @@ import com.kefir.web.dtos.LoanTypeRequest
 import com.kefir.web.dtos.LoanTypeResponse
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,6 +23,7 @@ class LoanTypeController(
     fun getLoanTypes(): List<LoanType> = loanTypeService.getAllLoanTypes()
 
     @PostMapping("/types")
+    @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     @ResponseStatus(HttpStatus.CREATED)
     fun createLoanType(
         @RequestBody @Valid loanTypeRequest: LoanTypeRequest,
