@@ -5,20 +5,16 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import lombok.*;
 
-@Getter
-@Setter
 @Builder
-@AllArgsConstructor
-public class LoanResponse {
-  Long id;
-  Long customer;
-  String loanType;
-  BigDecimal totalOperationAmount;
-  OffsetDateTime openingDate;
-  String currency;
-  OffsetDateTime expirationDate;
-  Integer numberOfInstallments;
-  LoanStatus status;
-  OffsetDateTime createdAt;
-  String user;
-}
+public record LoanResponse(
+    Long id,
+    Long customer,
+    String loanType,
+    String currency,
+    Integer numberOfInstallments,
+    BigDecimal totalOperationAmount,
+    OffsetDateTime openingDate,
+    OffsetDateTime expirationDate,
+    LoanStatus status,
+    OffsetDateTime createdAt,
+    String user) {}

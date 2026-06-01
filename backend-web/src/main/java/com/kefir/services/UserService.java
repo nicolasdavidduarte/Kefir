@@ -5,10 +5,12 @@ import com.kefir.entities.User;
 import com.kefir.exceptions.CoreUserNotFoundException;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.UserRepository;
+import com.kefir.web.dtos.EntityStatusUpdate;
 import com.kefir.web.dtos.UserRequest;
 import com.kefir.web.dtos.UserResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -74,20 +76,14 @@ public class UserService {
   }
 
   @Transactional
-  public void activate(Integer id) {
-    User user = userRepository.findById(id).orElseThrow(CoreUserNotFoundException::new);
+  public String updateStatus(Integer id, EntityStatusUpdate status) {
 
-    user.setEnabled(true);
+    User user = userRepository.findById(id).orElseThrow(CoreUserNotFoundException::new);
+    user.setEnabled(status.enabled());
 
     userRepository.save(user);
+
+    return (status.enabled()) ? "User successfully activated" : "User successfully deactivated";
   }
 
-  @Transactional
-  public void deactivate(Integer id) {
-    User user = userRepository.findById(id).orElseThrow(CoreUserNotFoundException::new);
-
-    user.setEnabled(false);
-
-    userRepository.save(user);
-  }
 }
