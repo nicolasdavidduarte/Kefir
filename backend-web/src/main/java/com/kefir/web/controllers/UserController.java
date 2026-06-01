@@ -3,6 +3,7 @@ package com.kefir.web.controllers;
 import com.kefir.services.UserService;
 import com.kefir.web.dtos.UserRequest;
 import com.kefir.web.dtos.UserResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "User services", description = "APIs for system users")
 public class UserController {
 
   private final UserService userService;

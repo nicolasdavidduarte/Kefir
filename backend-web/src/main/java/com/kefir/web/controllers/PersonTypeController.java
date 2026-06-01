@@ -4,6 +4,8 @@ import com.kefir.entities.PersonType;
 import com.kefir.services.PersonTypeService;
 import java.util.List;
 import java.util.Optional;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/personType")
+@Tag(name = "Person types services", description = "APIs for person types")
 public class PersonTypeController {
 
   private final PersonTypeService personTypeService;

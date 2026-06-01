@@ -3,6 +3,8 @@ package com.kefir.web.controllers;
 import com.kefir.entities.Currency;
 import com.kefir.services.CurrencyService;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/currency")
+@Tag(name = "Currency services", description = "APIs for currencies")
 public class CurrencyController {
 
   private final CurrencyService currencyService;

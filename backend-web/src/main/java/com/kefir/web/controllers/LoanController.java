@@ -24,11 +24,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/api/loans")
-@CrossOrigin(origins = "http://localhost:3000")
-@Tag(name = "Loan services", description = "APIs for loans")
-@RestController
 @Validated
+@RestController
+@RequestMapping("/api/loans")
+@Tag(name = "Loan services", description = "APIs for loans")
 public class LoanController {
 
   private final LoanService loanService;

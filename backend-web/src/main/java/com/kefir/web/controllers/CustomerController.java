@@ -3,6 +3,7 @@ package com.kefir.web.controllers;
 import com.kefir.services.CustomerService;
 import com.kefir.web.dtos.CustomerRequest;
 import com.kefir.web.dtos.CustomerResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-@Slf4j
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/customers")
+@Tag(name = "Customers services", description = "APIs for customers")
 public class CustomerController {
 
   private final CustomerService customerService;
