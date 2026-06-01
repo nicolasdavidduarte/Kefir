@@ -4,13 +4,16 @@ import com.kefir.entities.CoreUser;
 import com.kefir.services.CoreUserService;
 import java.util.List;
 import java.util.Optional;
+
+import com.kefir.web.dtos.UserResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/coreUser")
+@RequestMapping("/api/users")
 public class CoreUserController {
 
   private final CoreUserService coreUserService;
@@ -19,13 +22,11 @@ public class CoreUserController {
     this.coreUserService = coreUserService;
   }
 
-  // Endpoint to retrieve all records from the core_user table
   @GetMapping
-  public List<CoreUser> getAll() {
+  public ResponseEntity<List<UserResponse>> getAll() {
     return coreUserService.getAll();
   }
 
-  // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
   public Optional<CoreUser> getById(@PathVariable Integer id) {
     return coreUserService.getById(id);

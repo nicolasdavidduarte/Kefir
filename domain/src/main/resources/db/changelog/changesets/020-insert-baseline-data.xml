@@ -6,8 +6,10 @@
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
 
     <changeSet id="020" author="ndd">
+
+        <!-- ROLE -->
         <insert schemaName="public" tableName="role">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('role_id_seq')"/>
             <column name="name" value="ADMIN"/>
             <column name="description" value="Administrator"/>
             <column name="enabled" valueBoolean="true"/>
@@ -15,7 +17,7 @@
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="role">
-            <column name="id" valueNumeric="2"/>
+            <column name="id" valueComputed="nextval('role_id_seq')"/>
             <column name="name" value="OPR"/>
             <column name="description" value="Operator"/>
             <column name="enabled" valueBoolean="true"/>
@@ -23,7 +25,7 @@
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="role">
-            <column name="id" valueNumeric="3"/>
+            <column name="id" valueComputed="nextval('role_id_seq')"/>
             <column name="name" value="VIEWER"/>
             <column name="description" value="Read-Only"/>
             <column name="enabled" valueBoolean="true"/>
@@ -31,236 +33,238 @@
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
+        <!-- CORE_USER -->
         <insert schemaName="public" tableName="core_user">
-            <column name="id" valueNumeric="1"/>
-            <column name="username" value="ADMIN"/>
+            <column name="id" valueComputed="nextval('core_user_id_seq')"/>
+            <column name="username" value="admin"/>
             <column name="password" value="$2a$12$yR0/hohoNqS.OZ1UmlGi6ObZKjguvZQvE9BOXMNsDasVR/6Expm5C"/>
-            <column name="fullname" value="Core Administrator User"/>
+            <column name="fullname" value="Core administrator User"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="core_user">
-            <column name="id" valueNumeric="2"/>
-            <column name="username" value="OPR"/>
+            <column name="id" valueComputed="nextval('core_user_id_seq')"/>
+            <column name="username" value="operator"/>
             <column name="password" value="$2a$12$TREGK9z69BWkHefhdEPBpu/EZm/NU4uhSMtuDMFP.k81XXtR7NQue"/>
             <column name="fullname" value="Operator User"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="core_user">
-            <column name="id" valueNumeric="3"/>
-            <column name="username" value="VIEWER"/>
+            <column name="id" valueComputed="nextval('core_user_id_seq')"/>
+            <column name="username" value="viewer"/>
             <column name="password" value="$2a$12$z0CDIlR4JGfcFU.TFT8k8udcmy3fihJFkprvLq4S0zxRHALeggZyK"/>
             <column name="fullname" value="Read-Only User"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
+        <!-- USER_ROLE -->
         <insert schemaName="public" tableName="user_role">
-            <column name="user_id" valueNumeric="1"/>
-            <column name="role_id" valueNumeric="1"/>
-            <column name="enabled" valueBoolean="true"/>
-            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
-            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM role WHERE name = 'ADMIN')"/>
         </insert>
         <insert schemaName="public" tableName="user_role">
-            <column name="user_id" valueNumeric="2"/>
-            <column name="role_id" valueNumeric="2"/>
-            <column name="enabled" valueBoolean="true"/>
-            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
-            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'operator')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM role WHERE name = 'OPR')"/>
         </insert>
         <insert schemaName="public" tableName="user_role">
-            <column name="user_id" valueNumeric="3"/>
-            <column name="role_id" valueNumeric="3"/>
-            <column name="enabled" valueBoolean="true"/>
-            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
-            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'viewer')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM role WHERE name = 'VIEWER')"/>
         </insert>
 
+        <!-- ACCOUNT_TYPE -->
         <insert schemaName="public" tableName="account_type">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('account_type_id_seq')"/>
             <column name="name" value="Savings Account"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="account_type">
-            <column name="id" valueNumeric="2"/>
+            <column name="id" valueComputed="nextval('account_type_id_seq')"/>
             <column name="name" value="Checking Account"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
+        <!-- BANK -->
         <insert schemaName="public" tableName="bank">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('bank_id_seq')"/>
             <column name="name" value="Kefir Bank"/>
             <column name="status" value="ACTIVE"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
+        <!-- BANK_BRANCH -->
         <insert schemaName="public" tableName="bank_branch">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('bank_branch_id_seq')"/>
             <column name="branch_number" valueNumeric="1"/>
-            <column name="bank_id" valueNumeric="1"/>
+            <column name="bank_id" valueComputed="(SELECT id FROM bank WHERE name = 'Kefir Bank')"/>
             <column name="name" value="Main Branch"/>
             <column name="address" value="Maure 2262"/>
             <column name="status" value="ACTIVE"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
+        <!-- CURRENCY -->
         <insert schemaName="public" tableName="currency">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('currency_id_seq')"/>
             <column name="iso_code" value="USD"/>
             <column name="description" value="United States Dollar"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="currency">
-            <column name="id" valueNumeric="2"/>
+            <column name="id" valueComputed="nextval('currency_id_seq')"/>
             <column name="iso_code" value="ARS"/>
             <column name="description" value="Argentine Peso"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="currency">
-            <column name="id" valueNumeric="3"/>
+            <column name="id" valueComputed="nextval('currency_id_seq')"/>
             <column name="iso_code" value="EUR"/>
             <column name="description" value="Euro"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
+        <!-- CUSTOMER_TYPE -->
         <insert schemaName="public" tableName="customer_type">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('customer_type_id_seq')"/>
             <column name="name" value="Retail"/>
             <column name="description" value="Retail"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="customer_type">
-            <column name="id" valueNumeric="2"/>
+            <column name="id" valueComputed="nextval('customer_type_id_seq')"/>
             <column name="name" value="Corporate"/>
             <column name="description" value="Corporate"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
+        <!-- DOCUMENT_TYPE -->
         <insert schemaName="public" tableName="document_type">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('document_type_id_seq')"/>
             <column name="name" value="DNI"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="document_type">
-            <column name="id" valueNumeric="2"/>
+            <column name="id" valueComputed="nextval('document_type_id_seq')"/>
             <column name="name" value="Passport"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
+        <!-- LOAN_TYPE -->
         <insert schemaName="public" tableName="loan_type">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
             <column name="name" value="FRENCH"/>
-            <column name="description" value="Fully amortized loan where each installment (payment) remains fixed over the loan period..."/>
+            <column name="description" value="Fully amortized loan where each installment (payment) remains fixed over the loan period."/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="loan_type">
-            <column name="id" valueNumeric="2"/>
+            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
             <column name="name" value="GERMAN"/>
-            <column name="description" value="Has low or no payments during the term..."/>
+            <column name="description" value="characterized by a fixed, constant principal repayment portion in every installment, causing the total payment amount to decrease over time as interest drops."/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="loan_type">
-            <column name="id" valueNumeric="3"/>
+            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
             <column name="name" value="AMERICAN"/>
             <column name="description" value="Focus on periodic interest payments with a single principal repayment at the end."/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
+        <!-- PAYMENT_METHOD -->
         <insert schemaName="public" tableName="payment_method">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('payment_method_id_seq')"/>
             <column name="name" value="Homebanking"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="payment_method">
-            <column name="id" valueNumeric="2"/>
+            <column name="id" valueComputed="nextval('payment_method_id_seq')"/>
             <column name="name" value="ATM"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="payment_method">
-            <column name="id" valueNumeric="3"/>
+            <column name="id" valueComputed="nextval('payment_method_id_seq')"/>
             <column name="name" value="Cash"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="payment_method">
-            <column name="id" valueNumeric="4"/>
+            <column name="id" valueComputed="nextval('payment_method_id_seq')"/>
             <column name="name" value="Check"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
         </insert>
 
+        <!-- PERSON_TYPE -->
         <insert schemaName="public" tableName="person_type">
-            <column name="id" valueNumeric="1"/>
+            <column name="id" valueComputed="nextval('person_type_id_seq')"/>
             <column name="name" value="Natural"/>
             <column name="description" value="Natural"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
         </insert>
         <insert schemaName="public" tableName="person_type">
-            <column name="id" valueNumeric="2"/>
+            <column name="id" valueComputed="nextval('person_type_id_seq')"/>
             <column name="name" value="Juridical"/>
             <column name="description" value="Juridical"/>
             <column name="enabled" valueBoolean="true"/>
-            <column name="user_id" valueNumeric="1"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-25 00:00:00.000"/>
         </insert>

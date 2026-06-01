@@ -5,6 +5,8 @@ import com.kefir.exceptions.CoreUserNotFoundException;
 import com.kefir.repositories.CoreUserRepository;
 import java.util.List;
 import java.util.Optional;
+
+import com.kefir.web.dtos.UserResponse;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +20,13 @@ public class CoreUserService {
     this.coreUserRepository = coreUserRepository;
   }
 
-  public List<CoreUser> getAll() {
-    return coreUserRepository.findAll();
+  public List<UserResponse> getAll() {
+    return coreUserRepository.findAll().stream().map(UserResponse::fromEntity).toList();
   }
 
-  public Optional<CoreUser> getById(Integer id) {
-    return coreUserRepository.findById(id);
+  public UserResponse getById(Integer id) {
+    return coreUserRepository.findById(id).map(UserResponse::fromEntity)
+            .orElseThrow(CoreUserNotFoundException::new);
   }
 
   public CoreUser getByUsername(String username) {
