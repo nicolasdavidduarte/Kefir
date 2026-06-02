@@ -3,10 +3,8 @@ package com.kefir.services;
 import com.kefir.entities.CustomerType;
 import com.kefir.exceptions.CustomerTypeNotFoundException;
 import com.kefir.repositories.CustomerTypeRepository;
-import java.util.List;
-import java.util.Optional;
-
 import com.kefir.web.dtos.customerType.CustomerTypeResponse;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,7 +21,8 @@ public class CustomerTypeService {
   }
 
   public CustomerTypeResponse getById(Integer id) {
-    CustomerType customerType = customerTypeRepository.findById(id).orElseThrow(CustomerTypeNotFoundException::new);
+    CustomerType customerType =
+        customerTypeRepository.findById(id).orElseThrow(CustomerTypeNotFoundException::new);
 
     return CustomerTypeResponse.fromEntity(customerType);
   }

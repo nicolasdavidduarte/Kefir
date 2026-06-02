@@ -1,14 +1,15 @@
 package com.kefir.web.controllers;
 
 import com.kefir.services.CustomerService;
+import com.kefir.web.dtos.common.ApiEntityResponse;
 import com.kefir.web.dtos.customer.CustomerCreationRequest;
 import com.kefir.web.dtos.customer.CustomerResponse;
 import com.kefir.web.dtos.customer.CustomerUpdateRequest;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,45 +26,61 @@ public class CustomerController {
 
   // Endpoint to retrieve all records from the core_user table
   @GetMapping
+  @ResponseStatus(HttpStatus.OK)
   public List<CustomerResponse> getAll() {
     return customerService.getAllWithResponse();
   }
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
   public CustomerResponse getById(@PathVariable Long id) {
     return customerService.getByIdWithResponse(id);
   }
 
   // Create a new customer
   @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public ResponseEntity<CustomerResponse> createCustomer(
-      @RequestBody @Valid CustomerCreationRequest customer) {
-    return ResponseEntity.ok(customerService.create(customer));
+  public CustomerResponse createCustomer(@RequestBody @Valid CustomerCreationRequest customer) {
+
+    return customerService.create(customer);
   }
 
   @PatchMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public ResponseEntity<CustomerResponse> updateCustomer(
+  public CustomerResponse updateCustomer(
       @RequestBody @Valid CustomerUpdateRequest request, @PathVariable Long id) {
-    return ResponseEntity.ok(customerService.update(request, id));
+    return customerService.update(request, id);
   }
 
   // Endpoint to delete a loan
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public ResponseEntity<Map<String, String>> deleteCustomer(@PathVariable Long id) {
+  @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("hasAnyRole('ADMIN')")
+  public ApiEntityResponse deleteCustomer(@PathVariable Long id) {
 
     customerService.delete(id);
 
-    return ResponseEntity.ok(Map.of("Message","Customer successfully deleted!"));
+    return new ApiEntityResponse(id, "Customer successfully deleted", OffsetDateTime.now());
   }
 
-  @PostMapping("/{id}/status")
-  public ResponseEntity<Map<String, String>> activateCustomer(@PathVariable Long id) {
+  @PostMapping("/{id}/status/activate")
+  @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("hasAnyRole('ADMIN','OPR')")
+  public ApiEntityResponse activateCustomer(@PathVariable Long id) {
     customerService.activate(id);
 
-    return ResponseEntity.ok(Map.of("Message", "Customer successfully activated"));
+    return new ApiEntityResponse(id, "Customer successfully activated", OffsetDateTime.now());
+  }
+
+  @PostMapping("/{id}/status/deactivate")
+  @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("hasAnyRole('ADMIN','OPR')")
+  public ApiEntityResponse deactivateCustomer(@PathVariable Long id) {
+    customerService.deactivate(id);
+
+    return new ApiEntityResponse(id, "Customer successfully deactivated", OffsetDateTime.now());
   }
 }

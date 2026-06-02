@@ -1,9 +1,9 @@
 package com.kefir.orchestrators;
 
 import com.kefir.entities.Customer;
+import com.kefir.entities.Loan;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.exceptions.CustomerNotValidException;
-import com.kefir.exceptions.LoanNotFoundException;
 import com.kefir.services.CustomerService;
 import com.kefir.services.LoanService;
 import com.kefir.web.dtos.loan.LoanRequest;
@@ -22,10 +22,8 @@ public class LoanOrchestrator {
 
   @Observed(name = "loan.orchestrated.get")
   public LoanResponse getLoanData(Long loanId) {
-    return loanService
-        .getById(loanId)
-        .map(LoanResponse::fromEntity)
-        .orElseThrow(LoanNotFoundException::new);
+    Loan loan = loanService.getById(loanId);
+    return LoanResponse.fromEntity(loan);
   }
 
   public LoanResponse createLoan(LoanRequest loanRequest) {

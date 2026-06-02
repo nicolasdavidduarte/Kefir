@@ -1,14 +1,15 @@
 package com.kefir.web.controllers;
 
 import com.kefir.services.UserService;
+import com.kefir.web.dtos.common.ApiEntityResponse;
 import com.kefir.web.dtos.common.EntityStatusUpdate;
 import com.kefir.web.dtos.user.UserRequest;
 import com.kefir.web.dtos.user.UserResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,27 +25,31 @@ public class UserController {
   }
 
   @GetMapping
-  public ResponseEntity<List<UserResponse>> getAll() {
-    return ResponseEntity.ok(userService.getAll());
+  @ResponseStatus(HttpStatus.OK)
+  public List<UserResponse> getAll() {
+    return userService.getAll();
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<UserResponse> getById(@PathVariable Integer id) {
-    return ResponseEntity.ok(userService.getByIdWithResponse(id));
+  @ResponseStatus(HttpStatus.OK)
+  public UserResponse getById(@PathVariable Integer id) {
+    return userService.getByIdWithResponse(id);
   }
 
   @PostMapping()
+  @ResponseStatus(HttpStatus.CREATED)
   @PreAuthorize("hasAnyRole('ADMIN')")
-  public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest request) {
-    return ResponseEntity.ok(userService.create(request));
+  public UserResponse createUser(@RequestBody @Valid UserRequest request) {
+    return userService.create(request);
   }
 
   @PostMapping("/{id}/status")
+  @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN')")
-  public ResponseEntity<Map<String, String>> updateStatus(
+  public ApiEntityResponse updateStatus(
       @PathVariable Integer id, @RequestBody EntityStatusUpdate status) {
-    String response = userService.updateStatus(id, status);
+    String okMessage = userService.updateStatus(id, status);
 
-    return ResponseEntity.ok(Map.of("message", response));
+    return new ApiEntityResponse(id.longValue(), okMessage, OffsetDateTime.now());
   }
 }

@@ -1,9 +1,10 @@
 package com.kefir.services;
 
 import com.kefir.entities.PersonType;
+import com.kefir.exceptions.PersonTypeNotFoundException;
 import com.kefir.repositories.PersonTypeRepository;
+import com.kefir.web.dtos.personType.PersonTypeResponse;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,11 +16,14 @@ public class PersonTypeService {
     this.personTypeRepository = personTypeRepository;
   }
 
-  public List<PersonType> getAll() {
-    return personTypeRepository.findAll();
+  public List<PersonTypeResponse> getAll() {
+    return personTypeRepository.findAll().stream().map(PersonTypeResponse::fromEntity).toList();
   }
 
-  public Optional<PersonType> getById(Integer id) {
-    return personTypeRepository.findById(id);
+  public PersonTypeResponse getById(Integer id) {
+    PersonType personType =
+        personTypeRepository.findById(id).orElseThrow(PersonTypeNotFoundException::new);
+
+    return PersonTypeResponse.fromEntity(personType);
   }
 }

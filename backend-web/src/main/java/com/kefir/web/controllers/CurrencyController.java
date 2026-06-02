@@ -5,12 +5,8 @@ import com.kefir.services.CurrencyService;
 import com.kefir.web.dtos.currency.CurrencyResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/currencies")
@@ -25,13 +21,15 @@ public class CurrencyController {
 
   // Endpoint to retrieve all records from the person_type table
   @GetMapping
-  public ResponseEntity<List<CurrencyResponse>> getAll() {
-    return ResponseEntity.ok(currencyService.getAll());
+  @ResponseStatus(HttpStatus.OK)
+  public List<CurrencyResponse> getAll() {
+    return currencyService.getAll();
   }
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{isoCode}")
-  public ResponseEntity<CurrencyResponse> getByIsoCode(@PathVariable CurrencyIsoCodes isoCode) {
-    return ResponseEntity.ok(currencyService.getByIsoCodeWithResponse(isoCode));
+  @ResponseStatus(HttpStatus.OK)
+  public CurrencyResponse getByIsoCode(@PathVariable CurrencyIsoCodes isoCode) {
+    return currencyService.getByIsoCodeWithResponse(isoCode);
   }
 }

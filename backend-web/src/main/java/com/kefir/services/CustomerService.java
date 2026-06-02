@@ -166,6 +166,14 @@ public class CustomerService {
     customerRepository.save(customer);
   }
 
+  @Transactional
+  public void deactivate(Long id) {
+    Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
+    customer.setStatus(CustomerStatus.DEACTIVATED);
+
+    customerRepository.save(customer);
+  }
+
   private PersonType getPersonType(com.kefir.enums.PersonType personType) {
     return personTypeRepository
         .findByNameIgnoreCase(personType.name())

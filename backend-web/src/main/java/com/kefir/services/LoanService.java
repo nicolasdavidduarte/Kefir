@@ -13,7 +13,6 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -57,14 +56,19 @@ public class LoanService {
   }
 
   @Cacheable("loans")
-  public List<Loan> getAll() {
-    return loanRepository.findAll();
+  public List<LoanResponse> getAll() {
+    return loanRepository.findAll().stream().map(LoanResponse::fromEntity).toList();
   }
 
   @Observed(name = "loan.service.get")
-  public Optional<Loan> getById(Long id) {
-    log.info("Loan search for id: {}", id);
-    return loanRepository.findById(id);
+  public Loan getById(Long id) {
+    return loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
+  }
+
+  @Observed(name = "loan.service.get")
+  public LoanResponse getByIdWithResponse(Long id) {
+    Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
+    return LoanResponse.fromEntity(loan);
   }
 
   @Transactional

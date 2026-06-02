@@ -1,14 +1,11 @@
 package com.kefir.web.controllers;
 
-import com.kefir.entities.PersonType;
 import com.kefir.services.PersonTypeService;
+import com.kefir.web.dtos.personType.PersonTypeResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.Optional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/personType")
@@ -23,13 +20,15 @@ public class PersonTypeController {
 
   // Endpoint to retrieve all records from the person_type table
   @GetMapping
-  public List<PersonType> getAll() {
+  @ResponseStatus(HttpStatus.OK)
+  public List<PersonTypeResponse> getAll() {
     return personTypeService.getAll();
   }
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
-  public Optional<PersonType> getById(@PathVariable Integer id) {
+  @ResponseStatus(HttpStatus.OK)
+  public PersonTypeResponse getById(@PathVariable Integer id) {
     return personTypeService.getById(id);
   }
 }
