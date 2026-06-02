@@ -28,7 +28,7 @@ public class CurrencyService {
 
   public Currency getByIsoCode(CurrencyIsoCodes isoCode) {
     return currencyRepository
-        .findByIsoCode(isoCode.toString())
+        .findByIsoCode(isoCode.name())
         .orElseThrow(CurrencyNotFoundException::new);
   }
 

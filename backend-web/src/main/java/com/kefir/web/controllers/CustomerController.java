@@ -53,11 +53,11 @@ public class CustomerController {
   // Endpoint to delete a loan
   @DeleteMapping("/{id}")
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public ResponseEntity<String> deleteCustomer(@PathVariable Long id) {
+  public ResponseEntity<Map<String, String>> deleteCustomer(@PathVariable Long id) {
 
     customerService.delete(id);
 
-    return ResponseEntity.ok("Customer successfully deleted!");
+    return ResponseEntity.ok(Map.of("Message","Customer successfully deleted!"));
   }
 
   @PostMapping("/{id}/status")
