@@ -1,4 +1,4 @@
-package com.kefir.web.dtos;
+package com.kefir.web.dtos.common;
 
 import java.time.OffsetDateTime;
 

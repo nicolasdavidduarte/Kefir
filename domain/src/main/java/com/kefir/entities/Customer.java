@@ -8,6 +8,7 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "customer")
@@ -58,6 +59,7 @@ public class Customer {
   private CustomerType customerType;
 
   @Enumerated(EnumType.STRING)
+  @Builder.Default
   @Column(name = "status", nullable = false)
   private CustomerStatus status = CustomerStatus.PENDING;
 
@@ -65,11 +67,13 @@ public class Customer {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
+  @Builder.Default
   @Column(name = "created_at", nullable = false)
-  private OffsetDateTime createdAt;
+  private OffsetDateTime createdAt = OffsetDateTime.now();
 
+  @Builder.Default
   @Column(name = "updated_at", nullable = false)
-  private OffsetDateTime updatedAt;
+  private OffsetDateTime updatedAt = OffsetDateTime.now();
 
   @Override
   public String toString() {

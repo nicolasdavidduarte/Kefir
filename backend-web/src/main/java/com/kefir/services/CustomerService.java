@@ -3,21 +3,22 @@ package com.kefir.services;
 import com.kefir.entities.*;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.exceptions.CustomerNotFoundException;
+import com.kefir.exceptions.CustomerTypeNotFoundException;
 import com.kefir.exceptions.CustomerTypeNotValidException;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.CustomerRepository;
 import com.kefir.repositories.CustomerTypeRepository;
 import com.kefir.repositories.DocumentTypeRepository;
 import com.kefir.repositories.PersonTypeRepository;
-import com.kefir.web.dtos.CustomerRequest;
-import com.kefir.web.dtos.CustomerResponse;
+import com.kefir.web.dtos.customer.CustomerCreationRequest;
+import com.kefir.web.dtos.customer.CustomerResponse;
+import com.kefir.web.dtos.customer.CustomerUpdateRequest;
 import java.time.OffsetDateTime;
 import java.util.List;
-import lombok.extern.slf4j.Slf4j;
+import java.util.function.Consumer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 public class CustomerService {
 
@@ -59,91 +60,138 @@ public class CustomerService {
   }
 
   @Transactional
-  public CustomerResponse createCustomer(CustomerRequest customerRequest) {
+  public CustomerResponse create(CustomerCreationRequest request) {
 
-    Customer newCustomer = new Customer();
-    String fullname = generateFullname(customerRequest);
+    DocumentType documentType = getDocumentType(request.documentType());
 
-    DocumentType documentType =
-        documentTypeRepository.findByNameIgnoreCase(customerRequest.documentType());
+    PersonType personType = getPersonType(request.personType());
 
-    PersonType personType =
-        personTypeRepository
-            .findByNameIgnoreCase(customerRequest.personType())
-            .orElseThrow(() -> new RuntimeException("Person type not found"));
-
-    CustomerType customerType =
-        customerTypeRepository
-            .findByNameIgnoreCase(customerRequest.customerType())
-            .orElseThrow(CustomerNotFoundException::new);
-
-    if (!customerType.isEnabled()) {
-      throw new CustomerTypeNotValidException();
-    }
+    CustomerType customerType = getCustomerType(request.customerType());
 
     User user = userService.getById(authService.getCurrentUserId());
 
-    newCustomer.setName1(customerRequest.name1());
-    newCustomer.setName2(customerRequest.name2());
-    newCustomer.setName3(customerRequest.name3());
-    newCustomer.setLastname1(customerRequest.lastname1());
-    newCustomer.setLastname2(customerRequest.lastname2());
-    newCustomer.setLastname3(customerRequest.lastname3());
+    Customer newCustomer =
+        Customer.builder()
+            .name1(request.name1())
+            .name2(request.name2())
+            .name3(request.name3())
+            .lastname1(request.lastname1())
+            .lastname2(request.lastname2())
+            .lastname3(request.lastname3())
+            .personType(personType)
+            .documentType(documentType)
+            .documentNumber(request.documentNumber())
+            .customerType(customerType)
+            .user(user)
+            .build();
+
+    String fullname = generateFullname(newCustomer);
     newCustomer.setFullname(fullname);
-    newCustomer.setPersonType(personType);
-    newCustomer.setDocumentType(documentType);
-    newCustomer.setDocumentNumber(customerRequest.documentNumber());
-    newCustomer.setCustomerType(customerType);
-    newCustomer.setStatus(CustomerStatus.PENDING);
-    newCustomer.setUser(user);
-    newCustomer.setCreatedAt(OffsetDateTime.now());
-    newCustomer.setUpdatedAt(OffsetDateTime.now());
 
     Customer customerSaved = customerRepository.saveAndFlush(newCustomer);
 
-    CustomerResponse response =
-        CustomerResponse.builder()
-            .id(customerSaved.getId())
-            .name1(customerSaved.getName1())
-            .name2(customerSaved.getName2())
-            .name3(customerSaved.getName3())
-            .lastname1(customerSaved.getLastname1())
-            .lastname2(customerSaved.getLastname2())
-            .lastname3(customerSaved.getLastname3())
-            .personType(customerSaved.getPersonType().getName())
-            .documentType(customerSaved.getDocumentType().getName())
-            .documentNumber(customerSaved.getDocumentNumber())
-            .customerType(customerSaved.getCustomerType().getName())
-            .status(customerSaved.getStatus().toString())
-            .createdByUser(customerSaved.getUser().getUsername())
-            .creationDate(customerSaved.getCreatedAt())
-            .build();
-
-    log.info("Customer successfully created:{}", customerSaved);
-    return response;
+    return CustomerResponse.fromEntity(customerSaved);
   }
 
-  private String generateFullname(CustomerRequest customerRequest) {
+  public CustomerResponse update(CustomerUpdateRequest request, Long id) {
+    Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
+
+    updateIfChanged(request.name1(), customer.getName1(), customer::setName1);
+    updateIfChanged(request.name2(), customer.getName2(), customer::setName2);
+    updateIfChanged(request.name3(), customer.getName3(), customer::setName3);
+
+    updateIfChanged(request.lastname1(), customer.getLastname1(), customer::setLastname1);
+    updateIfChanged(request.lastname2(), customer.getLastname2(), customer::setLastname2);
+    updateIfChanged(request.lastname3(), customer.getLastname3(), customer::setLastname3);
+
+    String fullname = generateFullname(customer);
+    if (!fullname.equals(customer.getFullname())) customer.setFullname(fullname);
+
+    if (request.personType() != null) customer.setPersonType(getPersonType(request.personType()));
+
+    if (request.customerType() != null)
+      customer.setCustomerType(getCustomerType(request.customerType()));
+
+    if (request.documentType() != null)
+      customer.setDocumentType(getDocumentType(request.documentType()));
+
+    if (request.documentNumber() != null) customer.setDocumentNumber(request.documentNumber());
+
+    customer.setUser(userService.getById(authService.getCurrentUserId()));
+
+    customer.setUpdatedAt(OffsetDateTime.now());
+
+    Customer customerUpdated = customerRepository.save(customer);
+
+    return CustomerResponse.fromEntity(customerUpdated);
+  }
+
+  private String generateFullname(Customer customer) {
     StringBuilder fullname = new StringBuilder();
 
-    fullname.append(customerRequest.name1());
+    fullname.append(customer.getName1());
 
-    if ((customerRequest.name2() != null)) fullname.append(' ').append(customerRequest.name2());
-    if ((customerRequest.name3() != null)) fullname.append(' ').append(customerRequest.name3());
+    if (customer.getName2() != null) {
+      fullname.append(' ').append(customer.getName2());
+    }
 
-    fullname.append(' ').append(customerRequest.lastname1());
+    if (customer.getName3() != null) {
+      fullname.append(' ').append(customer.getName3());
+    }
 
-    if ((customerRequest.lastname2() != null))
-      fullname.append(' ').append(customerRequest.lastname2());
-    if ((customerRequest.lastname3() != null))
-      fullname.append(' ').append(customerRequest.lastname3());
+    fullname.append(' ').append(customer.getLastname1());
+
+    if (customer.getLastname2() != null) {
+      fullname.append(' ').append(customer.getLastname2());
+    }
+
+    if (customer.getLastname3() != null) {
+      fullname.append(' ').append(customer.getLastname3());
+    }
 
     return fullname.toString();
   }
 
   @Transactional
-  public void deleteCustomer(Long id) {
+  public void delete(Long id) {
     Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
     customerRepository.delete(customer);
+  }
+
+  @Transactional
+  public void activate(Long id) {
+    Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
+    customer.setStatus(CustomerStatus.ACTIVE);
+
+    customerRepository.save(customer);
+  }
+
+  private PersonType getPersonType(com.kefir.enums.PersonType personType) {
+    return personTypeRepository
+        .findByNameIgnoreCase(personType.name())
+        .orElseThrow(() -> new RuntimeException("Person type not found"));
+  }
+
+  private DocumentType getDocumentType(com.kefir.enums.DocumentType documentType) {
+    return documentTypeRepository.findByNameIgnoreCase(documentType.name());
+  }
+
+  private CustomerType getCustomerType(com.kefir.enums.CustomerType customerType) {
+    CustomerType customerTypeResponse =
+        customerTypeRepository
+            .findByNameIgnoreCase(customerType.name())
+            .orElseThrow(CustomerTypeNotFoundException::new);
+
+    if (!customerTypeResponse.isEnabled()) {
+      throw new CustomerTypeNotValidException();
+    }
+
+    return customerTypeResponse;
+  }
+
+  private void updateIfChanged(String newValue, String currentValue, Consumer<String> setter) {
+    if (newValue != null && !newValue.equals(currentValue)) {
+      setter.accept(newValue);
+    }
   }
 }

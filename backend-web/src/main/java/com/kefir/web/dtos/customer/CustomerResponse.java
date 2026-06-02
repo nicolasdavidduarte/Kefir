@@ -1,0 +1,39 @@
+package com.kefir.web.dtos.customer;
+
+import com.kefir.entities.Customer;
+import java.time.OffsetDateTime;
+
+public record CustomerResponse(
+    Long id,
+    String name1,
+    String name2,
+    String name3,
+    String lastname1,
+    String lastname2,
+    String lastname3,
+    String personType,
+    String documentType,
+    String documentNumber,
+    String customerType,
+    String status,
+    String createdByUser,
+    OffsetDateTime creationDate) {
+
+  public static CustomerResponse fromEntity(Customer customer) {
+    return new CustomerResponse(
+        customer.getId(),
+        customer.getName1(),
+        customer.getName2(),
+        customer.getName3(),
+        customer.getLastname1(),
+        customer.getLastname2(),
+        customer.getLastname3(),
+        customer.getPersonType().getName(),
+        customer.getDocumentType().getName(),
+        customer.getDocumentNumber(),
+        customer.getCustomerType().getName(),
+        customer.getStatus().name(),
+        customer.getUser().getUsername(),
+        customer.getCreatedAt());
+  }
+}

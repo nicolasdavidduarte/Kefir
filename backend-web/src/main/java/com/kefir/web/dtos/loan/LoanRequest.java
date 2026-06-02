@@ -1,4 +1,4 @@
-package com.kefir.web.dtos;
+package com.kefir.web.dtos.loan;
 
 import com.kefir.enums.CurrencyIsoCodes;
 import com.kefir.enums.LoanTypeName;

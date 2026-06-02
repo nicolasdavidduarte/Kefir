@@ -25,7 +25,9 @@
                 <constraints nullable="false"/>
             </column>
             <column name="currency_id" type="SMALLINT">
-                <constraints nullable="false" foreignKeyName="fk_loan_currency"/>
+                <constraints nullable="false" foreignKeyName="fk_loan_currency"
+                referencedTableName="currency"
+                referencedColumnNames="id"/>
             </column>
             <column name="total_operation_amount" type="NUMERIC(19,4)">
                 <constraints nullable="false"/>

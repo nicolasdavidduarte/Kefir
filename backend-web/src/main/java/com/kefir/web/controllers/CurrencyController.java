@@ -1,7 +1,8 @@
 package com.kefir.web.controllers;
 
-import com.kefir.entities.Currency;
+import com.kefir.enums.CurrencyIsoCodes;
 import com.kefir.services.CurrencyService;
+import com.kefir.web.dtos.currency.CurrencyResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/currency")
+@RequestMapping("/api/currencies")
 @Tag(name = "Currency services", description = "APIs for currencies")
 public class CurrencyController {
 
@@ -22,13 +23,13 @@ public class CurrencyController {
 
   // Endpoint to retrieve all records from the person_type table
   @GetMapping
-  public List<Currency> getAll() {
+  public List<CurrencyResponse> getAll() {
     return currencyService.getAll();
   }
 
   // Endpoint to retrieve a single record by ID
-  @GetMapping("/{id}")
-  public Currency getById(@PathVariable Integer id) {
-    return currencyService.getById(id);
+  @GetMapping("/{isoCode}")
+  public CurrencyResponse getByIsoCode(@PathVariable CurrencyIsoCodes isoCode) {
+    return currencyService.getByIsoCodeWithResponse(isoCode);
   }
 }

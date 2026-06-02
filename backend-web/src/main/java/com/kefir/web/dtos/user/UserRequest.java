@@ -1,4 +1,4 @@
-package com.kefir.web.dtos;
+package com.kefir.web.dtos.user;
 
 import com.kefir.enums.UserRoles;
 import java.util.List;

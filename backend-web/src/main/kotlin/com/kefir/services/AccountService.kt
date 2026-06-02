@@ -55,13 +55,13 @@ class AccountService(
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
         val user: User = userService.getById(authService.currentUserId)
 
-        val accountType: AccountType = accountTypeService.getByName(accountRequest.type)
+        val accountType: AccountType = accountTypeService.getByName(accountRequest.type?.dbName)
 
         val customer: Customer = customerService.getById(accountRequest.customerId)
 
         val bankBranch: BankBranch = bankBranchService.getByBranchNumberAndBank(requireNotNull(accountRequest.bankBranchId), requireNotNull(accountRequest.bankId))
 
-        val currency: Currency = currencyService.getById(accountRequest.currencyId)
+        val currency: Currency = currencyService.getByIsoCode(requireNotNull(accountRequest.currencyIsoCode))
 
         val savedAccount =
             accountRepository.save(

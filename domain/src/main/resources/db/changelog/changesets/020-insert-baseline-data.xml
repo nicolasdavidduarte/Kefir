@@ -81,7 +81,8 @@
         <!-- ACCOUNT_TYPE -->
         <insert schemaName="public" tableName="account_type">
             <column name="id" valueComputed="nextval('account_type_id_seq')"/>
-            <column name="name" value="Savings Account"/>
+            <column name="name" value="SAVINGS ACCOUNT"/>
+            <column name="description" value="An interest-bearing account used to store and protect secondary business reserves."/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
@@ -89,7 +90,8 @@
         </insert>
         <insert schemaName="public" tableName="account_type">
             <column name="id" valueComputed="nextval('account_type_id_seq')"/>
-            <column name="name" value="Checking Account"/>
+            <column name="name" value="CHECKING ACCOUNT"/>
+            <column name="description" value="A transactional account used for daily business spending and paying operational bills."/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
@@ -99,7 +101,7 @@
         <!-- BANK -->
         <insert schemaName="public" tableName="bank">
             <column name="id" valueComputed="nextval('bank_id_seq')"/>
-            <column name="name" value="Kefir Bank"/>
+            <column name="name" value="KEFIR BANK"/>
             <column name="status" value="ACTIVE"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
@@ -110,9 +112,9 @@
         <insert schemaName="public" tableName="bank_branch">
             <column name="id" valueComputed="nextval('bank_branch_id_seq')"/>
             <column name="branch_number" valueNumeric="1"/>
-            <column name="bank_id" valueComputed="(SELECT id FROM bank WHERE name = 'Kefir Bank')"/>
-            <column name="name" value="Main Branch"/>
-            <column name="address" value="Maure 2262"/>
+            <column name="bank_id" valueComputed="(SELECT id FROM bank WHERE name = 'KEFIR BANK')"/>
+            <column name="name" value="MAIN BRANCH"/>
+            <column name="address" value="False Street 123"/>
             <column name="status" value="ACTIVE"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
@@ -151,7 +153,7 @@
         <!-- CUSTOMER_TYPE -->
         <insert schemaName="public" tableName="customer_type">
             <column name="id" valueComputed="nextval('customer_type_id_seq')"/>
-            <column name="name" value="Retail"/>
+            <column name="name" value="RETAIL"/>
             <column name="description" value="Retail"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
@@ -160,7 +162,7 @@
         </insert>
         <insert schemaName="public" tableName="customer_type">
             <column name="id" valueComputed="nextval('customer_type_id_seq')"/>
-            <column name="name" value="Corporate"/>
+            <column name="name" value="CORPORATE"/>
             <column name="description" value="Corporate"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
@@ -179,7 +181,7 @@
         </insert>
         <insert schemaName="public" tableName="document_type">
             <column name="id" valueComputed="nextval('document_type_id_seq')"/>
-            <column name="name" value="Passport"/>
+            <column name="name" value="PASSPORT"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
@@ -218,7 +220,7 @@
         <!-- PAYMENT_METHOD -->
         <insert schemaName="public" tableName="payment_method">
             <column name="id" valueComputed="nextval('payment_method_id_seq')"/>
-            <column name="name" value="Homebanking"/>
+            <column name="name" value="HOMEBANKING"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
@@ -234,7 +236,7 @@
         </insert>
         <insert schemaName="public" tableName="payment_method">
             <column name="id" valueComputed="nextval('payment_method_id_seq')"/>
-            <column name="name" value="Cash"/>
+            <column name="name" value="CASH"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
@@ -242,7 +244,7 @@
         </insert>
         <insert schemaName="public" tableName="payment_method">
             <column name="id" valueComputed="nextval('payment_method_id_seq')"/>
-            <column name="name" value="Check"/>
+            <column name="name" value="CHECK"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-25 00:00:00.000"/>
@@ -252,7 +254,7 @@
         <!-- PERSON_TYPE -->
         <insert schemaName="public" tableName="person_type">
             <column name="id" valueComputed="nextval('person_type_id_seq')"/>
-            <column name="name" value="Natural"/>
+            <column name="name" value="NATURAL"/>
             <column name="description" value="Natural"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
@@ -261,7 +263,7 @@
         </insert>
         <insert schemaName="public" tableName="person_type">
             <column name="id" valueComputed="nextval('person_type_id_seq')"/>
-            <column name="name" value="Juridical"/>
+            <column name="name" value="JURIDICIAL"/>
             <column name="description" value="Juridical"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>

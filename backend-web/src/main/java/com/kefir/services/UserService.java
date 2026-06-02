@@ -5,12 +5,11 @@ import com.kefir.entities.User;
 import com.kefir.exceptions.CoreUserNotFoundException;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.UserRepository;
-import com.kefir.web.dtos.EntityStatusUpdate;
-import com.kefir.web.dtos.UserRequest;
-import com.kefir.web.dtos.UserResponse;
+import com.kefir.web.dtos.common.EntityStatusUpdate;
+import com.kefir.web.dtos.user.UserRequest;
+import com.kefir.web.dtos.user.UserResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -85,5 +84,4 @@ public class UserService {
 
     return (status.enabled()) ? "User successfully activated" : "User successfully deactivated";
   }
-
 }

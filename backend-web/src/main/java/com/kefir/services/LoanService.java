@@ -7,8 +7,8 @@ import com.kefir.exceptions.LoanNotFoundException;
 import com.kefir.infrastructure.messaging.SnsPublisher;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
-import com.kefir.web.dtos.LoanRequest;
-import com.kefir.web.dtos.LoanResponse;
+import com.kefir.web.dtos.loan.LoanRequest;
+import com.kefir.web.dtos.loan.LoanResponse;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
 import java.time.OffsetDateTime;
@@ -84,19 +84,7 @@ public class LoanService {
 
       snsPublisher.publishLoanCreated(loanSaved.getId(), loanSaved.getTotalOperationAmount());
 
-      return LoanResponse.builder()
-          .id(loanSaved.getId())
-          .customer(loanSaved.getCustomer().getId())
-          .loanType(loanSaved.getLoanType().getName())
-          .totalOperationAmount(loanSaved.getTotalOperationAmount())
-          .openingDate(loanSaved.getOpeningDate())
-          .currency(loanSaved.getCurrency().getIsoCode())
-          .expirationDate(loanSaved.getExpirationDate())
-          .numberOfInstallments(loanSaved.getNumberOfInstallments())
-          .status(loanSaved.getStatus())
-          .createdAt(loanSaved.getCreatedAt())
-          .user(loanSaved.getUser().getUsername())
-          .build();
+      return LoanResponse.fromEntity(loanSaved);
 
     } catch (CustomerCreationException e) {
       registry.counter("loan.created", "status", "error").increment();
@@ -104,12 +92,16 @@ public class LoanService {
     }
   }
 
+  // TODO: German Loan
   public LoanResponse createGerman() {
-    return LoanResponse.builder().build();
+    Loan loan = new Loan();
+    return LoanResponse.fromEntity(loan);
   }
 
+  // TODO: American Loan
   public LoanResponse createAmerican() {
-    return LoanResponse.builder().build();
+    Loan loan = new Loan();
+    return LoanResponse.fromEntity(loan);
   }
 
   @Transactional

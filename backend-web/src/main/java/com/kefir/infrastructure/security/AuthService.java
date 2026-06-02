@@ -2,8 +2,9 @@ package com.kefir.infrastructure.security;
 
 import com.kefir.entities.RefreshToken;
 import com.kefir.entities.User;
+import com.kefir.exceptions.UserNotValidException;
 import com.kefir.repositories.UserRepository;
-import com.kefir.web.dtos.AuthResponse;
+import com.kefir.web.dtos.auth.AuthResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +37,8 @@ public class AuthService {
     authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
     final User user = userRepository.findByUsername(username).orElseThrow();
+
+    if (!user.isEnabled()) throw new UserNotValidException();
 
     final List<String> roles =
         user.getRoles().stream().map(role -> "ROLE_" + role.getName()).toList();

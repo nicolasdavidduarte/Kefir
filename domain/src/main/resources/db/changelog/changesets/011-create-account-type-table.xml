@@ -14,6 +14,9 @@
             <column name="name" type="VARCHAR(50)">
                 <constraints nullable="false" />
             </column>
+            <column name="description" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
             <column name="enabled" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>

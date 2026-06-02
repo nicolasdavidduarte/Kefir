@@ -1,4 +1,4 @@
-package com.kefir.web.dtos;
+package com.kefir.web.dtos.user;
 
 import com.kefir.entities.Role;
 import com.kefir.entities.User;

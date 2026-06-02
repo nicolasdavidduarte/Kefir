@@ -1,9 +1,9 @@
 package com.kefir.web.controllers;
 
 import com.kefir.services.UserService;
-import com.kefir.web.dtos.EntityStatusUpdate;
-import com.kefir.web.dtos.UserRequest;
-import com.kefir.web.dtos.UserResponse;
+import com.kefir.web.dtos.common.EntityStatusUpdate;
+import com.kefir.web.dtos.user.UserRequest;
+import com.kefir.web.dtos.user.UserResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -41,7 +41,8 @@ public class UserController {
 
   @PostMapping("/{id}/status")
   @PreAuthorize("hasAnyRole('ADMIN')")
-  public ResponseEntity<Map<String, String>> updateStatus(@PathVariable Integer id, @RequestBody EntityStatusUpdate status) {
+  public ResponseEntity<Map<String, String>> updateStatus(
+      @PathVariable Integer id, @RequestBody EntityStatusUpdate status) {
     String response = userService.updateStatus(id, status);
 
     return ResponseEntity.ok(Map.of("message", response));
