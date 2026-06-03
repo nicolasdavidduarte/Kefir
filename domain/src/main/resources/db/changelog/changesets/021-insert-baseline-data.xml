@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
 
-    <changeSet id="020" author="ndd">
+    <changeSet id="021" author="ndd">
 
         <!-- ROLE -->
         <insert schemaName="public" tableName="role">
@@ -188,9 +188,9 @@
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
 
-        <!-- LOAN_TYPE -->
-        <insert schemaName="public" tableName="loan_type">
-            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
+        <!-- AMORTIZATION_TYPE -->
+        <insert schemaName="public" tableName="amortization_type">
+            <column name="id" valueComputed="nextval('amortization_type_id_seq')"/>
             <column name="name" value="FRENCH"/>
             <column name="description" value="Fully amortized loan where each installment (payment) remains fixed over the loan period."/>
             <column name="enabled" valueBoolean="true"/>
@@ -198,8 +198,8 @@
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
-        <insert schemaName="public" tableName="loan_type">
-            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
+        <insert schemaName="public" tableName="amortization_type">
+            <column name="id" valueComputed="nextval('amortization_type_id_seq')"/>
             <column name="name" value="GERMAN"/>
             <column name="description" value="characterized by a fixed, constant principal repayment portion in every installment, causing the total payment amount to decrease over time as interest drops."/>
             <column name="enabled" valueBoolean="true"/>
@@ -207,10 +207,66 @@
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
-        <insert schemaName="public" tableName="loan_type">
-            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
+        <insert schemaName="public" tableName="amortization_type">
+            <column name="id" valueComputed="nextval('amortization_type_id_seq')"/>
             <column name="name" value="AMERICAN"/>
             <column name="description" value="Focus on periodic interest payments with a single principal repayment at the end."/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <!-- LOAN_TYPE -->
+        <insert schemaName="public" tableName="loan_type">
+            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
+            <column name="name" value="PERSONAL"/>
+            <column name="description" value="Unsecured personal loan for general consumer purposes."/>
+            <column name="base_interest_rate" valueNumeric="75.0000"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="loan_type">
+            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
+            <column name="name" value="MORTGAGE"/>
+            <column name="description" value="Long-term loan secured by real estate property."/>
+            <column name="base_interest_rate" valueNumeric="12.0000"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="loan_type">
+            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
+            <column name="name" value="LEASING"/>
+            <column name="description" value="Financing arrangement where the lender retains ownership of the asset during the contract term."/>
+            <column name="base_interest_rate" valueNumeric="20.0000"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="loan_type">
+            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
+            <column name="name" value="AUTO"/>
+            <column name="description" value="Loan granted for the purchase of a motor vehicle."/>
+            <column name="base_interest_rate" valueNumeric="45.0000"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
+            <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
+            <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
+        </insert>
+
+        <insert schemaName="public" tableName="loan_type">
+            <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
+            <column name="name" value="BUSINESS"/>
+            <column name="description" value="Loan intended to finance business operations, expansion, or investment."/>
+            <column name="base_interest_rate" valueNumeric="35.0000"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>

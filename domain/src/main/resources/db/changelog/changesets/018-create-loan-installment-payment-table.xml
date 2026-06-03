@@ -5,7 +5,7 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="017a" author="ndd">
+    <changeSet id="018a" author="ndd">
 
         <createTable tableName="loan_installment_payment">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -39,7 +39,7 @@
 
     </changeSet>
 
-    <changeSet id="017b" author="ndd">
+    <changeSet id="018b" author="ndd">
         <createIndex indexName="idx_payment_loan_installment"
                      tableName="loan_installment_payment">
             <column name="loan_installment_id"/>

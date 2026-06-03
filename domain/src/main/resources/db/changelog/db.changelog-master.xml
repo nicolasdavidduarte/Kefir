@@ -19,12 +19,13 @@
     <include file="/db/changelog/changesets/011-create-account-type-table.xml"/>
     <include file="/db/changelog/changesets/012-create-account-table.xml"/>
     <include file="/db/changelog/changesets/013-create-payment-method-table.xml"/>
-    <include file="/db/changelog/changesets/014-create-loan-type-table.xml"/>
-    <include file="/db/changelog/changesets/015-create-loan-table.xml"/>
-    <include file="/db/changelog/changesets/016-create-loan-installment-table.xml"/>
-    <include file="/db/changelog/changesets/017-create-loan-installment-payment-table.xml"/>
-    <include file="/db/changelog/changesets/018-create-operation-log-table.xml"/>
-    <include file="/db/changelog/changesets/019-create-refresh-token-table.xml"/>
-    <include file="/db/changelog/changesets/020-insert-baseline-data.xml"/>
+    <include file="/db/changelog/changesets/014-create-amortization-type-table.xml"/>
+    <include file="/db/changelog/changesets/015-create-loan-type-table.xml"/>
+    <include file="/db/changelog/changesets/016-create-loan-table.xml"/>
+    <include file="/db/changelog/changesets/017-create-loan-installment-table.xml"/>
+    <include file="/db/changelog/changesets/018-create-loan-installment-payment-table.xml"/>
+    <include file="/db/changelog/changesets/019-create-operation-log-table.xml"/>
+    <include file="/db/changelog/changesets/020-create-refresh-token-table.xml"/>
+    <include file="/db/changelog/changesets/021-insert-baseline-data.xml"/>
 
 </databaseChangeLog>

@@ -5,7 +5,7 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="018" author="ndd">
+    <changeSet id="019" author="ndd">
 
         <createTable tableName="operation_log">
             <column name="id" type="BIGINT" autoIncrement="true">
