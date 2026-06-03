@@ -17,7 +17,7 @@
             <column name="description" type="VARCHAR(200)">
                 <constraints nullable="false"/>
             </column>
-            <column name="base_interest_rate" type="NUMERIC(19,4)">
+            <column name="annual_interest_rate" type="NUMERIC(19,4)">
                 <constraints nullable="false"/>
             </column>
             <column name="enabled" type="BOOLEAN" defaultValueBoolean="false">

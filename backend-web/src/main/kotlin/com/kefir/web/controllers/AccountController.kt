@@ -1,6 +1,6 @@
 package com.kefir.web.controllers
 
-import com.kefir.services.AccountService
+import com.kefir.services.account.AccountService
 import com.kefir.web.dtos.AccountRequest
 import com.kefir.web.dtos.AccountResponse
 import jakarta.validation.Valid
@@ -21,6 +21,7 @@ class AccountController(
     val accountService: AccountService,
 ) {
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     fun getAllAccounts(): List<AccountResponse> = accountService.getAllAccounts().sortedBy { a -> a.id }
 
     @PostMapping
@@ -31,12 +32,14 @@ class AccountController(
     ) = accountService.createAccount(accountRequest)
 
     @PatchMapping("/{id}/open")
+    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun openAccount(
         @PathVariable id: Long,
     ) = accountService.open(id)
 
     @PatchMapping("/{id}/close")
+    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun closeAccount(
         @PathVariable id: Long,

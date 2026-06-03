@@ -1,4 +1,4 @@
-package com.kefir.services
+package com.kefir.services.account
 
 import com.kefir.entities.Account
 import com.kefir.entities.AccountType
@@ -13,7 +13,12 @@ import com.kefir.enums.LogOperation
 import com.kefir.exceptions.AccountNotFoundException
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.AccountRepository
-import com.kefir.services.aux.account.CBUGenerator
+import com.kefir.services.AccountTypeService
+import com.kefir.services.BankBranchService
+import com.kefir.services.CurrencyService
+import com.kefir.services.CustomerService
+import com.kefir.services.OperationLogService
+import com.kefir.services.UserService
 import com.kefir.web.dtos.AccountRequest
 import com.kefir.web.dtos.AccountResponse
 import com.kefir.web.dtos.EntityOperationResponse
@@ -44,7 +49,7 @@ class AccountService(
      */
     @Cacheable("accounts")
     fun getAllAccounts(): List<AccountResponse> = accountRepository.findAll().map(Account::toResponse).toList().ifEmpty {
-        throw AccountNotFoundException("No accounts found")
+        throw AccountNotFoundException()
     }
 
     /**
@@ -90,7 +95,7 @@ class AccountService(
     }
 
     fun open(id: Long): EntityOperationResponse {
-        val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException("Account not found") }
+        val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException() }
 
         account.open()
         account.updatedAt = OffsetDateTime.now()
@@ -106,11 +111,17 @@ class AccountService(
             ),
         )
 
-        return EntityOperationResponse(operation = "Opening", entity = "Account", id = id, message = "Account opened!", timestamp = LocalDateTime.now())
+        return EntityOperationResponse(
+            operation = "Opening",
+            entity = "Account",
+            id = id,
+            message = "Account opened!",
+            timestamp = LocalDateTime.now(),
+        )
     }
 
     fun close(id: Long): EntityOperationResponse {
-        val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException("Account not found") }
+        val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException() }
 
         account.close()
         account.updatedAt = OffsetDateTime.now()
@@ -126,6 +137,12 @@ class AccountService(
             ),
         )
 
-        return EntityOperationResponse(operation = "Closing", entity = "Account", id = id, message = "Account closed!", timestamp = LocalDateTime.now())
+        return EntityOperationResponse(
+            operation = "Closing",
+            entity = "Account",
+            id = id,
+            message = "Account closed!",
+            timestamp = LocalDateTime.now(),
+        )
     }
 }

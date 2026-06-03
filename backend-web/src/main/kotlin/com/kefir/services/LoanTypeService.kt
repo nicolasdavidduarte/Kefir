@@ -27,6 +27,7 @@ class LoanTypeService(
         val loanType = LoanType(
             name = loanTypeRequest.name,
             description = loanTypeRequest.description,
+            annualInterestRate = loanTypeRequest.baseInterestRate,
             user = userService.getById(authService.currentUserId),
         )
 

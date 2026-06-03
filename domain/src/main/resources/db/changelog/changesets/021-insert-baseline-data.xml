@@ -222,7 +222,7 @@
             <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
             <column name="name" value="PERSONAL"/>
             <column name="description" value="Unsecured personal loan for general consumer purposes."/>
-            <column name="base_interest_rate" valueNumeric="75.0000"/>
+            <column name="annual_interest_rate" valueNumeric="75.0000"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
@@ -233,7 +233,7 @@
             <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
             <column name="name" value="MORTGAGE"/>
             <column name="description" value="Long-term loan secured by real estate property."/>
-            <column name="base_interest_rate" valueNumeric="12.0000"/>
+            <column name="annual_interest_rate" valueNumeric="12.0000"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
@@ -244,7 +244,7 @@
             <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
             <column name="name" value="LEASING"/>
             <column name="description" value="Financing arrangement where the lender retains ownership of the asset during the contract term."/>
-            <column name="base_interest_rate" valueNumeric="20.0000"/>
+            <column name="annual_interest_rate" valueNumeric="20.0000"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
@@ -255,7 +255,7 @@
             <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
             <column name="name" value="AUTO"/>
             <column name="description" value="Loan granted for the purchase of a motor vehicle."/>
-            <column name="base_interest_rate" valueNumeric="45.0000"/>
+            <column name="annual_interest_rate" valueNumeric="45.0000"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>
@@ -266,7 +266,7 @@
             <column name="id" valueComputed="nextval('loan_type_id_seq')"/>
             <column name="name" value="BUSINESS"/>
             <column name="description" value="Loan intended to finance business operations, expansion, or investment."/>
-            <column name="base_interest_rate" valueNumeric="35.0000"/>
+            <column name="annual_interest_rate" valueNumeric="35.0000"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'admin')"/>
             <column name="created_at" valueDate="2026-05-14 00:00:00.000"/>

@@ -1,4 +1,4 @@
-package com.kefir.services.aux.account
+package com.kefir.services.account
 
 object CBUGenerator {
     fun generate(bank: Int, branch: Int, id: Long): String {

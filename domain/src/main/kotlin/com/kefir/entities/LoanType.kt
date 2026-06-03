@@ -11,6 +11,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import jakarta.validation.constraints.NotBlank
+import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 @Entity
@@ -32,7 +33,10 @@ class LoanType(
     val name: String,
 
     @Column(name = "description", nullable = true, updatable = true)
-    val description: String,
+    var description: String,
+
+    @Column(name = "annual_interest_rate", nullable = true)
+    val annualInterestRate: BigDecimal,
 
     @Column(name = "enabled", nullable = false, updatable = true)
     var enabled: Boolean = false,
@@ -52,10 +56,12 @@ class LoanType(
         fun createNew(
             name: String,
             description: String,
+            annualInterestRate: BigDecimal,
             user: User,
         ): LoanType = LoanType(
             name = name,
             description = description,
+            annualInterestRate = annualInterestRate,
             user = user,
         )
     }

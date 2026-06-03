@@ -2,10 +2,14 @@ package com.kefir.services;
 
 import com.kefir.entities.Loan;
 import com.kefir.entities.LoanInstallment;
-import com.kefir.entities.User;
+import com.kefir.enums.AmortizationTypeName;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanInstallmentRepository;
-import java.math.BigDecimal;
+import com.kefir.services.loanInstallment.AmortizationCalculator;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,32 +18,33 @@ public class LoanInstallmentService {
   private final LoanInstallmentRepository loanInstallmentRepository;
   private final AuthService authService;
   private UserService userService;
+  private final Map<AmortizationTypeName, AmortizationCalculator> calculators;
 
   public LoanInstallmentService(
       LoanInstallmentRepository loanInstallmentRepository,
       AuthService authService,
-      UserService userService) {
+      UserService userService,
+      List<AmortizationCalculator> calculators) {
     this.loanInstallmentRepository = loanInstallmentRepository;
     this.authService = authService;
     this.userService = userService;
+
+    this.calculators =
+        calculators.stream()
+            .collect(
+                Collectors.toUnmodifiableMap(AmortizationCalculator::getType, Function.identity()));
   }
 
-  public void createInstallmentsSchedule(Loan loan) {
-    int i;
+  public List<LoanInstallment> createInstallmentsSchedule(Loan loan) {
+    AmortizationCalculator calculator = calculators.get(loan.getAmortizationType().getName());
 
-    Integer numberOfInstallments = loan.getNumberOfInstallments();
-    BigDecimal loanTotalAmount = loan.getTotalOperationAmount();
-
-    for (i = 1; i <= numberOfInstallments; i++) {
-      createInstallment(i, loan, loanTotalAmount);
+    if (calculator == null) {
+      throw new IllegalArgumentException(
+          "Unsupported amortization type: " + loan.getAmortizationType().getName());
     }
-  }
 
-  private void createInstallment(int number, Loan loan, BigDecimal loanTotalAmount) {
-    User user = userService.getById(authService.getCurrentUserId());
-    LoanInstallment loanInstallment =
-        LoanInstallment.createNew(loan, number, loanTotalAmount, user);
+    List<LoanInstallment> schedule = calculator.generateSchedule(loan);
 
-    loanInstallmentRepository.save(loanInstallment);
+    return loanInstallmentRepository.saveAll(schedule);
   }
 }

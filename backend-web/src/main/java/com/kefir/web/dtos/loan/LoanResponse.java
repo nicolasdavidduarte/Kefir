@@ -3,14 +3,20 @@ package com.kefir.web.dtos.loan;
 import com.kefir.entities.Loan;
 import com.kefir.enums.LoanStatus;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.OffsetDateTime;
 
 public record LoanResponse(
     Long id,
     String customer,
     String loanType,
+    String amortizationType,
     String currency,
     Integer numberOfInstallments,
+    BigDecimal annualInterestRate,
+    BigDecimal monthlyInterestRate,
+    BigDecimal totalPrincipal,
+    BigDecimal totalInterest,
     BigDecimal totalOperationAmount,
     OffsetDateTime openingDate,
     OffsetDateTime expirationDate,
@@ -23,8 +29,13 @@ public record LoanResponse(
         loan.getId(),
         loan.getCustomer().getFullname(),
         loan.getLoanType().getName(),
+        loan.getAmortizationType().getName().name(),
         loan.getCurrency().getIsoCode(),
         loan.getNumberOfInstallments(),
+        loan.getAnnualInterestRate(),
+        loan.getMonthlyInterestRate(),
+        loan.getPrincipalAmount(),
+        loan.getInterestAmount(),
         loan.getTotalOperationAmount(),
         loan.getOpeningDate(),
         loan.getExpirationDate(),

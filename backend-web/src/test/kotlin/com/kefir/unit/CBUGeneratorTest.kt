@@ -1,6 +1,6 @@
 package com.kefir.unit
 
-import com.kefir.services.aux.account.CBUGenerator
+import com.kefir.services.account.CBUGenerator
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 

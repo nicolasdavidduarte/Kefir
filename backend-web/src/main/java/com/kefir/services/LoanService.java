@@ -1,9 +1,9 @@
 package com.kefir.services;
 
 import com.kefir.entities.*;
+import com.kefir.enums.CustomerStatus;
 import com.kefir.enums.LoanStatus;
-import com.kefir.exceptions.CustomerCreationException;
-import com.kefir.exceptions.LoanNotFoundException;
+import com.kefir.exceptions.*;
 import com.kefir.infrastructure.messaging.SnsPublisher;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
@@ -11,6 +11,8 @@ import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,7 @@ public class LoanService {
   private final CustomerService customerService;
   private final LoanTypeService loanTypeService;
   private final CurrencyService currencyService;
+  private final AmortizationTypeService amortizationTypeService;
 
   @Autowired
   public LoanService(
@@ -43,7 +46,8 @@ public class LoanService {
       CustomerService customerService,
       LoanTypeService loanTypeService,
       CurrencyService currencyService,
-      UserService userService) {
+      UserService userService,
+      AmortizationTypeService amortizationTypeService) {
     this.snsPublisher = snsPublisher;
     this.loanRepository = loanRepository;
     this.registry = registry;
@@ -53,6 +57,7 @@ public class LoanService {
     this.loanTypeService = loanTypeService;
     this.currencyService = currencyService;
     this.userService = userService;
+    this.amortizationTypeService = amortizationTypeService;
   }
 
   @Cacheable("loans")
@@ -71,30 +76,35 @@ public class LoanService {
     return LoanResponse.fromEntity(loan);
   }
 
-  @Transactional
-  public LoanResponse createFrench(LoanRequest loanRequest) {
-
-    // TODO: Add interest rate mode (fixed or variable)
-
-    try {
-
-      Loan loanSaved = createLoan(loanRequest);
-
-      createLoanInstallment(loanSaved);
-
-      registry.counter("loan.created", "status", "success").increment();
-
-      log.info("Loan successfully created - id: {}", loanSaved);
-
-      snsPublisher.publishLoanCreated(loanSaved.getId(), loanSaved.getTotalOperationAmount());
-
-      return LoanResponse.fromEntity(loanSaved);
-
-    } catch (CustomerCreationException e) {
-      registry.counter("loan.created", "status", "error").increment();
-      throw e;
-    }
-  }
+  //
+  //  @Transactional
+  //  public LoanResponse createFrench(LoanRequest loanRequest, Customer customer) {
+  //
+  //    // TODO: Add interest rate mode (fixed or variable)
+  //
+  //    try {
+  //
+  //      Loan loanSaved = createLoan(loanRequest);
+  //
+  //      List<LoanInstallment> loanInstallments =
+  // loanInstallmentService.createInstallmentsSchedule(loanSaved);
+  //
+  //
+  //
+  //
+  //      registry.counter("loan.created", "status", "success").increment();
+  //
+  //      log.info("Loan successfully created - id: {}", loanSaved);
+  //
+  //      snsPublisher.publishLoanCreated(loanSaved.getId(), loanSaved.getTotalOperationAmount());
+  //
+  //      return LoanResponse.fromEntity(loanSaved);
+  //
+  //    } catch (Exception e) {
+  //      registry.counter("loan.created", "status", "error").increment();
+  //      throw e;
+  //    }
+  //  }
 
   // TODO: German Loan
   public LoanResponse createGerman() {
@@ -116,36 +126,80 @@ public class LoanService {
     log.info("Loan successfully deleted: {}", loan);
   }
 
-  private Loan createLoan(LoanRequest loanRequest) {
-
-    User user = userService.getById(authService.getCurrentUserId());
+  @Transactional
+  public LoanResponse create(LoanRequest loanRequest) {
 
     Customer customer = customerService.getById(loanRequest.customerId());
 
-    LoanType loanType = loanTypeService.getByNameIgnoringCase(loanRequest.loanType());
+    if (customer.getStatus() != CustomerStatus.ACTIVE) throw new CustomerNotValidException();
 
-    Currency currency = currencyService.getByIsoCode(loanRequest.currencyIsoCode());
+    try {
 
-    Loan loan =
-        Loan.builder()
-            .customer(customer)
-            .loanType(loanType)
-            .totalOperationAmount(loanRequest.totalOperationAmount())
-            .openingDate(OffsetDateTime.now())
-            .currency(currency)
-            .numberOfInstallments(loanRequest.numberOfInstallments())
-            .expirationDate(OffsetDateTime.now().plusMonths(loanRequest.numberOfInstallments()))
-            .status(LoanStatus.PENDING)
-            .user(user)
-            .externalId(loanRequest.externalId())
-            .createdAt(OffsetDateTime.now())
-            .updatedAt(OffsetDateTime.now())
-            .build();
+      OffsetDateTime now = OffsetDateTime.now();
 
-    return loanRepository.save(loan);
-  }
+      User user = userService.getById(authService.getCurrentUserId());
 
-  private void createLoanInstallment(Loan loan) {
-    loanInstallmentService.createInstallmentsSchedule(loan);
+      LoanType loanType = loanTypeService.getByNameIgnoringCase(loanRequest.loanType());
+
+      BigDecimal annualInterestRate = loanType.getAnnualInterestRate();
+      BigDecimal monthlyInterestRate =
+          annualInterestRate.divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP);
+
+      AmortizationType amortizationType =
+          amortizationTypeService.getByNameIgnoringCase(loanRequest.amortizationType());
+
+      Currency currency = currencyService.getByIsoCode(loanRequest.currencyIsoCode());
+
+      Loan loan =
+          Loan.builder()
+              .customer(customer)
+              .loanType(loanType)
+              .amortizationType(amortizationType)
+              .principalAmount(loanRequest.principalAmount())
+              .interestAmount(BigDecimal.ZERO)
+              .totalOperationAmount(BigDecimal.ZERO)
+              .annualInterestRate(annualInterestRate)
+              .monthlyInterestRate(monthlyInterestRate)
+              .openingDate(now)
+              .currency(currency)
+              .numberOfInstallments(loanRequest.numberOfInstallments())
+              .expirationDate(now.plusMonths(loanRequest.numberOfInstallments()))
+              .status(LoanStatus.PENDING)
+              .user(user)
+              .externalId(loanRequest.externalId())
+              .createdAt(now)
+              .updatedAt(now)
+              .build();
+
+      Loan loanSaved = loanRepository.saveAndFlush(loan);
+
+      List<LoanInstallment> loanInstallments =
+          loanInstallmentService.createInstallmentsSchedule(loanSaved);
+
+      BigDecimal totalOperationAmount =
+          loanInstallments.stream()
+              .map(LoanInstallment::getTotalAmount)
+              .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      BigDecimal interestAmount =
+          loanInstallments.stream()
+              .map(LoanInstallment::getInterestAmount)
+              .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      loanSaved.setTotalOperationAmount(totalOperationAmount);
+      loanSaved.setInterestAmount(interestAmount);
+
+      registry.counter("loan.created", "status", "success").increment();
+
+      log.info("Loan successfully created - id: {}", loanSaved);
+
+      snsPublisher.publishLoanCreated(loanSaved.getId(), loanSaved.getTotalOperationAmount());
+
+      return LoanResponse.fromEntity(loanSaved);
+
+    } catch (Exception e) {
+      registry.counter("loan.created", "status", "error").increment();
+      throw e;
+    }
   }
 }

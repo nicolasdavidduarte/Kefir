@@ -31,11 +31,20 @@ class LoanInstallment(
     @Column(name = "number", nullable = false)
     val number: Int,
 
-    @Column(name = "amount", nullable = false)
-    val amount: BigDecimal,
+    @Column(name = "principal_amount", nullable = false)
+    val principalAmount: BigDecimal,
+
+    @Column(name = "interest_amount", nullable = false)
+    val interestAmount: BigDecimal,
+
+    @Column(name = "total_amount", nullable = false)
+    val totalAmount: BigDecimal,
 
     @Column(name = "payment_due_date", nullable = false)
     val paymentDueDate: OffsetDateTime,
+
+    @Column(name = "remaining_balance", nullable = false)
+    val remainingBalance: BigDecimal,
 
     @Enumerated(value = EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -56,14 +65,20 @@ class LoanInstallment(
         fun createNew(
             loan: Loan,
             number: Int,
-            amount: BigDecimal,
+            principalAmount: BigDecimal,
+            interestAmount: BigDecimal,
+            totalAmount: BigDecimal,
+            remainingBalance: BigDecimal,
             user: User,
         ): LoanInstallment {
             val now = OffsetDateTime.now()
             return LoanInstallment(
                 loan = loan,
                 number = number,
-                amount = amount,
+                principalAmount = principalAmount,
+                interestAmount = interestAmount,
+                totalAmount = totalAmount,
+                remainingBalance = remainingBalance,
                 paymentDueDate = now.plusMonths(1),
                 status = LoanInstallmentStatus.PAYMENT_PENDING,
                 user = user,

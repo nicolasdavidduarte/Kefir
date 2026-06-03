@@ -35,12 +35,32 @@ public class Loan {
   @JoinColumn(name = "currency_id", nullable = false)
   private Currency currency;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "amortization_type_id", nullable = false)
+  private AmortizationType amortizationType;
+
+  @Column(name = "annual_interest_rate", nullable = false)
+  private BigDecimal annualInterestRate;
+
+  @Column(name = "monthly_interest_rate", nullable = false)
+  private BigDecimal monthlyInterestRate;
+
+  @Column(name = "principal_amount", nullable = false)
+  private BigDecimal principalAmount;
+
+  @Column(name = "interest_amount", nullable = false)
+  private BigDecimal interestAmount;
+
+  @Column(name = "total_operation_amount", nullable = false)
   private BigDecimal totalOperationAmount;
 
+  @Column(name = "opening_date", nullable = false)
   private OffsetDateTime openingDate;
 
+  @Column(name = "expiration_date", nullable = false)
   private OffsetDateTime expirationDate;
 
+  @Column(name = "external_id", nullable = false)
   private Long externalId;
 
   @Enumerated(EnumType.STRING)

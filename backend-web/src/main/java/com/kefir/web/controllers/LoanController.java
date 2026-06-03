@@ -1,6 +1,5 @@
 package com.kefir.web.controllers;
 
-import com.kefir.orchestrators.LoanOrchestrator;
 import com.kefir.services.LoanService;
 import com.kefir.web.dtos.common.ApiEntityResponse;
 import com.kefir.web.dtos.loan.LoanRequest;
@@ -29,11 +28,9 @@ import org.springframework.web.bind.annotation.*;
 public class LoanController {
 
   private final LoanService loanService;
-  private final LoanOrchestrator loanOrchestrator;
 
-  public LoanController(LoanService loanService, LoanOrchestrator loanOrchestrator) {
+  public LoanController(LoanService loanService) {
     this.loanService = loanService;
-    this.loanOrchestrator = loanOrchestrator;
   }
 
   @GetMapping
@@ -75,7 +72,7 @@ public class LoanController {
               example = "12345")
           @PathVariable
           Long loanId) {
-    return loanOrchestrator.getLoanData(loanId);
+    return loanService.getByIdWithResponse(loanId);
   }
 
   // Endpoint to create a new loan
@@ -88,7 +85,7 @@ public class LoanController {
       percentiles = {0.5, 0.9, 0.95, 0.99},
       histogram = true)
   public LoanResponse createLoan(@RequestBody @Valid LoanRequest loanRequest) {
-    return loanOrchestrator.createLoan(loanRequest);
+    return loanService.create(loanRequest);
   }
 
   // Endpoint to delete a loan
