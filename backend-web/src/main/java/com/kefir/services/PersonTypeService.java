@@ -1,7 +1,8 @@
 package com.kefir.services;
 
 import com.kefir.entities.PersonType;
-import com.kefir.exceptions.PersonTypeNotFoundException;
+import com.kefir.exceptions.ApiException;
+import com.kefir.exceptions.ErrorCode;
 import com.kefir.repositories.PersonTypeRepository;
 import com.kefir.web.dtos.personType.PersonTypeResponse;
 import java.util.List;
@@ -22,7 +23,9 @@ public class PersonTypeService {
 
   public PersonTypeResponse getById(Integer id) {
     PersonType personType =
-        personTypeRepository.findById(id).orElseThrow(PersonTypeNotFoundException::new);
+        personTypeRepository
+            .findById(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.PERSON_TYPE_NOT_FOUND));
 
     return PersonTypeResponse.fromEntity(personType);
   }

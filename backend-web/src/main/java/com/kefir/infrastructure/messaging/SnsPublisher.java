@@ -1,6 +1,6 @@
 package com.kefir.infrastructure.messaging;
 
-import com.kefir.exceptions.SNSMessageSendingException;
+import com.kefir.exceptions.ApiException;
 import java.math.BigDecimal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +41,7 @@ public class SnsPublisher {
       if (log.isInfoEnabled()) {
         log.info("Message sent, ID: {}", response.messageId());
       }
-    } catch (SNSMessageSendingException e) {
+    } catch (ApiException e) {
       if (log.isErrorEnabled()) {
         log.error("Error when sending message SNS: {}", e.getMessage());
       }

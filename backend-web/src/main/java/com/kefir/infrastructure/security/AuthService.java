@@ -2,7 +2,8 @@ package com.kefir.infrastructure.security;
 
 import com.kefir.entities.RefreshToken;
 import com.kefir.entities.User;
-import com.kefir.exceptions.UserNotValidException;
+import com.kefir.exceptions.ApiException;
+import com.kefir.exceptions.ErrorCode;
 import com.kefir.repositories.UserRepository;
 import com.kefir.web.dtos.auth.AuthResponse;
 import java.time.OffsetDateTime;
@@ -38,7 +39,7 @@ public class AuthService {
 
     final User user = userRepository.findByUsername(username).orElseThrow();
 
-    if (!user.isEnabled()) throw new UserNotValidException();
+    if (!user.isEnabled()) throw new ApiException(ErrorCode.USER_NOT_VALID);
 
     final List<String> roles =
         user.getRoles().stream().map(role -> "ROLE_" + role.getName()).toList();

@@ -1,7 +1,8 @@
 package com.kefir.services;
 
 import com.kefir.entities.CustomerType;
-import com.kefir.exceptions.CustomerTypeNotFoundException;
+import com.kefir.exceptions.ApiException;
+import com.kefir.exceptions.ErrorCode;
 import com.kefir.repositories.CustomerTypeRepository;
 import com.kefir.web.dtos.customerType.CustomerTypeResponse;
 import java.util.List;
@@ -22,7 +23,9 @@ public class CustomerTypeService {
 
   public CustomerTypeResponse getById(Integer id) {
     CustomerType customerType =
-        customerTypeRepository.findById(id).orElseThrow(CustomerTypeNotFoundException::new);
+        customerTypeRepository
+            .findById(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_TYPE_NOT_FOUND));
 
     return CustomerTypeResponse.fromEntity(customerType);
   }

@@ -10,7 +10,8 @@ import com.kefir.entities.close
 import com.kefir.entities.open
 import com.kefir.enums.EntityName
 import com.kefir.enums.LogOperation
-import com.kefir.exceptions.AccountNotFoundException
+import com.kefir.exceptions.ApiException
+import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.AccountRepository
 import com.kefir.services.AccountTypeService
@@ -49,7 +50,7 @@ class AccountService(
      */
     @Cacheable("accounts")
     fun getAllAccounts(): List<AccountResponse> = accountRepository.findAll().map(Account::toResponse).toList().ifEmpty {
-        throw AccountNotFoundException()
+        throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND)
     }
 
     /**
@@ -95,7 +96,7 @@ class AccountService(
     }
 
     fun open(id: Long): EntityOperationResponse {
-        val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException() }
+        val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.LOAN_NOT_FOUND) }
 
         account.open()
         account.updatedAt = OffsetDateTime.now()
@@ -121,7 +122,7 @@ class AccountService(
     }
 
     fun close(id: Long): EntityOperationResponse {
-        val account = accountRepository.findById(id).orElseThrow { throw AccountNotFoundException() }
+        val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
         account.close()
         account.updatedAt = OffsetDateTime.now()

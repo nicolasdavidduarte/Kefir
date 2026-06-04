@@ -2,9 +2,8 @@ package com.kefir.services;
 
 import com.kefir.entities.*;
 import com.kefir.enums.CustomerStatus;
-import com.kefir.exceptions.CustomerNotFoundException;
-import com.kefir.exceptions.CustomerTypeNotFoundException;
-import com.kefir.exceptions.CustomerTypeNotValidException;
+import com.kefir.exceptions.ApiException;
+import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.CustomerRepository;
 import com.kefir.repositories.CustomerTypeRepository;
@@ -49,14 +48,16 @@ public class CustomerService {
   }
 
   public Customer getById(Long id) {
-    return customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
+    return customerRepository
+        .findById(id)
+        .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
   }
 
   public CustomerResponse getByIdWithResponse(Long id) {
     return customerRepository
         .findById(id)
         .map(CustomerResponse::fromEntity)
-        .orElseThrow(CustomerNotFoundException::new);
+        .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
   }
 
   @Transactional
@@ -94,7 +95,10 @@ public class CustomerService {
   }
 
   public CustomerResponse update(CustomerUpdateRequest request, Long id) {
-    Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
+    Customer customer =
+        customerRepository
+            .findById(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
 
     updateIfChanged(request.name1(), customer.getName1(), customer::setName1);
     updateIfChanged(request.name2(), customer.getName2(), customer::setName2);
@@ -154,13 +158,19 @@ public class CustomerService {
 
   @Transactional
   public void delete(Long id) {
-    Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
+    Customer customer =
+        customerRepository
+            .findById(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
     customerRepository.delete(customer);
   }
 
   @Transactional
   public void activate(Long id) {
-    Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
+    Customer customer =
+        customerRepository
+            .findById(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
     customer.setStatus(CustomerStatus.ACTIVE);
 
     customerRepository.save(customer);
@@ -168,7 +178,10 @@ public class CustomerService {
 
   @Transactional
   public void deactivate(Long id) {
-    Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
+    Customer customer =
+        customerRepository
+            .findById(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
     customer.setStatus(CustomerStatus.DEACTIVATED);
 
     customerRepository.save(customer);
@@ -188,10 +201,10 @@ public class CustomerService {
     CustomerType customerTypeResponse =
         customerTypeRepository
             .findByNameIgnoreCase(customerType.name())
-            .orElseThrow(CustomerTypeNotFoundException::new);
+            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_TYPE_NOT_FOUND));
 
     if (!customerTypeResponse.isEnabled()) {
-      throw new CustomerTypeNotValidException();
+      throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
     }
 
     return customerTypeResponse;

@@ -2,7 +2,8 @@ package com.kefir.services
 
 import com.kefir.entities.LoanType
 import com.kefir.enums.LoanTypeName
-import com.kefir.exceptions.LoanTypeNotFoundException
+import com.kefir.exceptions.ApiException
+import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.LoanTypeRepository
 import com.kefir.web.dtos.LoanTypeRequest
@@ -20,7 +21,7 @@ class LoanTypeService(
 ) {
     fun getAllLoanTypes(): List<LoanType> = loanTypeRepository.findAll()
 
-    fun getByNameIgnoringCase(name: LoanTypeName): LoanType = loanTypeRepository.findByNameIgnoringCase(name.name).orElseThrow { throw LoanTypeNotFoundException() }
+    fun getByNameIgnoringCase(name: LoanTypeName): LoanType = loanTypeRepository.findByNameIgnoringCase(name.name).orElseThrow { throw ApiException(ErrorCode.LOAN_TYPE_NOT_FOUND) }
 
     @Transactional
     fun create(loanTypeRequest: LoanTypeRequest): LoanTypeResponse {

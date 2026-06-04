@@ -2,7 +2,8 @@ package com.kefir.services;
 
 import com.kefir.entities.Currency;
 import com.kefir.enums.CurrencyIsoCodes;
-import com.kefir.exceptions.CurrencyNotFoundException;
+import com.kefir.exceptions.ApiException;
+import com.kefir.exceptions.ErrorCode;
 import com.kefir.repositories.CurrencyRepository;
 import com.kefir.web.dtos.currency.CurrencyResponse;
 import java.util.List;
@@ -22,21 +23,24 @@ public class CurrencyService {
   }
 
   public CurrencyResponse getById(Integer id) {
-    Currency currency = currencyRepository.findById(id).orElseThrow(CurrencyNotFoundException::new);
+    Currency currency =
+        currencyRepository
+            .findById(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
     return CurrencyResponse.fromEntity(currency);
   }
 
   public Currency getByIsoCode(CurrencyIsoCodes isoCode) {
     return currencyRepository
         .findByIsoCode(isoCode.name())
-        .orElseThrow(CurrencyNotFoundException::new);
+        .orElseThrow(() -> new ApiException(ErrorCode.CURRENCY_NOT_FOUND));
   }
 
   public CurrencyResponse getByIsoCodeWithResponse(CurrencyIsoCodes isoCode) {
     Currency currency =
         currencyRepository
             .findByIsoCode(isoCode.name())
-            .orElseThrow(CurrencyNotFoundException::new);
+            .orElseThrow(() -> new ApiException(ErrorCode.CURRENCY_NOT_FOUND));
 
     return CurrencyResponse.fromEntity(currency);
   }

@@ -35,32 +35,29 @@ public class GlobalExceptionHandler {
         .getFieldErrors()
         .forEach(err -> fieldErrors.put(err.getField(), err.getDefaultMessage()));
 
-    return buildResponse(HttpStatus.BAD_REQUEST, "Validation Error", fieldErrors);
+    return buildResponse(HttpStatus.BAD_REQUEST, fieldErrors);
   }
 
   @ExceptionHandler(ExpiredJwtException.class)
   public ResponseEntity<ApiErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
-    return buildResponse(
-        HttpStatus.UNAUTHORIZED, "Authentication error", "Authentication token expired");
+    return buildResponse(HttpStatus.UNAUTHORIZED, "Authentication token expired");
   }
 
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<ApiErrorResponse> handleAccessDenied(AccessDeniedException ex) {
-    return buildResponse(
-        HttpStatus.FORBIDDEN, "Forbidden action", "User has not access to complete this request");
+    return buildResponse(HttpStatus.FORBIDDEN, "User has not access to complete this request");
   }
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiErrorResponse> handleGeneric(Exception ex) {
     log.error("Unhandled exception", ex);
-    return buildResponse(
-        HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", "Unexpected error");
+    return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
   }
 
   @ExceptionHandler(BadCredentialsException.class)
   public ResponseEntity<ApiErrorResponse> handleBadCredentials(BadCredentialsException ex) {
 
-    return buildResponse(HttpStatus.UNAUTHORIZED, "Bad credentials", "User or password incorrect");
+    return buildResponse(HttpStatus.UNAUTHORIZED, "User or password incorrect");
   }
 
   @ExceptionHandler(DataIntegrityViolationException.class)
@@ -82,13 +79,13 @@ public class GlobalExceptionHandler {
     String message =
         CONSTRAINT_MESSAGES.getOrDefault(constraintName, "Database integrity violation");
 
-    return buildResponse(HttpStatus.CONFLICT, "Conflict", message);
+    return buildResponse(HttpStatus.CONFLICT, message);
   }
 
   @ExceptionHandler(ApiException.class)
   public ResponseEntity<ApiErrorResponse> handleApiException(ApiException ex) {
 
-    return buildResponse(ex.getStatus(), ex.getError(), ex.getMessage());
+    return buildResponse(ex.getStatus(), ex.getMessage());
   }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -104,18 +101,16 @@ public class GlobalExceptionHandler {
 
       return buildResponse(
           HttpStatus.BAD_REQUEST,
-          "Invalid enum value",
           "Field '%s' accepts: %s".formatted(fieldName, java.util.Arrays.toString(acceptedValues)));
     }
 
-    return buildResponse(HttpStatus.BAD_REQUEST, "Malformed request", "Invalid request body");
+    return buildResponse(HttpStatus.BAD_REQUEST, "Invalid request body");
   }
 
-  private ResponseEntity<ApiErrorResponse> buildResponse(
-      HttpStatus status, String error, Object message) {
+  private ResponseEntity<ApiErrorResponse> buildResponse(HttpStatus status, Object message) {
 
     ApiErrorResponse apiErrorResponse =
-        new ApiErrorResponse(error, message, status.value(), OffsetDateTime.now());
+        new ApiErrorResponse(message, status.value(), OffsetDateTime.now());
 
     return ResponseEntity.status(status).body(apiErrorResponse);
   }

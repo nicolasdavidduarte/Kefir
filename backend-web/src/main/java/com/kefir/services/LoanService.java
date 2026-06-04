@@ -3,7 +3,8 @@ package com.kefir.services;
 import com.kefir.entities.*;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.enums.LoanStatus;
-import com.kefir.exceptions.*;
+import com.kefir.exceptions.ApiException;
+import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.messaging.SnsPublisher;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
@@ -67,60 +68,22 @@ public class LoanService {
 
   @Observed(name = "loan.service.get")
   public Loan getById(Long id) {
-    return loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
+    return loanRepository
+        .findById(id)
+        .orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
   }
 
   @Observed(name = "loan.service.get")
   public LoanResponse getByIdWithResponse(Long id) {
-    Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
-    return LoanResponse.fromEntity(loan);
-  }
-
-  //
-  //  @Transactional
-  //  public LoanResponse createFrench(LoanRequest loanRequest, Customer customer) {
-  //
-  //    // TODO: Add interest rate mode (fixed or variable)
-  //
-  //    try {
-  //
-  //      Loan loanSaved = createLoan(loanRequest);
-  //
-  //      List<LoanInstallment> loanInstallments =
-  // loanInstallmentService.createInstallmentsSchedule(loanSaved);
-  //
-  //
-  //
-  //
-  //      registry.counter("loan.created", "status", "success").increment();
-  //
-  //      log.info("Loan successfully created - id: {}", loanSaved);
-  //
-  //      snsPublisher.publishLoanCreated(loanSaved.getId(), loanSaved.getTotalOperationAmount());
-  //
-  //      return LoanResponse.fromEntity(loanSaved);
-  //
-  //    } catch (Exception e) {
-  //      registry.counter("loan.created", "status", "error").increment();
-  //      throw e;
-  //    }
-  //  }
-
-  // TODO: German Loan
-  public LoanResponse createGerman() {
-    Loan loan = new Loan();
-    return LoanResponse.fromEntity(loan);
-  }
-
-  // TODO: American Loan
-  public LoanResponse createAmerican() {
-    Loan loan = new Loan();
+    Loan loan =
+        loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
     return LoanResponse.fromEntity(loan);
   }
 
   @Transactional
-  public void deleteLoan(Long id) {
-    Loan loan = loanRepository.findById(id).orElseThrow(LoanNotFoundException::new);
+  public void delete(Long id) {
+    Loan loan =
+        loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
     loanRepository.delete(loan);
 
     log.info("Loan successfully deleted: {}", loan);
@@ -128,10 +91,12 @@ public class LoanService {
 
   @Transactional
   public LoanResponse create(LoanRequest loanRequest) {
+    // TODO: Add interest rate mode (fixed or variable)
 
     Customer customer = customerService.getById(loanRequest.customerId());
 
-    if (customer.getStatus() != CustomerStatus.ACTIVE) throw new CustomerNotValidException();
+    if (customer.getStatus() != CustomerStatus.ACTIVE)
+      throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
 
     try {
 

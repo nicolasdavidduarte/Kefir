@@ -2,7 +2,8 @@ package com.kefir.services;
 
 import com.kefir.entities.Role;
 import com.kefir.enums.UserRoles;
-import com.kefir.exceptions.RolesNotValidException;
+import com.kefir.exceptions.ApiException;
+import com.kefir.exceptions.ErrorCode;
 import com.kefir.repositories.RoleRepository;
 import java.util.*;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class RoleService {
     Set<Role> roles = roleRepository.findByNamesIgnoreCase(roleNames);
 
     if (roles.size() != roleNames.size()) {
-      throw new RolesNotValidException();
+      throw new ApiException(ErrorCode.ROLES_NOT_VALID);
     }
 
     return roles;

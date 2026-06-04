@@ -2,7 +2,8 @@ package com.kefir.services
 
 import com.kefir.entities.Bank
 import com.kefir.entities.enable
-import com.kefir.exceptions.BankNotFoundException
+import com.kefir.exceptions.ApiException
+import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.BankRepository
 import com.kefir.web.dtos.BankRequest
@@ -24,7 +25,7 @@ class BankService(
         .findAll()
         .map(Bank::toResponse)
         .toList()
-        .ifEmpty { throw BankNotFoundException() }
+        .ifEmpty { throw ApiException(ErrorCode.BANK_NOT_FOUND) }
 
     fun create(bankRequest: BankRequest): BankResponse = bankRepository.save(
         Bank(
@@ -34,7 +35,7 @@ class BankService(
     ).toResponse()
 
     fun enable(id: Int): EntityOperationResponse {
-        val bank = bankRepository.findById(id).orElseThrow { BankNotFoundException() }
+        val bank = bankRepository.findById(id).orElseThrow { ApiException(ErrorCode.BANK_NOT_FOUND) }
         bank.enable()
         bankRepository.save(bank)
 

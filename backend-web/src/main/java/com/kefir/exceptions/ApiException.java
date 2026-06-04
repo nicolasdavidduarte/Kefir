@@ -1,16 +1,17 @@
 package com.kefir.exceptions;
 
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@Getter
-public abstract class ApiException extends RuntimeException {
+public class ApiException extends RuntimeException {
 
-  private final HttpStatus status;
-  private final String error;
+  private final ErrorCode errorCode;
 
-  protected ApiException(HttpStatus status, String error) {
-    this.status = status;
-    this.error = error;
+  public ApiException(ErrorCode errorCode) {
+    super(errorCode.getMessage());
+    this.errorCode = errorCode;
+  }
+
+  public HttpStatus getStatus() {
+    return errorCode.getStatus();
   }
 }

@@ -2,7 +2,8 @@ package com.kefir.services;
 
 import com.kefir.entities.Role;
 import com.kefir.entities.User;
-import com.kefir.exceptions.CoreUserNotFoundException;
+import com.kefir.exceptions.ApiException;
+import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.UserRepository;
 import com.kefir.web.dtos.common.EntityStatusUpdate;
@@ -44,11 +45,13 @@ public class UserService {
     return userRepository
         .findById(id)
         .map(UserResponse::fromEntity)
-        .orElseThrow(CoreUserNotFoundException::new);
+        .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
   }
 
   public User getById(Integer id) {
-    return userRepository.findById(id).orElseThrow(CoreUserNotFoundException::new);
+    return userRepository
+        .findById(id)
+        .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
   }
 
   @Transactional
@@ -77,7 +80,8 @@ public class UserService {
   @Transactional
   public String updateStatus(Integer id, EntityStatusUpdate status) {
 
-    User user = userRepository.findById(id).orElseThrow(CoreUserNotFoundException::new);
+    User user =
+        userRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
     user.setEnabled(status.enabled());
 
     userRepository.save(user);

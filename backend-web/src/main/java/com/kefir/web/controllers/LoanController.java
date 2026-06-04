@@ -93,7 +93,7 @@ public class LoanController {
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasRole('ADMIN')")
   public ApiEntityResponse deleteLoan(@PathVariable Long loanId) {
-    loanService.deleteLoan(loanId);
+    loanService.delete(loanId);
 
     return new ApiEntityResponse(loanId, "Loan successfully deleted", OffsetDateTime.now());
   }
