@@ -73,19 +73,25 @@ class FrenchAmortizationCalculator : AmortizationCalculator {
         monthlyInterestRate: BigDecimal,
         installments: Int,
     ): BigDecimal {
-        val p = principal.toDouble()
-        val i = monthlyInterestRate.toDouble()
-        val n = installments.toDouble()
+        // French formula: PMT = P * [r(1 + r)^n] / [(1 + r)^n - 1]
 
-        val installment =
-            p * (
-                (
-                    i * (1 + i).pow(n) /
-                        ((1 + i).pow(n) - 1)
-                    )
-                )
+        // p: Principal loan amount
+        // r: Interest rate per period (e.g., annual rate / 12)
+        // n: Total number of payment periods
 
-        return BigDecimal.valueOf(installment)
-            .setScale(2, RoundingMode.HALF_UP)
+        val one = BigDecimal.ONE
+
+        val ratePlusOne = monthlyInterestRate.add(one)
+
+        val compoundedInterest = ratePlusOne.pow(installments)
+
+        val numerator = monthlyInterestRate.multiply(compoundedInterest)
+
+        val denominator = compoundedInterest.subtract(one)
+
+        val interestFactor = numerator.divide(denominator, 10, RoundingMode.HALF_UP)
+        val rawInstallment = principal.multiply(interestFactor)
+
+        return rawInstallment.setScale(2, RoundingMode.HALF_UP)
     }
 }

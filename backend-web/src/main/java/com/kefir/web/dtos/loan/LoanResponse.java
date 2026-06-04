@@ -3,7 +3,6 @@ package com.kefir.web.dtos.loan;
 import com.kefir.entities.Loan;
 import com.kefir.enums.LoanStatus;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.OffsetDateTime;
 
 public record LoanResponse(
