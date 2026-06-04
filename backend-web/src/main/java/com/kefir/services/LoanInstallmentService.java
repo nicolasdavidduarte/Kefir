@@ -3,7 +3,6 @@ package com.kefir.services;
 import com.kefir.entities.Loan;
 import com.kefir.entities.LoanInstallment;
 import com.kefir.enums.AmortizationTypeName;
-import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanInstallmentRepository;
 import com.kefir.services.loanInstallment.AmortizationCalculator;
 import com.kefir.web.dtos.InstallmentData;
@@ -18,18 +17,12 @@ import org.springframework.stereotype.Service;
 public class LoanInstallmentService {
 
   private final LoanInstallmentRepository loanInstallmentRepository;
-  private final AuthService authService;
-  private UserService userService;
   private final Map<AmortizationTypeName, AmortizationCalculator> calculators;
 
   public LoanInstallmentService(
       LoanInstallmentRepository loanInstallmentRepository,
-      AuthService authService,
-      UserService userService,
       List<AmortizationCalculator> calculators) {
     this.loanInstallmentRepository = loanInstallmentRepository;
-    this.authService = authService;
-    this.userService = userService;
 
     this.calculators =
         calculators.stream()
