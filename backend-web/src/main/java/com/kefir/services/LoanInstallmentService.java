@@ -7,7 +7,6 @@ import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanInstallmentRepository;
 import com.kefir.services.loanInstallment.AmortizationCalculator;
 import com.kefir.web.dtos.InstallmentData;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +58,7 @@ public class LoanInstallmentService {
               i.getPrincipalAmount(),
               i.getInterestAmount(),
               i.getTotalAmount(),
-              i.getRemainingBalance().max(BigDecimal.ZERO),
+              i.getRemainingBalance(),
               loan.getOpeningDate().plusMonths(i.getNumber()),
               loan.getUser());
 
