@@ -6,6 +6,9 @@ import com.kefir.enums.AmortizationTypeName;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanInstallmentRepository;
 import com.kefir.services.loanInstallment.AmortizationCalculator;
+import com.kefir.web.dtos.InstallmentData;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -43,8 +46,26 @@ public class LoanInstallmentService {
           "Unsupported amortization type: " + loan.getAmortizationType().getName());
     }
 
-    List<LoanInstallment> schedule = calculator.generateSchedule(loan);
+    List<InstallmentData> schedule = calculator.generateSchedule(loan);
 
-    return loanInstallmentRepository.saveAll(schedule);
+    List<LoanInstallment> loanInstallments = new ArrayList<>();
+
+    for (InstallmentData i : schedule) {
+
+      LoanInstallment installment =
+          LoanInstallment.createNew(
+              loan,
+              i.getNumber(),
+              i.getPrincipalAmount(),
+              i.getInterestAmount(),
+              i.getTotalAmount(),
+              i.getRemainingBalance().max(BigDecimal.ZERO),
+              loan.getOpeningDate().plusMonths(i.getNumber()),
+              loan.getUser());
+
+      loanInstallments.add(installment);
+    }
+
+    return loanInstallmentRepository.saveAll(loanInstallments);
   }
 }

@@ -8,9 +8,9 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Service
-class FrenchAmortizationCalculator : BaseAmortizationCalculator() {
+class GermanAmortizationCalculator : BaseAmortizationCalculator() {
 
-    override fun getType() = AmortizationTypeName.FRENCH
+    override fun getType() = AmortizationTypeName.GERMAN
 
     override fun generateSchedule(loan: Loan): List<InstallmentData> {
         val monthlyInterestRate =
@@ -22,11 +22,11 @@ class FrenchAmortizationCalculator : BaseAmortizationCalculator() {
 
         var balance = loan.principalAmount
 
-        val installmentAmount =
-            calculateInstallmentAmount(
-                loan.principalAmount,
-                monthlyInterestRate,
-                loan.numberOfInstallments,
+        val fixedAmortization =
+            loan.principalAmount.divide(
+                BigDecimal.valueOf(loan.numberOfInstallments.toLong()),
+                2,
+                RoundingMode.HALF_UP,
             )
 
         val schedule = mutableListOf<InstallmentData>()
@@ -36,13 +36,15 @@ class FrenchAmortizationCalculator : BaseAmortizationCalculator() {
                 balance.multiply(monthlyInterestRate)
                     .setScale(2, RoundingMode.HALF_UP)
 
-            var principal =
-                installmentAmount.subtract(interest)
-                    .setScale(2, RoundingMode.HALF_UP)
+            var principal = fixedAmortization
 
             if (installmentNumber == loan.numberOfInstallments) {
                 principal = balance
             }
+
+            val installmentAmount =
+                principal.add(interest)
+                    .setScale(2, RoundingMode.HALF_UP)
 
             balance = balance.subtract(principal)
                 .setScale(2, RoundingMode.HALF_UP)
@@ -59,32 +61,5 @@ class FrenchAmortizationCalculator : BaseAmortizationCalculator() {
         }
 
         return schedule
-    }
-
-    private fun calculateInstallmentAmount(
-        principal: BigDecimal,
-        monthlyInterestRate: BigDecimal,
-        installments: Int,
-    ): BigDecimal {
-        // French formula: PMT = P * [r(1 + r)^n] / [(1 + r)^n - 1]
-
-        // p: Principal loan amount
-        // r: Interest rate per period (e.g., annual rate / 12)
-        // n: Total number of payment periods
-
-        val one = BigDecimal.ONE
-
-        val ratePlusOne = monthlyInterestRate.add(one)
-
-        val compoundedInterest = ratePlusOne.pow(installments)
-
-        val numerator = monthlyInterestRate.multiply(compoundedInterest)
-
-        val denominator = compoundedInterest.subtract(one)
-
-        val interestFactor = numerator.divide(denominator, 10, RoundingMode.HALF_UP)
-        val rawInstallment = principal.multiply(interestFactor)
-
-        return rawInstallment.setScale(2, RoundingMode.HALF_UP)
     }
 }

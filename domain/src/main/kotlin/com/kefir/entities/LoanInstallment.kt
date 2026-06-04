@@ -69,6 +69,7 @@ class LoanInstallment(
             interestAmount: BigDecimal,
             totalAmount: BigDecimal,
             remainingBalance: BigDecimal,
+            paymentDueDate: OffsetDateTime,
             user: User,
         ): LoanInstallment {
             val now = OffsetDateTime.now()
@@ -79,7 +80,7 @@ class LoanInstallment(
                 interestAmount = interestAmount,
                 totalAmount = totalAmount,
                 remainingBalance = remainingBalance,
-                paymentDueDate = now.plusMonths(1),
+                paymentDueDate = paymentDueDate,
                 status = LoanInstallmentStatus.PAYMENT_PENDING,
                 user = user,
             )
