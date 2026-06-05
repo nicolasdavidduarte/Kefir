@@ -6,9 +6,6 @@ import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.CustomerRepository;
-import com.kefir.repositories.CustomerTypeRepository;
-import com.kefir.repositories.DocumentTypeRepository;
-import com.kefir.repositories.PersonTypeRepository;
 import com.kefir.web.dtos.customer.CustomerCreationRequest;
 import com.kefir.web.dtos.customer.CustomerResponse;
 import com.kefir.web.dtos.customer.CustomerUpdateRequest;
@@ -111,7 +108,8 @@ public class CustomerService {
     String fullname = generateFullname(customer);
     if (!fullname.equals(customer.getFullname())) customer.setFullname(fullname);
 
-    if (request.personType() != null) customer.setPersonType(personTypeService.getByName(request.personType()));
+    if (request.personType() != null)
+      customer.setPersonType(personTypeService.getByName(request.personType()));
 
     if (request.customerType() != null)
       customer.setCustomerType(getCustomerType(request.customerType()));

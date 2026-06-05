@@ -38,7 +38,11 @@ public class LoanInstallmentService {
           "Unsupported amortization type: " + loan.getAmortizationType().getName());
     }
 
-    List<InstallmentData> schedule = calculator.generateSchedule(loan);
+    List<InstallmentData> schedule =
+        calculator.generateSchedule(
+            loan.getMonthlyInterestRate(),
+            loan.getPrincipalAmount(),
+            loan.getNumberOfInstallments());
 
     List<LoanInstallment> loanInstallments = new ArrayList<>();
 

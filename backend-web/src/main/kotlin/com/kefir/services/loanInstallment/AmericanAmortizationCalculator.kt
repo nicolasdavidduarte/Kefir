@@ -1,6 +1,5 @@
 package com.kefir.services.loanInstallment
 
-import com.kefir.entities.Loan
 import com.kefir.enums.AmortizationTypeName
 import com.kefir.web.dtos.InstallmentData
 import org.springframework.stereotype.Service
@@ -13,10 +12,12 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
     override fun getType() = AmortizationTypeName.AMERICAN
 
     override fun generateSchedule(
-        loan: Loan,
+        monthlyInterestRate: BigDecimal,
+        principalAmount: BigDecimal,
+        numberOfInstallments: Int,
     ): List<InstallmentData> {
         val monthlyInterestRate =
-            loan.monthlyInterestRate.divide(
+            monthlyInterestRate.divide(
                 BigDecimal.valueOf(100),
                 10,
                 RoundingMode.HALF_UP,
@@ -24,15 +25,15 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
 
         val schedule = mutableListOf<InstallmentData>()
 
-        var balance = loan.principalAmount
+        var balance = principalAmount
 
-        for (installmentNumber in 1..loan.numberOfInstallments) {
+        for (installmentNumber in 1..numberOfInstallments) {
             val interest =
                 balance.multiply(monthlyInterestRate)
                     .setScale(2, RoundingMode.HALF_UP)
 
             val principal =
-                if (installmentNumber == loan.numberOfInstallments) {
+                if (installmentNumber == numberOfInstallments) {
                     balance
                 } else {
                     BigDecimal.ZERO
@@ -43,7 +44,7 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
                     .setScale(2, RoundingMode.HALF_UP)
 
             val balance =
-                if (installmentNumber == loan.numberOfInstallments) {
+                if (installmentNumber == numberOfInstallments) {
                     BigDecimal.ZERO
                 } else {
                     balance

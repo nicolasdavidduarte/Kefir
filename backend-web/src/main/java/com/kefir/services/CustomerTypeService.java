@@ -30,11 +30,9 @@ public class CustomerTypeService {
     return CustomerTypeResponse.fromEntity(customerType);
   }
 
-  public CustomerType getByName(com.kefir.enums.CustomerType customerType){
-    return
-            customerTypeRepository
-                    .findByNameIgnoreCase(customerType.name())
-                    .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_TYPE_NOT_FOUND));
-
+  public CustomerType getByName(com.kefir.enums.CustomerType customerType) {
+    return customerTypeRepository
+        .findByNameIgnoreCase(customerType.name())
+        .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_TYPE_NOT_FOUND));
   }
 }

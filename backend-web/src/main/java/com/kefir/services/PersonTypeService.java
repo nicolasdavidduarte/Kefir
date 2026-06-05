@@ -30,11 +30,9 @@ public class PersonTypeService {
     return PersonTypeResponse.fromEntity(personType);
   }
 
-  public PersonType getByName(com.kefir.enums.PersonType personType){
+  public PersonType getByName(com.kefir.enums.PersonType personType) {
     return personTypeRepository
-            .findByNameIgnoreCase(personType.name())
-            .orElseThrow(() -> new RuntimeException("Person type not found"));
+        .findByNameIgnoreCase(personType.name())
+        .orElseThrow(() -> new RuntimeException("Person type not found"));
   }
-
-
 }

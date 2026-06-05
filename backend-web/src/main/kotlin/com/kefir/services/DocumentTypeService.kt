@@ -9,7 +9,5 @@ import org.springframework.stereotype.Service
 @Service
 class DocumentTypeService(private val documentTypeRepository: DocumentTypeRepository) {
 
-    fun getByName(name: DocumentType) =
-        documentTypeRepository.findByNameIgnoreCase(name.name).orElseThrow{ throw ApiException(ErrorCode.DOCUMENT_TYPE_NOT_FOUND) }
-
+    fun getByName(name: DocumentType) = documentTypeRepository.findByNameIgnoreCase(name.name).orElseThrow { throw ApiException(ErrorCode.DOCUMENT_TYPE_NOT_FOUND) }
 }
