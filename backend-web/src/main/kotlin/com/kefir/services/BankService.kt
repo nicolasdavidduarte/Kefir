@@ -17,9 +17,9 @@ import java.time.LocalDateTime
 @Service
 @Transactional
 class BankService(
-    val bankRepository: BankRepository,
-    val userService: UserService,
-    val authService: AuthService,
+    private val bankRepository: BankRepository,
+    private val userService: UserService,
+    private val authService: AuthService,
 ) {
     fun getAll(): List<BankResponse> = bankRepository
         .findAll()

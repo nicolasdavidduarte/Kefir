@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class BankBranchService(
-    val bankBranchRepository: BankBranchRepository,
+    private val bankBranchRepository: BankBranchRepository,
 ) {
 
     fun getByBranchNumberAndBank(branchNumber: Int, bankId: Int): BankBranch = bankBranchRepository.findByBranchNumberAndBankId(branchNumber, bankId).orElseThrow { throw ApiException(ErrorCode.BANK_BRANCH_NOT_FOUND) }

@@ -22,13 +22,13 @@ public class PersonTypeController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public List<PersonTypeResponse> getAll() {
-    return personTypeService.getAll();
+    return personTypeService.getAllWithResponse();
   }
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public PersonTypeResponse getById(@PathVariable Integer id) {
-    return personTypeService.getById(id);
+    return personTypeService.getByIdWithResponse(id);
   }
 }

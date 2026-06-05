@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service
 
 @Service
 class OperationLogService(
-    val operationLogRepository: OperationLogRepository,
-    val userService: UserService,
-    val authService: AuthService,
+    private val operationLogRepository: OperationLogRepository,
+    private val userService: UserService,
+    private val authService: AuthService,
 ) {
 
     fun log(

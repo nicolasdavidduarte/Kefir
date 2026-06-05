@@ -17,11 +17,11 @@ public class PersonTypeService {
     this.personTypeRepository = personTypeRepository;
   }
 
-  public List<PersonTypeResponse> getAll() {
+  public List<PersonTypeResponse> getAllWithResponse() {
     return personTypeRepository.findAll().stream().map(PersonTypeResponse::fromEntity).toList();
   }
 
-  public PersonTypeResponse getById(Integer id) {
+  public PersonTypeResponse getByIdWithResponse(Integer id) {
     PersonType personType =
         personTypeRepository
             .findById(id)
@@ -29,4 +29,12 @@ public class PersonTypeService {
 
     return PersonTypeResponse.fromEntity(personType);
   }
+
+  public PersonType getByName(com.kefir.enums.PersonType personType){
+    return personTypeRepository
+            .findByNameIgnoreCase(personType.name())
+            .orElseThrow(() -> new RuntimeException("Person type not found"));
+  }
+
+
 }

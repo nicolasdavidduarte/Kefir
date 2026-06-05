@@ -34,14 +34,14 @@ import java.time.OffsetDateTime
 @Transactional
 @Service
 class AccountService(
-    val accountRepository: AccountRepository,
-    val operationLogService: OperationLogService,
-    val authService: AuthService,
-    val userService: UserService,
-    val customerService: CustomerService,
-    val currencyService: CurrencyService,
-    val accountTypeService: AccountTypeService,
-    val bankBranchService: BankBranchService,
+    private val accountRepository: AccountRepository,
+    private val operationLogService: OperationLogService,
+    private val authService: AuthService,
+    private val userService: UserService,
+    private val customerService: CustomerService,
+    private val currencyService: CurrencyService,
+    private val accountTypeService: AccountTypeService,
+    private val bankBranchService: BankBranchService,
 ) {
 
     /**
