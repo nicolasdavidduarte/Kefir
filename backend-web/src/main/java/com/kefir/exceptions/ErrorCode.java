@@ -40,7 +40,9 @@ public enum ErrorCode {
 
   SNS_MESSAGE_SENDING_EXCEPTION(HttpStatus.CONFLICT, "SNS message cannot be delivered"),
 
-  USER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "User not valid");
+  USER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "User not valid"),
+
+  DOCUMENT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Document type not found");
 
   private final HttpStatus status;
   private final String message;

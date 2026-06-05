@@ -22,23 +22,23 @@ import org.springframework.transaction.annotation.Transactional;
 public class CustomerService {
 
   private final CustomerRepository customerRepository;
-  private final DocumentTypeRepository documentTypeRepository;
-  private final PersonTypeRepository personTypeRepository;
-  private final CustomerTypeRepository customerTypeRepository;
+  private final DocumentTypeService documentTypeService;
+  private final PersonTypeService personTypeService;
+  private final CustomerTypeService customerTypeService;
   private final AuthService authService;
   private final UserService userService;
 
   public CustomerService(
       CustomerRepository customerRepository,
-      DocumentTypeRepository documentTypeRepository,
-      PersonTypeRepository personTypeRepository,
-      CustomerTypeRepository customerTypeRepository,
+      DocumentTypeService documentTypeService,
+      CustomerTypeService customerTypeService,
       AuthService authService,
-      UserService userService) {
+      UserService userService,
+      PersonTypeService personTypeService) {
     this.customerRepository = customerRepository;
-    this.documentTypeRepository = documentTypeRepository;
-    this.personTypeRepository = personTypeRepository;
-    this.customerTypeRepository = customerTypeRepository;
+    this.documentTypeService = documentTypeService;
+    this.personTypeService = personTypeService;
+    this.customerTypeService = customerTypeService;
     this.authService = authService;
     this.userService = userService;
   }
@@ -63,9 +63,9 @@ public class CustomerService {
   @Transactional
   public CustomerResponse create(CustomerCreationRequest request) {
 
-    DocumentType documentType = getDocumentType(request.documentType());
+    DocumentType documentType = documentTypeService.getByName(request.documentType());
 
-    PersonType personType = getPersonType(request.personType());
+    PersonType personType = personTypeService.getByName(request.personType());
 
     CustomerType customerType = getCustomerType(request.customerType());
 
@@ -111,13 +111,13 @@ public class CustomerService {
     String fullname = generateFullname(customer);
     if (!fullname.equals(customer.getFullname())) customer.setFullname(fullname);
 
-    if (request.personType() != null) customer.setPersonType(getPersonType(request.personType()));
+    if (request.personType() != null) customer.setPersonType(personTypeService.getByName(request.personType()));
 
     if (request.customerType() != null)
       customer.setCustomerType(getCustomerType(request.customerType()));
 
     if (request.documentType() != null)
-      customer.setDocumentType(getDocumentType(request.documentType()));
+      customer.setDocumentType(documentTypeService.getByName(request.documentType()));
 
     if (request.documentNumber() != null) customer.setDocumentNumber(request.documentNumber());
 
@@ -187,21 +187,8 @@ public class CustomerService {
     customerRepository.save(customer);
   }
 
-  private PersonType getPersonType(com.kefir.enums.PersonType personType) {
-    return personTypeRepository
-        .findByNameIgnoreCase(personType.name())
-        .orElseThrow(() -> new RuntimeException("Person type not found"));
-  }
-
-  private DocumentType getDocumentType(com.kefir.enums.DocumentType documentType) {
-    return documentTypeRepository.findByNameIgnoreCase(documentType.name());
-  }
-
   private CustomerType getCustomerType(com.kefir.enums.CustomerType customerType) {
-    CustomerType customerTypeResponse =
-        customerTypeRepository
-            .findByNameIgnoreCase(customerType.name())
-            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_TYPE_NOT_FOUND));
+    CustomerType customerTypeResponse = customerTypeService.getByName(customerType);
 
     if (!customerTypeResponse.isEnabled()) {
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);

@@ -22,13 +22,13 @@ public class CustomerTypeController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public List<CustomerTypeResponse> getAll() {
-    return customerTypeService.getAll();
+    return customerTypeService.getAllWithResponse();
   }
 
   // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public CustomerTypeResponse getById(@PathVariable Integer id) {
-    return customerTypeService.getById(id);
+    return customerTypeService.getByIdWithResponse(id);
   }
 }
