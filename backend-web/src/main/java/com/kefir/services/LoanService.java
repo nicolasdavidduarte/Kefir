@@ -5,7 +5,6 @@ import com.kefir.enums.CustomerStatus;
 import com.kefir.enums.LoanStatus;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
-import com.kefir.infrastructure.messaging.SnsPublisher;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
 import com.kefir.web.dtos.loan.LoanRequest;
@@ -31,7 +30,6 @@ public class LoanService {
   private final AuthService authService;
   private final UserService userService;
   private final MeterRegistry registry;
-  private final SnsPublisher snsPublisher;
   private final CustomerService customerService;
   private final LoanTypeService loanTypeService;
   private final CurrencyService currencyService;
@@ -39,7 +37,6 @@ public class LoanService {
 
   @Autowired
   public LoanService(
-      SnsPublisher snsPublisher,
       LoanRepository loanRepository,
       AuthService authService,
       MeterRegistry registry,
@@ -49,7 +46,6 @@ public class LoanService {
       CurrencyService currencyService,
       UserService userService,
       AmortizationTypeService amortizationTypeService) {
-    this.snsPublisher = snsPublisher;
     this.loanRepository = loanRepository;
     this.registry = registry;
     this.authService = authService;
@@ -157,8 +153,6 @@ public class LoanService {
       registry.counter("loan.created", "status", "success").increment();
 
       log.info("Loan successfully created - id: {}", loanSaved);
-
-      snsPublisher.publishLoanCreated(loanSaved.getId(), loanSaved.getTotalOperationAmount());
 
       return LoanResponse.fromEntity(loanSaved);
 

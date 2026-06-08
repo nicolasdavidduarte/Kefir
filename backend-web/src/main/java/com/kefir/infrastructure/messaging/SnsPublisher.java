@@ -12,7 +12,7 @@ import software.amazon.awssdk.services.sns.model.PublishRequest;
 import software.amazon.awssdk.services.sns.model.PublishResponse;
 
 @Slf4j
-@Component
+//@Component
 @EnableAsync
 public class SnsPublisher {
 
