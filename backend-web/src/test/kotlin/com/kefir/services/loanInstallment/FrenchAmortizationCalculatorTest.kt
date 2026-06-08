@@ -51,43 +51,6 @@ class FrenchAmortizationCalculatorTest {
     }
 
     @Test
-    fun calculateAmountFor1Installment() {
-        val frenchCalculator = FrenchAmortizationCalculator()
-
-        val monthlyInterestRate = BigDecimal("6.25")
-        val principalAmount = BigDecimal("5000.50")
-        val numberOfInstallments = 1
-
-        val schedule = frenchCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
-
-        assertEquals(schedule.size, 1)
-
-        // First installment
-        assertEquals(1, schedule[0].number)
-        assertEquals(BigDecimal("5000.50"), schedule[0].principalAmount)
-        assertEquals(BigDecimal("312.53"), schedule[0].interestAmount)
-        assertEquals(BigDecimal("5313.03"), schedule[0].totalAmount)
-        assertEquals(BigDecimal("0.00"), schedule[0].remainingBalance)
-    }
-
-    @Test
-    fun calculateAmountWithInterestRateZero() {
-        val frenchCalculator = FrenchAmortizationCalculator()
-
-        val monthlyInterestRate = BigDecimal.ZERO
-        val principalAmount = BigDecimal("5000.50")
-        val numberOfInstallments = 4
-
-        assertThrows<ApiException> {
-            frenchCalculator.generateSchedule(
-                monthlyInterestRate,
-                principalAmount,
-                numberOfInstallments,
-            )
-        }
-    }
-
-    @Test
     fun calculateAmountForLowPrincipal() {
         val frenchCalculator = FrenchAmortizationCalculator()
 

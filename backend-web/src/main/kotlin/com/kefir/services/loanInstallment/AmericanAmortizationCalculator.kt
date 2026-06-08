@@ -1,6 +1,8 @@
 package com.kefir.services.loanInstallment
 
 import com.kefir.enums.AmortizationTypeName
+import com.kefir.exceptions.ApiException
+import com.kefir.exceptions.ErrorCode
 import com.kefir.web.dtos.InstallmentData
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -16,6 +18,11 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
         principalAmount: BigDecimal,
         numberOfInstallments: Int,
     ): List<InstallmentData> {
+
+        if (monthlyInterestRate == BigDecimal.ZERO) {
+            throw ApiException(ErrorCode.LOAN_TYPE_INTEREST_RATE_ZERO)
+        }
+
         val monthlyInterestRate =
             monthlyInterestRate.divide(
                 BigDecimal.valueOf(100),
@@ -25,7 +32,7 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
 
         val schedule = mutableListOf<InstallmentData>()
 
-        var balance = principalAmount
+        val balance = principalAmount
 
         for (installmentNumber in 1..numberOfInstallments) {
             val interest =
@@ -36,7 +43,7 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
                 if (installmentNumber == numberOfInstallments) {
                     balance
                 } else {
-                    BigDecimal.ZERO
+                    BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)
                 }
 
             val installmentAmount =
@@ -45,7 +52,7 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
 
             val balance =
                 if (installmentNumber == numberOfInstallments) {
-                    BigDecimal.ZERO
+                    BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)
                 } else {
                     balance
                 }
