@@ -1,0 +1,7 @@
+{
+  "bankId":"1",
+  "bankBranchId":"1",
+  "type":"SAVINGS_ACCOUNT",
+  "customerId":"1",
+  "currencyIsoCode":"USD"
+}
