@@ -1,6 +1,7 @@
-package com.kefir.services.loanInstallment
+package com.kefir.unit.services.loanInstallment
 
 import com.kefir.exceptions.ApiException
+import com.kefir.services.loanInstallment.AmericanAmortizationCalculator
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test

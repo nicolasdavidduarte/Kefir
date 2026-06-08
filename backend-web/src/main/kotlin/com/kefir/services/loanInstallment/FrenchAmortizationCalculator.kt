@@ -18,7 +18,6 @@ class FrenchAmortizationCalculator : BaseAmortizationCalculator() {
         principalAmount: BigDecimal,
         numberOfInstallments: Int,
     ): List<InstallmentData> {
-
         if (monthlyInterestRate == BigDecimal.ZERO) {
             throw ApiException(ErrorCode.LOAN_TYPE_INTEREST_RATE_ZERO)
         }

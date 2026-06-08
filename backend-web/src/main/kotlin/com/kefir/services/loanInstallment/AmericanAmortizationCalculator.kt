@@ -18,7 +18,6 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
         principalAmount: BigDecimal,
         numberOfInstallments: Int,
     ): List<InstallmentData> {
-
         if (monthlyInterestRate == BigDecimal.ZERO) {
             throw ApiException(ErrorCode.LOAN_TYPE_INTEREST_RATE_ZERO)
         }
@@ -32,16 +31,14 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
 
         val schedule = mutableListOf<InstallmentData>()
 
-        val balance = principalAmount
-
         for (installmentNumber in 1..numberOfInstallments) {
             val interest =
-                balance.multiply(monthlyInterestRate)
+                principalAmount.multiply(monthlyInterestRate)
                     .setScale(2, RoundingMode.HALF_UP)
 
             val principal =
                 if (installmentNumber == numberOfInstallments) {
-                    balance
+                    principalAmount
                 } else {
                     BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)
                 }
@@ -54,7 +51,7 @@ class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
                 if (installmentNumber == numberOfInstallments) {
                     BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP)
                 } else {
-                    balance
+                    principalAmount
                 }
 
             schedule.add(

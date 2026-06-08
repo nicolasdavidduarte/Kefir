@@ -1,4 +1,4 @@
-package com.kefir.unit
+package com.kefir.unit.services.account
 
 import com.kefir.services.account.CBUGenerator
 import org.junit.jupiter.api.DisplayName
