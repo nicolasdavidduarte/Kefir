@@ -22,6 +22,7 @@ public enum ErrorCode {
   CURRENCY_NOT_FOUND(HttpStatus.NOT_FOUND, "Currency not found"),
 
   CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer not found"),
+  CUSTOMERS_NOT_FOUND(HttpStatus.NOT_FOUND, "There aren't customers created yet"),
   CUSTOMER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer not valid"),
   CUSTOMER_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Customer creation failed"),
 

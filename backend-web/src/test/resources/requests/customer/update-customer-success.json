@@ -1,0 +1,9 @@
+{
+  "name1":"Mary",
+  "name2":"Jane",
+  "lastname1":"Sue",
+  "documentType": "PASSPORT",
+  "documentNumber": "34555654",
+  "personType": "NATURAL",
+  "customerType": "CORPORATE"
+}

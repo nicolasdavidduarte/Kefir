@@ -11,13 +11,15 @@ public record CustomerResponse(
     String lastname1,
     String lastname2,
     String lastname3,
+    String fullname,
     String personType,
     String documentType,
     String documentNumber,
     String customerType,
     String status,
     String createdByUser,
-    OffsetDateTime creationDate) {
+    OffsetDateTime creationDate,
+    OffsetDateTime updateDate) {
 
   public static CustomerResponse fromEntity(Customer customer) {
     return new CustomerResponse(
@@ -28,12 +30,14 @@ public record CustomerResponse(
         customer.getLastname1(),
         customer.getLastname2(),
         customer.getLastname3(),
+        customer.getFullname(),
         customer.getPersonType().getName(),
         customer.getDocumentType().getName(),
         customer.getDocumentNumber(),
         customer.getCustomerType().getName(),
         customer.getStatus().name(),
         customer.getUser().getUsername(),
-        customer.getCreatedAt());
+        customer.getCreatedAt(),
+        customer.getUpdatedAt());
   }
 }

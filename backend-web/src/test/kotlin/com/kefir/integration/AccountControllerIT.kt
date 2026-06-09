@@ -132,7 +132,9 @@ class AccountControllerIT : IntegrationTestBase() {
     fun createAccountFailWhenUserIsUnauthorized() {
         val unauthorizedUser = AuthenticatedUser(2, "regular_user")
         val lowPrivilegeToken = UsernamePasswordAuthenticationToken(
-            unauthorizedUser, null, listOf(SimpleGrantedAuthority("ROLE_USER"))
+            unauthorizedUser,
+            null,
+            listOf(SimpleGrantedAuthority("ROLE_USER")),
         )
         SecurityContextHolder.getContext().authentication = lowPrivilegeToken
 
@@ -149,7 +151,7 @@ class AccountControllerIT : IntegrationTestBase() {
 
     @Test
     fun createAccountFailWhenPayloadIsInvalid() {
-        val invalidRequestBody = "{}" // Sending an empty body to trigger constraint violations
+        val invalidRequestBody = "{}"
 
         mockMvc.perform(
             post("/api/accounts")
@@ -264,7 +266,6 @@ class AccountControllerIT : IntegrationTestBase() {
 
         val user = userRepository.findById(1).orElseThrow { ApiException(ErrorCode.USER_NOT_FOUND) }
 
-        // Example if generating dummy strings dynamically in your helper methods:
         val randomCbu = "001000" + (1000000000000000..9999999999999999).random().toString()
 
         return accountRepository.save(

@@ -1,0 +1,8 @@
+{
+  "name1":"John",
+  "lastname1":"Doe",
+  "documentType": "DNI",
+  "documentNumber": "33555677",
+  "personType": "NATURAL",
+  "customerType": "RETAIL"
+}

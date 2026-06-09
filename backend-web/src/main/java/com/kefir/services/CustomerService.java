@@ -41,7 +41,12 @@ public class CustomerService {
   }
 
   public List<CustomerResponse> getAllWithResponse() {
-    return customerRepository.findAll().stream().map(CustomerResponse::fromEntity).toList();
+    List<CustomerResponse> customers =
+        customerRepository.findAll().stream().map(CustomerResponse::fromEntity).toList();
+
+    if (customers.isEmpty()) throw new ApiException(ErrorCode.CUSTOMERS_NOT_FOUND);
+
+    return customers;
   }
 
   public Customer getById(Long id) {
