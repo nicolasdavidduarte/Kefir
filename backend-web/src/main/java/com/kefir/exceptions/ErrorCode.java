@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
   ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "Account not found"),
 
+  ACCOUNT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Account type not found"),
+
   AMORTIZATION_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Amortization type not found"),
 
   BANK_NOT_FOUND(HttpStatus.NOT_FOUND, "Bank not found"),

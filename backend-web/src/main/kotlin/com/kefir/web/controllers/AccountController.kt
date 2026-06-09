@@ -24,6 +24,10 @@ class AccountController(
     @ResponseStatus(HttpStatus.OK)
     fun getAllAccounts(): List<AccountResponse> = accountService.getAllAccounts().sortedBy { a -> a.id }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun getById(@PathVariable id: Long): AccountResponse = accountService.getById(id)
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
