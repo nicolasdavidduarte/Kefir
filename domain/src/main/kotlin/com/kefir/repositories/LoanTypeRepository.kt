@@ -8,4 +8,6 @@ import java.util.Optional
 @Repository
 interface LoanTypeRepository : JpaRepository<LoanType, Int> {
     fun findByNameIgnoringCase(name: String): Optional<LoanType>
+
+    fun findAllByOrderByIdAsc(): List<LoanType>
 }

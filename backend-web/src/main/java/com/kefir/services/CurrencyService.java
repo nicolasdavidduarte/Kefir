@@ -18,11 +18,13 @@ public class CurrencyService {
     this.currencyRepository = currencyRepository;
   }
 
-  public List<CurrencyResponse> getAll() {
-    return currencyRepository.findAll().stream().map(CurrencyResponse::fromEntity).toList();
+  public List<CurrencyResponse> getAllWithResponse() {
+    return currencyRepository.findAllByOrderByIdAsc().stream()
+        .map(CurrencyResponse::fromEntity)
+        .toList();
   }
 
-  public CurrencyResponse getById(Integer id) {
+  public CurrencyResponse getByIdWithResponse(Integer id) {
     Currency currency =
         currencyRepository
             .findById(id)

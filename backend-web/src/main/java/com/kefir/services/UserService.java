@@ -38,7 +38,7 @@ public class UserService {
   }
 
   public List<UserResponse> getAll() {
-    return userRepository.findAll().stream().map(UserResponse::fromEntity).toList();
+    return userRepository.findAllByOrderByIdAsc().stream().map(UserResponse::fromEntity).toList();
   }
 
   public UserResponse getByIdWithResponse(Integer id) {

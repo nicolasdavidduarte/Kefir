@@ -123,10 +123,10 @@ class LoanControllerIT extends IntegrationTestBase {
 
   @Test
   public void createLoanFailWhenUserIsUnauthorized() throws Exception {
-    AuthenticatedUser unauthorizedUser = new AuthenticatedUser(2, "regular_user");
+    AuthenticatedUser unauthorizedUser = new AuthenticatedUser(2, "viewer_user");
     UsernamePasswordAuthenticationToken lowPrivilegeToken =
         new UsernamePasswordAuthenticationToken(
-            unauthorizedUser, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+            unauthorizedUser, null, List.of(new SimpleGrantedAuthority("ROLE_VIEWER")));
 
     SecurityContextHolder.getContext().setAuthentication(lowPrivilegeToken);
 
@@ -143,6 +143,32 @@ class LoanControllerIT extends IntegrationTestBase {
         .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
         .andDo(print())
         .andExpect(status().isForbidden());
+  }
+
+  @Test
+  public void createLoanFailWhenUserIsOperator() throws Exception {
+    AuthenticatedUser operatorUser = new AuthenticatedUser(2, "operator_user");
+    UsernamePasswordAuthenticationToken lowPrivilegeToken =
+        new UsernamePasswordAuthenticationToken(
+            operatorUser, null, List.of(new SimpleGrantedAuthority("ROLE_OPR")));
+
+    SecurityContextHolder.getContext().setAuthentication(lowPrivilegeToken);
+
+    createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+
+    String requestBody;
+    try {
+      requestBody =
+          new ClassPathResource("requests/loan/create-loan-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("File not found or unreadable", e);
+    }
+
+    mockMvc
+        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andDo(print())
+        .andExpect(status().isCreated());
   }
 
   @Test

@@ -18,7 +18,9 @@ public class CustomerTypeService {
   }
 
   public List<CustomerTypeResponse> getAllWithResponse() {
-    return customerTypeRepository.findAll().stream().map(CustomerTypeResponse::fromEntity).toList();
+    return customerTypeRepository.findAllByOrderByIdAsc().stream()
+        .map(CustomerTypeResponse::fromEntity)
+        .toList();
   }
 
   public CustomerTypeResponse getByIdWithResponse(Integer id) {

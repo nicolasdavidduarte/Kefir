@@ -42,7 +42,9 @@ public class CustomerService {
 
   public List<CustomerResponse> getAllWithResponse() {
     List<CustomerResponse> customers =
-        customerRepository.findAll().stream().map(CustomerResponse::fromEntity).toList();
+        customerRepository.findAllByOrderByIdAsc().stream()
+            .map(CustomerResponse::fromEntity)
+            .toList();
 
     if (customers.isEmpty()) throw new ApiException(ErrorCode.CUSTOMERS_NOT_FOUND);
 

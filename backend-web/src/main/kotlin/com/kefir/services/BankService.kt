@@ -22,7 +22,7 @@ class BankService(
     private val authService: AuthService,
 ) {
     fun getAll(): List<BankResponse> = bankRepository
-        .findAll()
+        .findAllByOrderByIdAsc()
         .map(Bank::toResponse)
         .toList()
         .ifEmpty { throw ApiException(ErrorCode.BANK_NOT_FOUND) }

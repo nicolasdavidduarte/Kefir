@@ -1,7 +1,6 @@
 package com.kefir.web.controllers;
 
 import com.kefir.services.LoanService;
-import com.kefir.web.dtos.common.ApiEntityResponse;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
 import io.micrometer.core.annotation.Timed;
@@ -14,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -87,5 +85,4 @@ public class LoanController {
   public LoanResponse createLoan(@RequestBody @Valid LoanRequest loanRequest) {
     return loanService.create(loanRequest);
   }
-  
 }

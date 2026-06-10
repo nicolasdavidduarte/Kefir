@@ -23,7 +23,7 @@ public class CurrencyController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public List<CurrencyResponse> getAll() {
-    return currencyService.getAll();
+    return currencyService.getAllWithResponse();
   }
 
   // Endpoint to retrieve a single record by ID

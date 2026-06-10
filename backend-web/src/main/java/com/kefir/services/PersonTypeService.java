@@ -18,7 +18,9 @@ public class PersonTypeService {
   }
 
   public List<PersonTypeResponse> getAllWithResponse() {
-    return personTypeRepository.findAll().stream().map(PersonTypeResponse::fromEntity).toList();
+    return personTypeRepository.findAllByOrderByIdAsc().stream()
+        .map(PersonTypeResponse::fromEntity)
+        .toList();
   }
 
   public PersonTypeResponse getByIdWithResponse(Integer id) {
