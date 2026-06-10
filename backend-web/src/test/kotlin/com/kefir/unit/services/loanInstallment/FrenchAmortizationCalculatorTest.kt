@@ -2,14 +2,30 @@ package com.kefir.unit.services.loanInstallment
 
 import com.kefir.services.loanInstallment.FrenchAmortizationCalculator
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.math.BigDecimal
 
 class FrenchAmortizationCalculatorTest {
 
+    private val frenchCalculator = FrenchAmortizationCalculator()
+
+    companion object {
+
+        @JvmStatic
+        fun frenchScenarios() = listOf(
+            Arguments.of(BigDecimal("6.25"), BigDecimal("100.00"), 4),
+            Arguments.of(BigDecimal("6.25"), BigDecimal("5000.50"), 4),
+            Arguments.of(BigDecimal("4.50"), BigDecimal("10000.00"), 12),
+            Arguments.of(BigDecimal("2.00"), BigDecimal("25000.00"), 24),
+        )
+    }
+
     @Test
     fun calculateAmountFor4Installments() {
-        val frenchCalculator = FrenchAmortizationCalculator()
 
         val monthlyInterestRate = BigDecimal("6.25")
         val principalAmount = BigDecimal("5000.50")
@@ -50,7 +66,6 @@ class FrenchAmortizationCalculatorTest {
 
     @Test
     fun calculateAmountForLowPrincipal() {
-        val frenchCalculator = FrenchAmortizationCalculator()
 
         val monthlyInterestRate = BigDecimal("6.25")
         val principalAmount = BigDecimal("100.00")
@@ -85,5 +100,52 @@ class FrenchAmortizationCalculatorTest {
         assertEquals(BigDecimal("1.71"), schedule[3].interestAmount)
         assertEquals(BigDecimal("29.02"), schedule[3].totalAmount)
         assertEquals(BigDecimal("0.00"), schedule[3].remainingBalance)
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("frenchScenarios")
+    fun installmentAmountShouldBeConstant(
+        monthlyInterestRate: BigDecimal, principalAmount: BigDecimal, numberOfInstallments: Int
+    ) {
+
+        val schedule = frenchCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
+
+        val firstAmount = schedule.first().totalAmount
+
+        schedule.forEach {
+            assertEquals(firstAmount, it.totalAmount)
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("frenchScenarios")
+    fun interestShouldDecreaseEveryInstallment(
+        monthlyInterestRate: BigDecimal, principalAmount: BigDecimal, numberOfInstallments: Int
+    ) {
+
+        val schedule = frenchCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
+
+        for (i in 1 ..< schedule.size) {
+            assertTrue(
+                schedule[i].interestAmount < schedule[i - 1].interestAmount
+            )
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("frenchScenarios")
+    fun principalShouldIncreaseEveryInstallment(
+        monthlyInterestRate: BigDecimal, principalAmount: BigDecimal, numberOfInstallments: Int
+    ) {
+
+        val schedule = frenchCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
+
+        for (i in 1..<schedule.size) {
+            assertTrue(
+                schedule[i].principalAmount >
+                        schedule[i - 1].principalAmount
+            )
+        }
     }
 }

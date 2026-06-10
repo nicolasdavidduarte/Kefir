@@ -62,4 +62,90 @@ class AmortizationCalculatorTest {
             )
         }
     }
+
+    @ParameterizedTest
+    @MethodSource("calculators")
+    fun lastInstallmentLeavesBalanceInZero(
+        calculator: AmortizationCalculator,
+    ) {
+        val schedule = calculator.generateSchedule(
+            BigDecimal("6.25"),
+            BigDecimal("5000.50"),
+            12,
+        )
+
+        assertEquals(
+            BigDecimal("0.00"),
+            schedule.last().remainingBalance,
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("calculators")
+    fun sumOfPrincipalAmountsMatchesLoanAmount(
+        calculator: AmortizationCalculator,
+    ) {
+        val principal = BigDecimal("5000.50")
+
+        val schedule = calculator.generateSchedule(
+            BigDecimal("6.25"),
+            principal,
+            12,
+        )
+
+        val totalPrincipal = schedule.fold(BigDecimal.ZERO) { acc, installment ->
+            acc + installment.principalAmount
+        }
+
+        assertEquals(principal, totalPrincipal)
+    }
+
+    @ParameterizedTest
+    @MethodSource("calculators")
+    fun generatedInstallmentsMatchRequestedAmount(
+        calculator: AmortizationCalculator,
+    ) {
+        val installments = 24
+
+        val schedule = calculator.generateSchedule(
+            BigDecimal("6.25"),
+            BigDecimal("5000.50"),
+            installments,
+        )
+
+        assertEquals(installments, schedule.size)
+    }
+
+    @ParameterizedTest
+    @MethodSource("calculators")
+    fun installmentNumbersAreSequential(
+        calculator: AmortizationCalculator,
+    ) {
+        val schedule = calculator.generateSchedule(
+            BigDecimal("6.25"),
+            BigDecimal("5000.50"),
+            12,
+        )
+
+        schedule.forEachIndexed { index, installment ->
+            assertEquals(index + 1, installment.number)
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("calculators")
+    fun remainingBalanceIsNeverNegative(
+        calculator: AmortizationCalculator,
+    ) {
+        val schedule = calculator.generateSchedule(
+            BigDecimal("6.25"),
+            BigDecimal("5000.50"),
+            12,
+        )
+
+        schedule.forEach {
+            assert(it.remainingBalance >= BigDecimal.ZERO)
+        }
+    }
+
 }
