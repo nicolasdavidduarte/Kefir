@@ -1,144 +1,345 @@
-// package com.kefir.integration;
-//
-// import static org.mockito.Mockito.*;
-// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-// import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-//
-// import com.kefir.entities.CoreUser;
-// import com.kefir.entities.Currency;
-// import com.kefir.entities.Customer;
-// import com.kefir.entities.Loan;
-// import com.kefir.entities.LoanType;
-// import com.kefir.enums.LoanStatus;
-// import com.kefir.exceptions.LoanNotFoundException;
-// import com.kefir.infrastructure.security.JwtService;
-// import com.kefir.orchestrators.LoanOrchestrator;
-// import com.kefir.repositories.IdempotentRequestRepository;
-// import com.kefir.services.LoanService;
-// import com.kefir.web.controllers.LoanController;
-// import io.micrometer.core.instrument.MeterRegistry;
-// import io.micrometer.core.instrument.Timer;
-// import java.math.BigDecimal;
-// import java.time.OffsetDateTime;
-// import java.util.*;
-// import org.junit.jupiter.api.Test;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-// import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-// import org.springframework.test.context.bean.override.mockito.MockitoBean;
-// import org.springframework.test.web.servlet.MockMvc;
-//
-// @AutoConfigureMockMvc(addFilters = false)
-// @WebMvcTest(LoanController.class)
-// class LoanControllerIT {
-//  @Autowired private MockMvc mockMvc;
-//
-//  @MockitoBean private LoanService loanService;
-//
-//  @MockitoBean private LoanOrchestrator loanOrchestrator;
-//
-//  @MockitoBean private IdempotentRequestRepository idempotentRepo;
-//
-//  @MockitoBean private JwtService jwtService;
-//
-//  @MockitoBean private MeterRegistry meterRegistry;
-//
-//  @MockitoBean private Timer timer;
-//
-//  static final Long ID_TARGET = 999L;
-//
-//  @Test
-//  void testGetAllLoans() throws Exception {
-//
-//    Customer customer = new Customer();
-//    customer.setId(123L);
-//
-//    CoreUser user = new CoreUser();
-//    user.setId(999);
-//
-//    LoanType loanType = LoanType.createNew("TestType", "Type for Test", user);
-//
-//    Currency currency = new Currency();
-//    currency.setId(1);
-//
-//    Loan loan =
-//        Loan.builder()
-//            .id(ID_TARGET)
-//            .customer(customer)
-//            .loanType(loanType)
-//            .totalOperationAmount(new BigDecimal("1000.00"))
-//            .openingDate(OffsetDateTime.now())
-//            .currency(currency)
-//            .expirationDate(OffsetDateTime.now())
-//            .numberOfInstallments(4)
-//            .status(LoanStatus.ACTIVE)
-//            .build();
-//
-//    List<Loan> loans = List.of(loan);
-//    when(loanService.getAll()).thenReturn(loans);
-//
-//    //    mockMvc
-//    //        .perform(get("/api/loans"))
-//    //        .andExpect(status().isOk())
-//    //        .andExpect(jsonPath("$[0].id").value(idTarget))
-//    //        .andExpect(jsonPath("$[0].customer").value(123L))
-//    //        .andExpect(jsonPath("$[0].totalOperationAmount").value(1000.0));
-//  }
-//
-//  @Test
-//  void testWhenGetLoanByExistentIdRetrieveLoan() throws Exception {
-//    Customer customer = new Customer();
-//    customer.setId(123L);
-//
-//    CoreUser user = new CoreUser();
-//    user.setId(999);
-//
-//    LoanType loanType = LoanType.createNew("TestType", "Type for Test", user);
-//
-//    Currency currency = new Currency();
-//    currency.setId(1);
-//
-//    //    Loan loan =
-//    //        Loan.builder()
-//    //            .id(idTarget)
-//    //            .customer(customer)
-//    //            .loanType(loanType)
-//    //            .totalOperationAmount(new BigDecimal("1000.00"))
-//    //            .openingDate(OffsetDateTime.now())
-//    //            .currency(currency)
-//    //            .expirationDate(OffsetDateTime.now())
-//    //            .numberOfInstallments(4)
-//    //            .status(LoanStatus.ACTIVE)
-//    //            .build();
-//    //
-//    //    LoanResponse loanDetails =
-//    //        LoanResponse.builder()
-//    //            .id(idTarget)
-//    //            .customer(123L)
-//    //            .loanType(1)
-//    //            .totalOperationAmount(new BigDecimal("1000.00"))
-//    //            .openingDate(OffsetDateTime.now())
-//    //            .currency(1)
-//    //            .updatedAt(OffsetDateTime.now())
-//    //            .numberOfInstallments(4)
-//    //            .status((LoanStatus.ACTIVE))
-//    //            .build();
-//    //
-//    //    when(loanOrchestrator.getLoanData(loan.getId())).thenReturn(loanDetails);
-//
-//    //    mockMvc
-//    //        .perform(get("/api/loans/" + idTarget))
-//    //        .andExpect(status().isOk())
-//    //        .andExpect(jsonPath("$.id").value(idTarget))
-//    //        .andExpect(jsonPath("$.customer").value(123L))
-//    //        .andExpect(jsonPath("$.totalOperationAmount").value(1000.0));
-//  }
-//
-//  @Test
-//  void testWhenGetLoanByNonExistentIdThrowErrorMessage() throws Exception {
-//    when(loanOrchestrator.getLoanData(anyLong())).thenThrow(new LoanNotFoundException(122L));
-//
-//    mockMvc.perform(get("/api/loans/122")).andExpect(status().isNotFound());
-//    verify(loanOrchestrator).getLoanData(anyLong());
-//  }
-// }
+package com.kefir.integration;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import com.kefir.entities.*;
+import com.kefir.entities.CustomerType;
+import com.kefir.entities.DocumentType;
+import com.kefir.entities.PersonType;
+import com.kefir.enums.*;
+import com.kefir.exceptions.ApiException;
+import com.kefir.exceptions.ErrorCode;
+import com.kefir.infrastructure.security.AuthenticatedUser;
+import com.kefir.repositories.*;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
+import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.web.servlet.MockMvc;
+
+class LoanControllerIT extends IntegrationTestBase {
+  @Autowired private MockMvc mockMvc;
+
+  @Autowired private CustomerRepository customerRepository;
+
+  @Autowired private PersonTypeRepository personTypeRepository;
+
+  @Autowired private DocumentTypeRepository documentTypeRepository;
+
+  @Autowired private CustomerTypeRepository customerTypeRepository;
+
+  @Autowired private UserRepository userRepository;
+
+  @Autowired private LoanTypeRepository loanTypeRepository;
+
+  @Autowired private CurrencyRepository currencyRepository;
+
+  @Autowired private AmortizationTypeRepository amortizationTypeRepository;
+
+  @Autowired private LoanRepository loanRepository;
+
+  @BeforeEach
+  public void setup() {
+
+    AuthenticatedUser principal = new AuthenticatedUser(1, "admin");
+
+    UsernamePasswordAuthenticationToken authToken =
+        new UsernamePasswordAuthenticationToken(
+            principal, null, List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+
+    SecurityContextHolder.getContext().setAuthentication(authToken);
+  }
+
+  @AfterEach
+  public void tearDown() {
+    SecurityContextHolder.clearContext();
+  }
+
+  @Test
+  public void createLoanSuccessfully() throws Exception {
+
+    createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+
+    String requestBody;
+    try {
+      requestBody =
+          new ClassPathResource("requests/loan/create-loan-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("File not found or unreadable", e);
+    }
+
+    mockMvc
+        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andDo(print())
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.id").exists());
+  }
+
+  @Test
+  public void createLoanFailWhenCustomerIsNotActivated() throws Exception {
+
+    createTestCustomer(1, "123456789", CustomerStatus.PENDING);
+
+    String requestBody;
+    try {
+      requestBody =
+          new ClassPathResource("requests/loan/create-loan-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("File not found or unreadable", e);
+    }
+
+    mockMvc
+        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andDo(print())
+        .andExpect(status().isUnprocessableEntity());
+  }
+
+  @Test
+  public void createLoanFailWhenPayloadIsInvalid() throws Exception {
+
+    String invalidRequestBody = "{}";
+
+    mockMvc
+        .perform(
+            post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(invalidRequestBody))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void createLoanFailWhenUserIsUnauthorized() throws Exception {
+    AuthenticatedUser unauthorizedUser = new AuthenticatedUser(2, "regular_user");
+    UsernamePasswordAuthenticationToken lowPrivilegeToken =
+        new UsernamePasswordAuthenticationToken(
+            unauthorizedUser, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+    SecurityContextHolder.getContext().setAuthentication(lowPrivilegeToken);
+
+    String requestBody;
+    try {
+      requestBody =
+          new ClassPathResource("requests/loan/create-loan-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("File not found or unreadable", e);
+    }
+
+    mockMvc
+        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andDo(print())
+        .andExpect(status().isForbidden());
+  }
+
+  @Test
+  public void createLoanFailWhenDuplicated() throws Exception {
+
+    createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+
+    String requestBody;
+    try {
+      requestBody =
+          new ClassPathResource("requests/loan/create-loan-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("File not found or unreadable", e);
+    }
+
+    mockMvc
+        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andDo(print())
+        .andExpect(status().isCreated());
+
+    mockMvc
+        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andDo(print())
+        .andExpect(status().isConflict());
+  }
+
+  @Test
+  public void getAllLoansSuccessfully() throws Exception {
+    Customer customer1 = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
+    createTestLoan(customer1, 998L);
+
+    Customer customer2 = createTestCustomer(2, "123456788", CustomerStatus.ACTIVE);
+    createTestLoan(customer2, 999L);
+
+    mockMvc
+        .perform(get("/api/loans").contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        // First loan data
+        .andExpect(jsonPath("$[0].id").exists())
+        .andExpect(jsonPath("$[0].externalId").exists())
+        .andExpect(jsonPath("$[0].customer").value("John Doe"))
+        .andExpect(jsonPath("$[0].loanType").value("PERSONAL"))
+        .andExpect(jsonPath("$[0].amortizationType").value("FRENCH"))
+        .andExpect(jsonPath("$[0].currency").value("USD"))
+        .andExpect(jsonPath("$[0].numberOfInstallments").value(4))
+        .andExpect(jsonPath("$[0].annualInterestRate").value("75.0"))
+        .andExpect(jsonPath("$[0].monthlyInterestRate").value("6.25"))
+        .andExpect(jsonPath("$[0].totalPrincipal").value("10000.0"))
+        .andExpect(jsonPath("$[0].totalInterest").value("2500.0"))
+        .andExpect(jsonPath("$[0].openingDate").exists())
+        .andExpect(jsonPath("$[0].expirationDate").exists())
+        .andExpect(jsonPath("$[0].status").value("ACTIVE"))
+        .andExpect(jsonPath("$[0].createdAt").exists())
+        .andExpect(jsonPath("$[0].user").value("admin"))
+        //                // Second customer data
+        .andExpect(jsonPath("$[1].id").exists())
+        .andExpect(jsonPath("$[1].externalId").exists())
+        .andExpect(jsonPath("$[1].customer").value("John Doe"))
+        .andExpect(jsonPath("$[1].loanType").value("PERSONAL"))
+        .andExpect(jsonPath("$[1].amortizationType").value("FRENCH"))
+        .andExpect(jsonPath("$[1].currency").value("USD"))
+        .andExpect(jsonPath("$[1].numberOfInstallments").value(4))
+        .andExpect(jsonPath("$[1].annualInterestRate").value("75.0"))
+        .andExpect(jsonPath("$[1].monthlyInterestRate").value("6.25"))
+        .andExpect(jsonPath("$[1].totalPrincipal").value("10000.0"))
+        .andExpect(jsonPath("$[1].totalInterest").value("2500.0"))
+        .andExpect(jsonPath("$[1].openingDate").exists())
+        .andExpect(jsonPath("$[1].expirationDate").exists())
+        .andExpect(jsonPath("$[1].status").value("ACTIVE"))
+        .andExpect(jsonPath("$[1].createdAt").exists())
+        .andExpect(jsonPath("$[1].user").value("admin"));
+  }
+
+  @Test
+  public void getAllLoansFailWhenDatabaseIsEmpty() throws Exception {
+
+    System.out.println("Before GET count = " + loanRepository.count());
+
+    mockMvc.perform(get("/api/loans"));
+
+    System.out.println("After GET count = " + loanRepository.count());
+
+    mockMvc
+        .perform(get("/api/loans").contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void getLoanByIdSuccessfully() throws Exception {
+    Customer customer1 = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
+    createTestLoan(customer1, 999L);
+
+    mockMvc
+        .perform(get("/api/loans/1").contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("id").exists())
+        .andExpect(jsonPath("externalId").exists())
+        .andExpect(jsonPath("customer").value("John Doe"))
+        .andExpect(jsonPath("loanType").value("PERSONAL"))
+        .andExpect(jsonPath("amortizationType").value("FRENCH"))
+        .andExpect(jsonPath("currency").value("USD"))
+        .andExpect(jsonPath("numberOfInstallments").value(4))
+        .andExpect(jsonPath("annualInterestRate").value("75.0"))
+        .andExpect(jsonPath("monthlyInterestRate").value("6.25"))
+        .andExpect(jsonPath("totalPrincipal").value("10000.0"))
+        .andExpect(jsonPath("totalInterest").value("2500.0"))
+        .andExpect(jsonPath("openingDate").exists())
+        .andExpect(jsonPath("expirationDate").exists())
+        .andExpect(jsonPath("status").value("ACTIVE"))
+        .andExpect(jsonPath("createdAt").exists())
+        .andExpect(jsonPath("user").value("admin"));
+  }
+
+  @Test
+  public void getLoanByIdFailWhenNotFound() throws Exception {
+    mockMvc
+        .perform(get("/api/loans/1").contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isNotFound());
+  }
+
+  private Customer createTestCustomer(Integer id, String documentNumber, CustomerStatus status) {
+    PersonType personType =
+        personTypeRepository
+            .findById(1)
+            .orElseThrow(() -> new ApiException(ErrorCode.PERSON_TYPE_NOT_FOUND));
+    DocumentType documentType =
+        documentTypeRepository
+            .findById(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.DOCUMENT_TYPE_NOT_FOUND));
+    CustomerType customerType =
+        customerTypeRepository
+            .findById(1)
+            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_TYPE_NOT_FOUND));
+    User user =
+        userRepository.findById(1).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+
+    return customerRepository.save(
+        Customer.builder()
+            .name1("John")
+            .lastname1("Doe")
+            .fullname("John Doe")
+            .personType(personType)
+            .documentType(documentType)
+            .documentNumber(documentNumber)
+            .customerType(customerType)
+            .user(user)
+            .status(status)
+            .build());
+  }
+
+  private void createTestLoan(Customer customer, Long externalId) {
+
+    LoanType loanType =
+        loanTypeRepository
+            .findByNameIgnoringCase(LoanTypeName.PERSONAL.name())
+            .orElseThrow(() -> new ApiException(ErrorCode.LOAN_TYPE_NOT_FOUND));
+
+    Currency currency =
+        currencyRepository
+            .findByIsoCode(CurrencyIsoCodes.USD.name())
+            .orElseThrow(() -> new ApiException(ErrorCode.CURRENCY_NOT_FOUND));
+
+    AmortizationType amortizationType =
+        amortizationTypeRepository
+            .findByName(AmortizationTypeName.FRENCH)
+            .orElseThrow(() -> new ApiException(ErrorCode.AMORTIZATION_TYPE_NOT_FOUND));
+
+    OffsetDateTime now = OffsetDateTime.now();
+
+    User user =
+        userRepository.findById(1).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+
+    loanRepository.save(
+        Loan.builder()
+            .customer(customer)
+            .loanType(loanType)
+            .numberOfInstallments(4)
+            .currency(currency)
+            .amortizationType(amortizationType)
+            .annualInterestRate(new BigDecimal("75.00"))
+            .monthlyInterestRate(new BigDecimal("6.25"))
+            .principalAmount(new BigDecimal("10000.00"))
+            .interestAmount(new BigDecimal("2500.00"))
+            .totalOperationAmount(new BigDecimal("12500.00"))
+            .openingDate(now)
+            .expirationDate(now.plusMonths(4))
+            .externalId(externalId)
+            .status(LoanStatus.ACTIVE)
+            .user(user)
+            .createdAt(now)
+            .updatedAt(now)
+            .build());
+  }
+}

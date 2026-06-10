@@ -30,6 +30,7 @@ public enum ErrorCode {
   CUSTOMER_TYPE_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer type not valid"),
 
   LOAN_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan not found"),
+  LOANS_NOT_FOUND(HttpStatus.NOT_FOUND, "There aren't loans created yet"),
   LOAN_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Loan creation failed"),
 
   LOAN_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan type not found"),

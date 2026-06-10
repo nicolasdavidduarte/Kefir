@@ -59,7 +59,14 @@ public class LoanService {
 
   @Cacheable("loans")
   public List<LoanResponse> getAll() {
-    return loanRepository.findAll().stream().map(LoanResponse::fromEntity).toList();
+    List<LoanResponse> loans =
+        loanRepository.findAll().stream().map(LoanResponse::fromEntity).toList();
+
+    if (loans.isEmpty()) {
+      throw new ApiException(ErrorCode.LOANS_NOT_FOUND);
+    }
+
+    return loans;
   }
 
   @Observed(name = "loan.service.get")

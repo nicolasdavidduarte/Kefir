@@ -7,6 +7,7 @@ import java.time.OffsetDateTime;
 
 public record LoanResponse(
     Long id,
+    Long externalId,
     String customer,
     String loanType,
     String amortizationType,
@@ -26,6 +27,7 @@ public record LoanResponse(
   public static LoanResponse fromEntity(Loan loan) {
     return new LoanResponse(
         loan.getId(),
+        loan.getExternalId(),
         loan.getCustomer().getFullname(),
         loan.getLoanType().getName(),
         loan.getAmortizationType().getName().name(),

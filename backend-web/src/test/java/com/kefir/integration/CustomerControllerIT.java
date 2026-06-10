@@ -26,17 +26,17 @@ import org.springframework.test.web.servlet.MockMvc;
 
 public class CustomerControllerIT extends IntegrationTestBase {
 
-  @Autowired MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-  @Autowired CustomerRepository customerRepository;
+  @Autowired private CustomerRepository customerRepository;
 
-  @Autowired PersonTypeRepository personTypeRepository;
+  @Autowired private PersonTypeRepository personTypeRepository;
 
-  @Autowired DocumentTypeRepository documentTypeRepository;
+  @Autowired private DocumentTypeRepository documentTypeRepository;
 
-  @Autowired CustomerTypeRepository customerTypeRepository;
+  @Autowired private CustomerTypeRepository customerTypeRepository;
 
-  @Autowired UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
   @BeforeEach
   public void setup() {

@@ -1,6 +1,7 @@
 package com.kefir.integration
 
 import com.kefir.integration.util.DatabaseCleanup
+import com.kefir.repositories.LoanRepository
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -17,6 +18,8 @@ abstract class IntegrationTestBase {
 
     @Autowired
     private lateinit var databaseCleanup: DatabaseCleanup
+
+    @Autowired private lateinit var loanRepository: LoanRepository
 
     companion object {
         // Shared container lifecycle instance across the entire suite run
@@ -41,5 +44,7 @@ abstract class IntegrationTestBase {
     fun cleanDatabase() {
         // Wipes out test rows, resets sequences to 1, leaves Liquibase lookups intact!
         databaseCleanup.truncateTestData()
+
+        println("Loans after cleanup: " + loanRepository.count())
     }
 }

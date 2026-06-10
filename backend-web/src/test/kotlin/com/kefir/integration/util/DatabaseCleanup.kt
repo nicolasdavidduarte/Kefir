@@ -11,7 +11,6 @@ class DatabaseCleanup {
     @PersistenceContext
     lateinit var entityManager: EntityManager
 
-    // The precise list of business tables that accumulate test data
     private val tablesToTruncate = listOf(
         "loan_installment_payment",
         "loan_installment",
@@ -30,5 +29,9 @@ class DatabaseCleanup {
         for (tableName in tablesToTruncate) {
             entityManager.createNativeQuery("TRUNCATE TABLE $tableName RESTART IDENTITY CASCADE").executeUpdate()
         }
+
+        // --- ADD THIS LINE TO FIX THE BUG ---
+        // This forces Hibernate to drop all cached entity objects from memory
+        entityManager.clear()
     }
 }
