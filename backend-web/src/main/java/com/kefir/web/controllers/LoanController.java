@@ -87,14 +87,5 @@ public class LoanController {
   public LoanResponse createLoan(@RequestBody @Valid LoanRequest loanRequest) {
     return loanService.create(loanRequest);
   }
-
-  // Endpoint to delete a loan
-  @DeleteMapping("/{loanId}")
-  @ResponseStatus(HttpStatus.OK)
-  @PreAuthorize("hasRole('ADMIN')")
-  public ApiEntityResponse deleteLoan(@PathVariable Long loanId) {
-    loanService.delete(loanId);
-
-    return new ApiEntityResponse(loanId, "Loan successfully deleted", OffsetDateTime.now());
-  }
+  
 }
