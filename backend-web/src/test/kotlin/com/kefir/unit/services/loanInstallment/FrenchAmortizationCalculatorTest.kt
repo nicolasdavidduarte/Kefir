@@ -26,7 +26,6 @@ class FrenchAmortizationCalculatorTest {
 
     @Test
     fun calculateAmountFor4Installments() {
-
         val monthlyInterestRate = BigDecimal("6.25")
         val principalAmount = BigDecimal("5000.50")
         val numberOfInstallments = 4
@@ -66,7 +65,6 @@ class FrenchAmortizationCalculatorTest {
 
     @Test
     fun calculateAmountForLowPrincipal() {
-
         val monthlyInterestRate = BigDecimal("6.25")
         val principalAmount = BigDecimal("100.00")
         val numberOfInstallments = 4
@@ -102,13 +100,13 @@ class FrenchAmortizationCalculatorTest {
         assertEquals(BigDecimal("0.00"), schedule[3].remainingBalance)
     }
 
-
     @ParameterizedTest
     @MethodSource("frenchScenarios")
     fun installmentAmountShouldBeConstant(
-        monthlyInterestRate: BigDecimal, principalAmount: BigDecimal, numberOfInstallments: Int
+        monthlyInterestRate: BigDecimal,
+        principalAmount: BigDecimal,
+        numberOfInstallments: Int,
     ) {
-
         val schedule = frenchCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
 
         val firstAmount = schedule.first().totalAmount
@@ -121,14 +119,15 @@ class FrenchAmortizationCalculatorTest {
     @ParameterizedTest
     @MethodSource("frenchScenarios")
     fun interestShouldDecreaseEveryInstallment(
-        monthlyInterestRate: BigDecimal, principalAmount: BigDecimal, numberOfInstallments: Int
+        monthlyInterestRate: BigDecimal,
+        principalAmount: BigDecimal,
+        numberOfInstallments: Int,
     ) {
-
         val schedule = frenchCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
 
-        for (i in 1 ..< schedule.size) {
+        for (i in 1..<schedule.size) {
             assertTrue(
-                schedule[i].interestAmount < schedule[i - 1].interestAmount
+                schedule[i].interestAmount < schedule[i - 1].interestAmount,
             )
         }
     }
@@ -136,15 +135,16 @@ class FrenchAmortizationCalculatorTest {
     @ParameterizedTest
     @MethodSource("frenchScenarios")
     fun principalShouldIncreaseEveryInstallment(
-        monthlyInterestRate: BigDecimal, principalAmount: BigDecimal, numberOfInstallments: Int
+        monthlyInterestRate: BigDecimal,
+        principalAmount: BigDecimal,
+        numberOfInstallments: Int,
     ) {
-
         val schedule = frenchCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
 
         for (i in 1..<schedule.size) {
             assertTrue(
                 schedule[i].principalAmount >
-                        schedule[i - 1].principalAmount
+                    schedule[i - 1].principalAmount,
             )
         }
     }

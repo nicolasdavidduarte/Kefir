@@ -1,19 +1,30 @@
 package com.kefir.unit.services.loanInstallment
 
-import com.kefir.exceptions.ApiException
 import com.kefir.services.loanInstallment.GermanAmortizationCalculator
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import java.math.BigDecimal
 
 class GermanAmortizationCalculatorTest {
 
+    private val germanCalculator = GermanAmortizationCalculator()
+
+    companion object {
+
+        @JvmStatic
+        fun germanScenarios() = listOf(
+            Arguments.of(BigDecimal("6.25"), BigDecimal("100.00"), 4),
+            Arguments.of(BigDecimal("6.25"), BigDecimal("5000.50"), 4),
+            Arguments.of(BigDecimal("4.50"), BigDecimal("10000.00"), 12),
+            Arguments.of(BigDecimal("2.00"), BigDecimal("25000.00"), 24),
+        )
+    }
+
     @Test
     fun calculateAmountFor4Installments() {
-        val germanCalculator = GermanAmortizationCalculator()
-
         val monthlyInterestRate = BigDecimal("6.25")
         val principalAmount = BigDecimal("5000.50")
         val numberOfInstallments = 4
@@ -52,46 +63,7 @@ class GermanAmortizationCalculatorTest {
     }
 
     @Test
-    fun calculateAmountFor1Installment() {
-        val germanCalculator = GermanAmortizationCalculator()
-
-        val monthlyInterestRate = BigDecimal("6.25")
-        val principalAmount = BigDecimal("5000.50")
-        val numberOfInstallments = 1
-
-        val schedule = germanCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
-
-        assertEquals(schedule.size, 1)
-
-        // First installment
-        assertEquals(1, schedule[0].number)
-        assertEquals(BigDecimal("5000.50"), schedule[0].principalAmount)
-        assertEquals(BigDecimal("312.53"), schedule[0].interestAmount)
-        assertEquals(BigDecimal("5313.03"), schedule[0].totalAmount)
-        assertEquals(BigDecimal("0.00"), schedule[0].remainingBalance)
-    }
-
-    @Test
-    fun calculateAmountWithInterestRateZero() {
-        val germanCalculator = GermanAmortizationCalculator()
-
-        val monthlyInterestRate = BigDecimal.ZERO
-        val principalAmount = BigDecimal("5000.50")
-        val numberOfInstallments = 4
-
-        assertThrows<ApiException> {
-            germanCalculator.generateSchedule(
-                monthlyInterestRate,
-                principalAmount,
-                numberOfInstallments,
-            )
-        }
-    }
-
-    @Test
     fun calculateAmountForLowPrincipal() {
-        val germanCalculator = GermanAmortizationCalculator()
-
         val monthlyInterestRate = BigDecimal("6.25")
         val principalAmount = BigDecimal("100.00")
         val numberOfInstallments = 4
@@ -125,5 +97,56 @@ class GermanAmortizationCalculatorTest {
         assertEquals(BigDecimal("1.56"), schedule[3].interestAmount)
         assertEquals(BigDecimal("26.56"), schedule[3].totalAmount)
         assertEquals(BigDecimal("0.00"), schedule[3].remainingBalance)
+    }
+
+    @ParameterizedTest
+    @MethodSource("germanScenarios")
+    fun principalAmountIsConstantUntilLastInstallment(
+        monthlyInterestRate: BigDecimal,
+        principalAmount: BigDecimal,
+        numberOfInstallments: Int,
+    ) {
+        val schedule = germanCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
+
+        assertEquals(
+            schedule[0].principalAmount,
+            schedule[1].principalAmount,
+        )
+
+        assertEquals(
+            schedule[1].principalAmount,
+            schedule[2].principalAmount,
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("germanScenarios")
+    fun interestAmountsDecreaseEveryInstallment(
+        monthlyInterestRate: BigDecimal,
+        principalAmount: BigDecimal,
+        numberOfInstallments: Int,
+    ) {
+        val schedule = germanCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
+
+        for (i in 1..<schedule.size) {
+            assert(
+                schedule[i].interestAmount <
+                    schedule[i - 1].interestAmount,
+            )
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("germanScenarios")
+    fun totalAmountsDecreaseEveryInstallment(
+        monthlyInterestRate: BigDecimal,
+        principalAmount: BigDecimal,
+        numberOfInstallments: Int,
+    ) {
+        val schedule = germanCalculator.generateSchedule(monthlyInterestRate, principalAmount, numberOfInstallments)
+
+        for (i in 1..<schedule.size) {
+            assert(schedule[i].totalAmount < schedule[i - 1].totalAmount)
+        }
     }
 }

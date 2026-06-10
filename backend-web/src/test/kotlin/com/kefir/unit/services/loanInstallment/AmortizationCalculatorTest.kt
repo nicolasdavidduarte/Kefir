@@ -147,5 +147,4 @@ class AmortizationCalculatorTest {
             assert(it.remainingBalance >= BigDecimal.ZERO)
         }
     }
-
 }
