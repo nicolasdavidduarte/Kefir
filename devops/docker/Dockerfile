@@ -1,4 +1,13 @@
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jdk-alpine AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN chmod +x gradlew
+RUN ./gradlew :backend-web:bootJar --no-daemon
+
+FROM eclipse-temurin:21-jre-alpine
 
 RUN apk update && \
     apk add --no-cache iputils curl busybox-extras && \
@@ -6,7 +15,7 @@ RUN apk update && \
 
 WORKDIR /app
 
-COPY backend-web/build/libs/backend-web-1.0-SNAPSHOT.jar app.jar
+COPY --from=builder /app/backend-web/build/libs/*.jar app.jar
 
 EXPOSE 8080
 
