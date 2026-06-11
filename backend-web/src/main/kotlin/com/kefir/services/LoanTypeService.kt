@@ -19,7 +19,8 @@ class LoanTypeService(
     private val userService: UserService,
     private val authService: AuthService,
 ) {
-    fun getAllLoanTypes(): List<LoanType> = loanTypeRepository.findAllByOrderByIdAsc()
+    fun getAllLoanTypesWithResponse(): List<LoanTypeResponse> = loanTypeRepository.findAllByOrderByIdAsc().map(
+        LoanType::toResponse)
 
     fun getByNameIgnoringCase(name: LoanTypeName): LoanType = loanTypeRepository.findByNameIgnoringCase(name.name).orElseThrow { throw ApiException(ErrorCode.LOAN_TYPE_NOT_FOUND) }
 

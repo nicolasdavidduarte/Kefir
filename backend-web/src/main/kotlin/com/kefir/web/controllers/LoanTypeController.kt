@@ -1,6 +1,5 @@
 package com.kefir.web.controllers
 
-import com.kefir.entities.LoanType
 import com.kefir.services.LoanTypeService
 import com.kefir.web.dtos.LoanTypeRequest
 import com.kefir.web.dtos.LoanTypeResponse
@@ -20,7 +19,7 @@ class LoanTypeController(
     private val loanTypeService: LoanTypeService,
 ) {
     @GetMapping("/types")
-    fun getLoanTypes(): List<LoanType> = loanTypeService.getAllLoanTypes()
+    fun getLoanTypes(): List<LoanTypeResponse> = loanTypeService.getAllLoanTypesWithResponse()
 
     @PostMapping("/types")
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
