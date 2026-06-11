@@ -5,12 +5,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: Kefir
+      POSTGRES_DB: kefir_db
       POSTGRES_INITDB_ARGS: "--data-checksums"
-    volumes:
-      - ./postgres-docker/postgresql.conf:/etc/postgresql/postgresql.conf
-      - ./postgres-docker/init-pgaudit.sql:/docker-entrypoint-initdb.d/init-pgaudit.sql
-    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+    command: postgres -c listen_addresses='*' -c port=5432
     ports:
       - "5433:5432"
     healthcheck:
@@ -20,19 +17,23 @@ services:
       retries: 5
 
   backend:
-    build: ../../backend-web   # Construye la imagen localmente
+    build:
+      context: ../../
+      dockerfile: devops/docker/Dockerfile
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     ports:
       - "8080:8080"
     env_file:
-      - ../../backend-web/.env
+      - .env
 
   prometheus:
     image: prom/prometheus
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ../monitoring/prometheus.yaml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
 
@@ -42,3 +43,20 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  redis-data:
