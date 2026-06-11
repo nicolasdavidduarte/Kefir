@@ -1,28 +1,35 @@
 # What is Kefir?
-Kefir is a mini banking core, with a simplified approach in order to understand better things
-that I already know and learn new ones. 
+Kefir is a simplified banking core system built to deepen my understanding of software engineering concepts and explore 
+new technologies. It serves as a learning platform where I can experiment with architecture, security, cloud 
+infrastructure, batch processing, and modern development practices.
 
-# Languages / Frameworks
-This system is developed using Java 21 and Kotlin with Spring Boot.
+# Technology Stack
+* Java 21
+* Kotlin 
+* Spring Boot
+* PostgreSQL 
+* Gradle 
+* Docker
 
-## Dependencies
-This project uses:
-* Hibernate to connect to the database and perform operations
-* Liquibase to execute database scripts
-* Micrometer for metrics to be consumed with Prometheus, Datadog and Grafana
-* Spring Security for authorization
-* Spring Batch for massive processing
-* Amazon SNS for message delivery
+## Main Components
+* Hibernate (JPA) for data persistence 
+* Liquibase for database schema versioning and migrations 
+* Micrometer for application metrics and observability 
+* Spring Security for authentication and authorization 
+* Spring Batch for batch and bulk processing 
+* Amazon SNS for event notifications and message delivery
 
-## Bundles
-This project use Gradle for maintaining the bundles.
+## Build Tool
+This project uses Gradle for dependency management and build automation.
 
-## Security Scanning with Trivy and SNYK
-This project includes comprehensive security scanning using Trivy and SNYK. Both scans for:
-- **Vulnerabilities** in dependencies and container images
-- **Security misconfigurations** in configuration files
-- **Secrets** and sensitive data in the codebase
-- **Container image** security issues
+
+## Security Scanning
+Kefir includes automated security scanning using Trivy and Snyk.
+The scans check for:
+* Dependency vulnerabilities 
+* Container image vulnerabilities 
+* Security misconfigurations 
+* Exposed secrets and sensitive data
 
 #### Quick Security Scan
 ### Trivy
@@ -35,6 +42,52 @@ This project includes comprehensive security scanning using Trivy and SNYK. Both
 ./snyk-scan.sh
 ```
 
-## Setup
-Building this project requires using a PostgreSQL database with Kefir core tables (Environment image currently is WIP).
-Initial development created on a MacBook Air M2 32 GB using Java 17 with IntelliJ IDEA CE
+## Requirements
+* Java 21 
+* PostgreSQL 
+* Gradle 
+* Docker (optional)
+
+
+## Environment Variables
+Before running the application, configure the following environment variable:
+
+```bash
+JWT_SECRET=<your-secret-key>
+```
+
+For Docker deployments:
+* Copy .env.example to .env 
+* Set a value for JWT_SECRET 
+* Start the environment:
+```bash
+docker compose -f docker-compose-full.yaml up --build
+```
+
+# Features
+* Customer management 
+* Account management
+* Loan creation 
+* Loan amortization schedules 
+* JWT authentication 
+* Batch report generation 
+* Metrics and observability
+
+
+## Architecture
+Kefir follows a layered architecture built with Spring Boot.
+
+```text
+Client
+  │
+  ▼
+REST API (Controllers)
+  │
+  ▼
+Business Logic (Services)
+  │
+  ▼
+Persistence Layer (Repositories)
+  │
+  ▼
+PostgreSQL
