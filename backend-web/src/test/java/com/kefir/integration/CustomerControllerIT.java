@@ -24,7 +24,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
-public class CustomerControllerIT extends IntegrationTestBase {
+class CustomerControllerIT extends IntegrationTestBase {
 
   @Autowired private MockMvc mockMvc;
 
@@ -51,12 +51,12 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @AfterEach
-  public void tearDown() {
+  void tearDown() {
     SecurityContextHolder.clearContext();
   }
 
   @Test
-  public void createCustomerSuccessfully() throws Exception {
+  void createCustomerSuccessfully() throws Exception {
 
     String requestBody;
     try {
@@ -76,7 +76,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void createCustomerFailWhenPayloadIsInvalid() throws Exception {
+  void createCustomerFailWhenPayloadIsInvalid() throws Exception {
 
     String invalidRequestBody = "{}";
 
@@ -90,7 +90,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void createCustomerFailWhenUserIsUnauthorized() throws Exception {
+  void createCustomerFailWhenUserIsUnauthorized() throws Exception {
     AuthenticatedUser unauthorizedUser = new AuthenticatedUser(2, "regular_user");
     UsernamePasswordAuthenticationToken lowPrivilegeToken =
         new UsernamePasswordAuthenticationToken(
@@ -115,7 +115,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void createCustomerFailWhenDuplicated() throws Exception {
+  void createCustomerFailWhenDuplicated() throws Exception {
     String requestBody;
     try {
       requestBody =
@@ -139,7 +139,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void getAllCustomersSuccessfully() throws Exception {
+  void getAllCustomersSuccessfully() throws Exception {
     createTestCustomer(1, "123456788");
     createTestCustomer(2, "123456789");
 
@@ -175,7 +175,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void getAllCustomersFailWhenDatabaseIsEmpty() throws Exception {
+  void getAllCustomersFailWhenDatabaseIsEmpty() throws Exception {
     mockMvc
         .perform(get("/api/customers").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
@@ -183,7 +183,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void getCustomerByIdSuccessfully() throws Exception {
+  void getCustomerByIdSuccessfully() throws Exception {
     createTestCustomer(1, "123456788");
 
     mockMvc
@@ -205,7 +205,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void getCustomerByIdFailWhenNotFound() throws Exception {
+  void getCustomerByIdFailWhenNotFound() throws Exception {
     mockMvc
         .perform(get("/api/customers/1").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
@@ -213,7 +213,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void updateCustomerSuccessfully() throws Exception {
+  void updateCustomerSuccessfully() throws Exception {
     createTestCustomer(1, "123456788");
 
     String requestBody;
@@ -247,7 +247,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void updateCustomerFailWhenIdNotFound() throws Exception {
+  void updateCustomerFailWhenIdNotFound() throws Exception {
     String requestBody;
     try {
       requestBody =
@@ -265,18 +265,18 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void deleteCustomerSuccessfully() throws Exception {
+  void deleteCustomerSuccessfully() throws Exception {
     createTestCustomer(1, "123456789");
     mockMvc.perform(delete("/api/customers/1")).andDo(print()).andExpect(status().isOk());
   }
 
   @Test
-  public void deleteCustomerFailWhenIdNotFound() throws Exception {
+  void deleteCustomerFailWhenIdNotFound() throws Exception {
     mockMvc.perform(delete("/api/customers/1")).andDo(print()).andExpect(status().isNotFound());
   }
 
   @Test
-  public void activateCustomerStatusSuccessfully() throws Exception {
+  void activateCustomerStatusSuccessfully() throws Exception {
     createTestCustomer(1, "123456789");
 
     mockMvc
@@ -289,7 +289,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void activateCustomerFailWhenIdNotFound() throws Exception {
+  void activateCustomerFailWhenIdNotFound() throws Exception {
     mockMvc
         .perform(post("/api/customers/1/status/activate"))
         .andDo(print())
@@ -297,7 +297,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void deactivateCustomerSuccessfully() throws Exception {
+  void deactivateCustomerSuccessfully() throws Exception {
     createTestCustomer(1, "123456789");
 
     mockMvc
@@ -310,14 +310,14 @@ public class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void deactivateCustomerFailWhenIdNotFound() throws Exception {
+  void deactivateCustomerFailWhenIdNotFound() throws Exception {
     mockMvc
         .perform(post("/api/customers/1/status/activate"))
         .andDo(print())
         .andExpect(status().isNotFound());
   }
 
-  private Customer createTestCustomer(Integer id, String documentNumber) {
+  void createTestCustomer(Integer id, String documentNumber) {
     PersonType personType =
         personTypeRepository
             .findById(1)
@@ -333,7 +333,7 @@ public class CustomerControllerIT extends IntegrationTestBase {
     User user =
         userRepository.findById(1).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
-    return customerRepository.save(
+    customerRepository.save(
         Customer.builder()
             .name1("John")
             .lastname1("Doe")

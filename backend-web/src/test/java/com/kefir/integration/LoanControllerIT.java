@@ -52,7 +52,7 @@ class LoanControllerIT extends IntegrationTestBase {
   @Autowired private LoanRepository loanRepository;
 
   @BeforeEach
-  public void setup() {
+  void setup() {
 
     AuthenticatedUser principal = new AuthenticatedUser(1, "admin");
 
@@ -64,12 +64,12 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @AfterEach
-  public void tearDown() {
+  void tearDown() {
     SecurityContextHolder.clearContext();
   }
 
   @Test
-  public void createLoanSuccessfully() throws Exception {
+  void createLoanSuccessfully() throws Exception {
 
     createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
 
@@ -90,7 +90,7 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void createLoanFailWhenCustomerIsNotActivated() throws Exception {
+  void createLoanFailWhenCustomerIsNotActivated() throws Exception {
 
     createTestCustomer(1, "123456789", CustomerStatus.PENDING);
 
@@ -110,7 +110,7 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void createLoanFailWhenPayloadIsInvalid() throws Exception {
+  void createLoanFailWhenPayloadIsInvalid() throws Exception {
 
     String invalidRequestBody = "{}";
 
@@ -122,7 +122,7 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void createLoanFailWhenUserIsUnauthorized() throws Exception {
+  void createLoanFailWhenUserIsUnauthorized() throws Exception {
     AuthenticatedUser unauthorizedUser = new AuthenticatedUser(2, "viewer_user");
     UsernamePasswordAuthenticationToken lowPrivilegeToken =
         new UsernamePasswordAuthenticationToken(
@@ -146,7 +146,7 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void createLoanFailWhenUserIsOperator() throws Exception {
+  void createLoanFailWhenUserIsOperator() throws Exception {
     AuthenticatedUser operatorUser = new AuthenticatedUser(2, "operator_user");
     UsernamePasswordAuthenticationToken lowPrivilegeToken =
         new UsernamePasswordAuthenticationToken(
@@ -172,7 +172,7 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void createLoanFailWhenDuplicated() throws Exception {
+  void createLoanFailWhenDuplicated() throws Exception {
 
     createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
 
@@ -197,7 +197,7 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void getAllLoansSuccessfully() throws Exception {
+  void getAllLoansSuccessfully() throws Exception {
     Customer customer1 = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
     createTestLoan(customer1, 998L);
 
@@ -246,13 +246,9 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void getAllLoansFailWhenDatabaseIsEmpty() throws Exception {
-
-    System.out.println("Before GET count = " + loanRepository.count());
+  void getAllLoansFailWhenDatabaseIsEmpty() throws Exception {
 
     mockMvc.perform(get("/api/loans"));
-
-    System.out.println("After GET count = " + loanRepository.count());
 
     mockMvc
         .perform(get("/api/loans").contentType(MediaType.APPLICATION_JSON))
@@ -261,7 +257,7 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void getLoanByIdSuccessfully() throws Exception {
+  void getLoanByIdSuccessfully() throws Exception {
     Customer customer1 = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
     createTestLoan(customer1, 999L);
 
@@ -288,7 +284,7 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  public void getLoanByIdFailWhenNotFound() throws Exception {
+  void getLoanByIdFailWhenNotFound() throws Exception {
     mockMvc
         .perform(get("/api/loans/1").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())

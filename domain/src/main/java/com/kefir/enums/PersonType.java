@@ -7,5 +7,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum PersonType {
   NATURAL,
-  JURIDICIAL;
+  JURIDICIAL
 }

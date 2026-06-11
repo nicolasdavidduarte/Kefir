@@ -72,7 +72,6 @@ class LoanInstallment(
             paymentDueDate: OffsetDateTime,
             user: User,
         ): LoanInstallment {
-            val now = OffsetDateTime.now()
             return LoanInstallment(
                 loan = loan,
                 number = number,
