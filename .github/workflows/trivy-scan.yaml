@@ -40,7 +40,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
-            -f devops/docker/dockerfile \
+            -f devops/docker/Dockerfile \
             -t kefir-backend:latest \
             ./backend-web
 
