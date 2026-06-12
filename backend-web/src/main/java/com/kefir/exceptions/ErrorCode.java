@@ -33,6 +33,8 @@ public enum ErrorCode {
   LOANS_NOT_FOUND(HttpStatus.NOT_FOUND, "There aren't loans created yet"),
   LOAN_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Loan creation failed"),
 
+  LOAN_INSTALLMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan installments not found"),
+
   LOAN_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan type not found"),
   LOAN_TYPE_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Loan type creation failed"),
   LOAN_TYPE_INTEREST_RATE_ZERO(

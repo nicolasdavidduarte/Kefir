@@ -5,7 +5,7 @@ import com.kefir.web.dtos.InstallmentData
 import java.math.BigDecimal
 
 interface AmortizationCalculator {
-    fun getType(): AmortizationTypeName
+    val type: AmortizationTypeName
 
     fun generateSchedule(
         monthlyInterestRate: BigDecimal,

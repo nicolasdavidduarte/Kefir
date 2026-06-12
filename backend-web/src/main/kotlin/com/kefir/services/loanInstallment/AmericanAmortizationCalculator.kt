@@ -11,7 +11,7 @@ import java.math.RoundingMode
 @Service
 class AmericanAmortizationCalculator : BaseAmortizationCalculator() {
 
-    override fun getType() = AmortizationTypeName.AMERICAN
+    override val type = AmortizationTypeName.AMERICAN
 
     override fun generateSchedule(
         monthlyInterestRate: BigDecimal,

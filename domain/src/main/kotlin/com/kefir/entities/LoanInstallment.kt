@@ -71,18 +71,16 @@ class LoanInstallment(
             remainingBalance: BigDecimal,
             paymentDueDate: OffsetDateTime,
             user: User,
-        ): LoanInstallment {
-            return LoanInstallment(
-                loan = loan,
-                number = number,
-                principalAmount = principalAmount,
-                interestAmount = interestAmount,
-                totalAmount = totalAmount,
-                remainingBalance = remainingBalance,
-                paymentDueDate = paymentDueDate,
-                status = LoanInstallmentStatus.PAYMENT_PENDING,
-                user = user,
-            )
-        }
+        ): LoanInstallment = LoanInstallment(
+            loan = loan,
+            number = number,
+            principalAmount = principalAmount,
+            interestAmount = interestAmount,
+            totalAmount = totalAmount,
+            remainingBalance = remainingBalance,
+            paymentDueDate = paymentDueDate,
+            status = LoanInstallmentStatus.PAYMENT_PENDING,
+            user = user,
+        )
     }
 }

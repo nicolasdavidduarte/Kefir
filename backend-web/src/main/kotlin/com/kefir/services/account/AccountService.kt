@@ -49,7 +49,7 @@ class AccountService(
      * @return list of accounts
      */
     @Cacheable("accounts")
-    fun getAllAccounts(): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc().sortedBy(Account::id).map(Account::toResponse).toList().ifEmpty {
+    fun getAllAccounts(): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc().map(Account::toResponse).toList().ifEmpty {
         throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND)
     }
 
