@@ -20,8 +20,8 @@ class LoanInstallmentService(
     private val calculators: Map<AmortizationTypeName, AmortizationCalculator> =
         calculatorsList.associateBy { it.type }
 
-    fun getAllInstallments(): List<LoanInstallmentResponse> {
-        val loanInstallments = loanInstallmentRepository.findAllByOrderByNumberAsc().map(LoanInstallment::toResponse)
+    fun getAllInstallments(loanId: Long): List<LoanInstallmentResponse> {
+        val loanInstallments = loanInstallmentRepository.findAllByLoanIdOrderByNumberAsc(loanId).map(LoanInstallment::toResponse)
 
         if (loanInstallments.isEmpty()) {
             throw ApiException(ErrorCode.LOAN_INSTALLMENTS_NOT_FOUND)
