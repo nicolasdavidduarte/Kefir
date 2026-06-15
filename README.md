@@ -58,7 +58,10 @@ JWT_SECRET=<your-secret-key>
 
 For Docker deployments:
 * Copy .env.example to .env 
-* Set a value for JWT_SECRET 
+* Set a value for JWT_SECRET. You can create a secure key with the following command:
+```bash
+openssl rand -base64 32
+```
 * Start the environment:
 ```bash
 docker compose -f docker-compose-full.yaml up --build
