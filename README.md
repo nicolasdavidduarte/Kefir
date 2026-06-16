@@ -94,3 +94,34 @@ Persistence Layer (Repositories)
   │
   ▼
 PostgreSQL
+```
+
+
+## API Documentation
+
+Kefir provides interactive API documentation through Swagger UI.
+
+After starting the application, open:
+
+http://localhost:8080/swagger-ui/index.html
+
+
+### Authentication
+
+Most endpoints require JWT authentication.
+
+1. Execute `POST /api/auth/login`
+2. Copy the `accessToken` from the response
+3. Click the **Authorize** button in Swagger UI
+4. Paste the token and confirm
+5. Execute any protected endpoint
+
+Swagger will automatically include the following header in all requests:
+
+Authorization: Bearer <your-token>
+
+### OpenAPI Specification
+
+The OpenAPI definition is available at:
+
+http://localhost:8080/v3/api-docs
