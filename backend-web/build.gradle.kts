@@ -24,11 +24,14 @@ repositories {
 
 extra["junit-jupiter.version"] = "6.0.3"
 extra["tomcat.version"] = "10.1.55"
+extra["micrometer-tracing.version"] = "1.4.3"
 extra["opentelemetry.version"] = "1.62.0"
+
 dependencies {
+
     constraints {
         // Fixes High Severity Netty Smuggling & Resource Allocation
-        val secureNettyVersion = "4.1.133.Final"
+        val secureNettyVersion = "4.1.135.Final"
         implementation("io.netty:netty-codec:$secureNettyVersion")
         implementation("io.netty:netty-codec-http:$secureNettyVersion")
         implementation("io.netty:netty-codec-http2:$secureNettyVersion")
@@ -62,9 +65,8 @@ dependencies {
 
     // Monitoring
     implementation("io.micrometer:micrometer-registry-prometheus")
-    implementation("io.micrometer:micrometer-tracing-bridge-otel:1.7.0")
+    implementation("io.micrometer:micrometer-tracing-bridge-otel")
     implementation("net.logstash.logback:logstash-logback-encoder:8.0")
-    //implementation("io.opentelemetry:opentelemetry-exporter-otlp")
 
     // API Documentation (OpenAPI 3)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
