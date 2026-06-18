@@ -24,6 +24,7 @@ repositories {
 
 extra["junit-jupiter.version"] = "6.0.3"
 extra["tomcat.version"] = "10.1.55"
+extra["opentelemetry.version"] = "1.62.0"
 dependencies {
     constraints {
         // Fixes High Severity Netty Smuggling & Resource Allocation
@@ -61,7 +62,7 @@ dependencies {
 
     // Monitoring
     implementation("io.micrometer:micrometer-registry-prometheus")
-    implementation("io.micrometer:micrometer-tracing-bridge-otel")
+    implementation("io.micrometer:micrometer-tracing-bridge-otel:1.7.0")
     implementation("net.logstash.logback:logstash-logback-encoder:8.0")
     //implementation("io.opentelemetry:opentelemetry-exporter-otlp")
 
@@ -124,7 +125,7 @@ tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "io.netty") {
-            useVersion("4.1.133.Final")
+            useVersion("4.1.135.Final")
             because("fixes High Severity Netty Smuggling and DoS vulnerabilities")
         }
         if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {
