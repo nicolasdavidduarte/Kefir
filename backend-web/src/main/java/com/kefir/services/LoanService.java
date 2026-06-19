@@ -14,7 +14,10 @@ import io.micrometer.observation.annotation.Observed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -60,7 +63,8 @@ public class LoanService {
   @Cacheable("loans")
   public List<LoanResponse> getAll() {
     List<LoanResponse> loans =
-        loanRepository.findAllByOrderByIdAsc().stream().map(LoanResponse::fromEntity).toList();
+        loanRepository.findAllByOrderByIdAsc().stream().map(LoanResponse::fromEntity)
+                .collect(Collectors.toCollection(ArrayList::new));
 
     if (loans.isEmpty()) {
       throw new ApiException(ErrorCode.LOANS_NOT_FOUND);
