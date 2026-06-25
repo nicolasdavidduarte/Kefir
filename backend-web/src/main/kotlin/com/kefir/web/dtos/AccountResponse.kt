@@ -6,10 +6,10 @@ import java.math.BigDecimal
 
 data class AccountResponse(
     val id: Long,
-    val customer: Long,
+    val customer: String,
     val type: String,
     val currencyIsoCode: String,
-    val bank: Int,
+    val bank: String,
     val cbu: String,
     val balance: BigDecimal?,
     val status: AccountStatus,
@@ -17,10 +17,10 @@ data class AccountResponse(
 
 fun Account.toResponse() = AccountResponse(
     id = this.id,
-    customer = this.customer.id,
+    customer = this.customer.fullname,
     type = this.type.name,
     currencyIsoCode = this.currency.isoCode,
-    bank = this.bank.id,
+    bank = this.bank.name,
     cbu = this.cbu,
     balance = this.balance,
     status = this.status,
