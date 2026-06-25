@@ -42,6 +42,10 @@ dependencies {
         implementation("io.netty:netty-resolver:$secureNettyVersion")
         // Fixes High Severity Uncontrolled Recursion in Commons Lang
         implementation("org.apache.commons:commons-lang3:3.18.0")
+        // Fixes CVE-2024-25710 and CVE-2024-26308
+        testImplementation("org.apache.commons:commons-compress:1.26.0") {
+            because("Fixes Infinite loop (CVE-2024-25710) and Resource Allocation (CVE-2024-26308)")
+        }
     }
 
     // Project Modules
