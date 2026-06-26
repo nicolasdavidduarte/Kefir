@@ -22,7 +22,6 @@ abstract class IntegrationTestBase {
     @Autowired private lateinit var loanRepository: LoanRepository
 
     companion object {
-        // Shared container lifecycle instance across the entire suite run
         val postgres = PostgreSQLContainer("postgres:16-alpine").apply {
             withDatabaseName("kefir_test")
             withUsername("test")
@@ -42,7 +41,6 @@ abstract class IntegrationTestBase {
 
     @BeforeEach
     fun cleanDatabase() {
-        // Wipes out test rows, resets sequences to 1, leaves Liquibase lookups intact!
         databaseCleanup.truncateTestData()
 
         println("Loans after cleanup: " + loanRepository.count())

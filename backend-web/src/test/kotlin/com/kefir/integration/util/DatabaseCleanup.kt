@@ -22,16 +22,12 @@ class DatabaseCleanup {
 
     @Transactional
     fun truncateTestData() {
-        // Defer all foreign key constraints until the end of the transaction
         entityManager.createNativeQuery("SET CONSTRAINTS ALL DEFERRED").executeUpdate()
 
-        // Execute truncation and reset primary key counters to 1
         for (tableName in tablesToTruncate) {
             entityManager.createNativeQuery("TRUNCATE TABLE $tableName RESTART IDENTITY CASCADE").executeUpdate()
         }
 
-        // --- ADD THIS LINE TO FIX THE BUG ---
-        // This forces Hibernate to drop all cached entity objects from memory
         entityManager.clear()
     }
 }

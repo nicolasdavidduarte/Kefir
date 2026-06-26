@@ -101,55 +101,22 @@ class AccountService(
         return accountRepository.save(savedAccount).toResponse()
     }
 
-    fun open(id: Long): EntityOperationResponse {
+    fun open(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.LOAN_NOT_FOUND) }
 
         account.open()
         account.updatedAt = OffsetDateTime.now()
 
-        accountRepository.save(account)
-
-        operationLogService.log(
-            OperationLogCommand(
-                operation = LogOperation.OPENING,
-                entity = EntityName.ACCOUNT,
-                entityId = account.id,
-                comments = "Account with id: ${account.id} opened",
-            ),
-        )
-
-        return EntityOperationResponse(
-            operation = "Opening",
-            entity = "Account",
-            id = id,
-            message = "Account opened!",
-            timestamp = LocalDateTime.now(),
-        )
+        return accountRepository.save(account).toResponse()
     }
 
-    fun close(id: Long): EntityOperationResponse {
+    fun close(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
         account.close()
         account.updatedAt = OffsetDateTime.now()
 
-        accountRepository.save(account)
+        return accountRepository.save(account).toResponse()
 
-        operationLogService.log(
-            OperationLogCommand(
-                operation = LogOperation.CLOSING,
-                entity = EntityName.ACCOUNT,
-                entityId = account.id,
-                comments = "Account with id: ${account.id} closed",
-            ),
-        )
-
-        return EntityOperationResponse(
-            operation = "Closing",
-            entity = "Account",
-            id = id,
-            message = "Account closed!",
-            timestamp = LocalDateTime.now(),
-        )
     }
 }
