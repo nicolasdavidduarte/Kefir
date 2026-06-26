@@ -171,25 +171,29 @@ public class CustomerService {
   }
 
   @Transactional
-  public void activate(Long id) {
+  public CustomerResponse activate(Long id) {
     Customer customer =
         customerRepository
             .findById(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
     customer.setStatus(CustomerStatus.ACTIVE);
 
-    customerRepository.save(customer);
+     Customer updatedCustomer = customerRepository.save(customer);
+
+     return CustomerResponse.fromEntity(updatedCustomer);
   }
 
   @Transactional
-  public void deactivate(Long id) {
+  public CustomerResponse deactivate(Long id) {
     Customer customer =
         customerRepository
             .findById(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
     customer.setStatus(CustomerStatus.DEACTIVATED);
 
-    customerRepository.save(customer);
+    Customer updatedCustomer = customerRepository.save(customer);
+
+    return CustomerResponse.fromEntity(updatedCustomer);
   }
 
   private CustomerType getCustomerType(com.kefir.enums.CustomerType customerType) {

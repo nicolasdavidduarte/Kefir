@@ -70,7 +70,7 @@ dependencies {
     // Monitoring
     implementation("io.micrometer:micrometer-registry-prometheus")
     implementation("io.micrometer:micrometer-tracing-bridge-otel")
-    implementation("net.logstash.logback:logstash-logback-encoder:8.0")
+    implementation("net.logstash.logback:logstash-logback-encoder:9.0")
 
     // API Documentation (OpenAPI 3)
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")

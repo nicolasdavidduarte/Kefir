@@ -1,5 +1,6 @@
 package com.kefir.web.controllers;
 
+import com.kefir.entities.Customer;
 import com.kefir.services.CustomerService;
 import com.kefir.web.dtos.common.ApiEntityResponse;
 import com.kefir.web.dtos.customer.CustomerCreationRequest;
@@ -69,18 +70,16 @@ public class CustomerController {
   @PostMapping("/{id}/status/activate")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public ApiEntityResponse activateCustomer(@PathVariable Long id) {
-    customerService.activate(id);
+  public CustomerResponse activateCustomer(@PathVariable Long id) {
 
-    return new ApiEntityResponse(id, "Customer successfully activated", OffsetDateTime.now());
+    return customerService.activate(id);
   }
 
   @PostMapping("/{id}/status/deactivate")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public ApiEntityResponse deactivateCustomer(@PathVariable Long id) {
-    customerService.deactivate(id);
+  public CustomerResponse deactivateCustomer(@PathVariable Long id) {
 
-    return new ApiEntityResponse(id, "Customer successfully deactivated", OffsetDateTime.now());
+    return customerService.deactivate(id);
   }
 }

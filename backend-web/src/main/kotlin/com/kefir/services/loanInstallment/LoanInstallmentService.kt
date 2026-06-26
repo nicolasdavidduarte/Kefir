@@ -1,4 +1,4 @@
-package com.kefir.services
+package com.kefir.services.loanInstallment
 
 import com.kefir.entities.Loan
 import com.kefir.entities.LoanInstallment
@@ -6,7 +6,6 @@ import com.kefir.enums.AmortizationTypeName
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.repositories.LoanInstallmentRepository
-import com.kefir.services.loanInstallment.AmortizationCalculator
 import com.kefir.web.dtos.LoanInstallmentResponse
 import com.kefir.web.dtos.toResponse
 import org.springframework.stereotype.Service

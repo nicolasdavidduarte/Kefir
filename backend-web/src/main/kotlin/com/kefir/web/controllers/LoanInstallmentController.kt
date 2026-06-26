@@ -1,6 +1,6 @@
 package com.kefir.web.controllers
 
-import com.kefir.services.LoanInstallmentService
+import com.kefir.services.loanInstallment.LoanInstallmentService
 import com.kefir.web.dtos.LoanInstallmentResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

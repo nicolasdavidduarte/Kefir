@@ -7,6 +7,7 @@ import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
+import com.kefir.services.loanInstallment.LoanInstallmentService;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
 import io.micrometer.core.instrument.MeterRegistry;
