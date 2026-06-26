@@ -1,6 +1,5 @@
 package com.kefir.web.controllers;
 
-import com.kefir.entities.Customer;
 import com.kefir.services.CustomerService;
 import com.kefir.web.dtos.common.ApiEntityResponse;
 import com.kefir.web.dtos.customer.CustomerCreationRequest;

@@ -233,11 +233,7 @@ class AccountControllerIT : IntegrationTestBase() {
             patch("/api/accounts/1/open"),
         ).andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("operation").value("Opening"))
-            .andExpect(jsonPath("entity").value("Account"))
-            .andExpect(jsonPath("id").value(1))
-            .andExpect(jsonPath("message").value("Account opened!"))
-            .andExpect(jsonPath("timestamp").exists())
+            .andExpect(jsonPath("status").value("OPENED"))
     }
 
     @Test
@@ -248,11 +244,7 @@ class AccountControllerIT : IntegrationTestBase() {
             patch("/api/accounts/1/close"),
         ).andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("operation").value("Closing"))
-            .andExpect(jsonPath("entity").value("Account"))
-            .andExpect(jsonPath("id").value(1))
-            .andExpect(jsonPath("message").value("Account closed!"))
-            .andExpect(jsonPath("timestamp").exists())
+            .andExpect(jsonPath("status").value("CLOSED"))
     }
 
     private fun createTestAccount(accountType: AccountType): Account {

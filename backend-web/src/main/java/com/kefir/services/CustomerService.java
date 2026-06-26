@@ -178,9 +178,9 @@ public class CustomerService {
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
     customer.setStatus(CustomerStatus.ACTIVE);
 
-     Customer updatedCustomer = customerRepository.save(customer);
+    Customer updatedCustomer = customerRepository.save(customer);
 
-     return CustomerResponse.fromEntity(updatedCustomer);
+    return CustomerResponse.fromEntity(updatedCustomer);
   }
 
   @Transactional

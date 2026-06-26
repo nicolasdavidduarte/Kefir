@@ -283,9 +283,7 @@ class CustomerControllerIT extends IntegrationTestBase {
         .perform(post("/api/customers/1/status/activate"))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(jsonPath("resourceId").value(1))
-        .andExpect(jsonPath("message").value("Customer successfully activated"))
-        .andExpect(jsonPath("timestamp").exists());
+        .andExpect(jsonPath("status").value("ACTIVE"));
   }
 
   @Test
@@ -304,9 +302,7 @@ class CustomerControllerIT extends IntegrationTestBase {
         .perform(post("/api/customers/1/status/deactivate"))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(jsonPath("resourceId").value(1))
-        .andExpect(jsonPath("message").value("Customer successfully deactivated"))
-        .andExpect(jsonPath("timestamp").exists());
+        .andExpect(jsonPath("status").value("DEACTIVATED"));
   }
 
   @Test

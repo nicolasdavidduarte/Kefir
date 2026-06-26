@@ -22,13 +22,11 @@ import com.kefir.services.OperationLogService
 import com.kefir.services.UserService
 import com.kefir.web.dtos.AccountRequest
 import com.kefir.web.dtos.AccountResponse
-import com.kefir.web.dtos.EntityOperationResponse
 import com.kefir.web.dtos.OperationLogCommand
 import com.kefir.web.dtos.toResponse
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
 @Transactional
@@ -117,6 +115,5 @@ class AccountService(
         account.updatedAt = OffsetDateTime.now()
 
         return accountRepository.save(account).toResponse()
-
     }
 }
