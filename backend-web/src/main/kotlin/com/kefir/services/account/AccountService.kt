@@ -24,7 +24,6 @@ import com.kefir.web.dtos.AccountRequest
 import com.kefir.web.dtos.AccountResponse
 import com.kefir.web.dtos.OperationLogCommand
 import com.kefir.web.dtos.toResponse
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
@@ -46,7 +45,6 @@ class AccountService(
      * Obtains all accounts from the database
      * @return list of accounts
      */
-    @Cacheable("accounts")
     fun getAllAccounts(): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc().map(Account::toResponse).toList().ifEmpty {
         throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND)
     }

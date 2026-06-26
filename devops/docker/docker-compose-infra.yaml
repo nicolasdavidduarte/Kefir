@@ -1,13 +1,4 @@
 services:
-  redis:
-    image: redis
-    container_name: redis
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis-data:/data
-    command: ["redis-server", "--appendonly", "yes"]
-
   datadog-agent:
     image: registry.datadoghq.com/agent:latest
     container_name: dd-agent
@@ -57,6 +48,5 @@ services:
       - grafana
 
 volumes:
-  redis-data:
   grafana-data:
   tempo-data:
