@@ -7,8 +7,10 @@ import com.kefir.repositories.CustomerTypeRepository;
 import com.kefir.web.dtos.customerType.CustomerTypeResponse;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class CustomerTypeService {
 
   private final CustomerTypeRepository customerTypeRepository;

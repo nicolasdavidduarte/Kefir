@@ -15,18 +15,19 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
-@Transactional
 class BankService(
     private val bankRepository: BankRepository,
     private val userService: UserService,
     private val authService: AuthService,
 ) {
+    @Transactional(readOnly = true)
     fun getAll(): List<BankResponse> = bankRepository
         .findAllByOrderByIdAsc()
         .map(Bank::toResponse)
         .toList()
         .ifEmpty { throw ApiException(ErrorCode.BANK_NOT_FOUND) }
 
+    @Transactional
     fun create(bankRequest: BankRequest): BankResponse = bankRepository.save(
         Bank(
             name = requireNotNull(bankRequest.name),
@@ -34,6 +35,7 @@ class BankService(
         ),
     ).toResponse()
 
+    @Transactional
     fun enable(id: Int): EntityOperationResponse {
         val bank = bankRepository.findById(id).orElseThrow { ApiException(ErrorCode.BANK_NOT_FOUND) }
         bank.enable()

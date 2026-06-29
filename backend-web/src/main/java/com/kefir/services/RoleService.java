@@ -7,6 +7,7 @@ import com.kefir.exceptions.ErrorCode;
 import com.kefir.repositories.RoleRepository;
 import java.util.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class RoleService {
@@ -16,6 +17,7 @@ public class RoleService {
     this.roleRepository = roleRepository;
   }
 
+  @Transactional(readOnly = true)
   public Set<Role> getRolesByName(List<UserRoles> userRoles) {
     List<String> roleNames = userRoles.stream().map(UserRoles::name).toList();
 

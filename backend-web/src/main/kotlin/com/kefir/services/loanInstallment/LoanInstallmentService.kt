@@ -9,6 +9,7 @@ import com.kefir.repositories.LoanInstallmentRepository
 import com.kefir.web.dtos.LoanInstallmentResponse
 import com.kefir.web.dtos.toResponse
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class LoanInstallmentService(
@@ -19,6 +20,7 @@ class LoanInstallmentService(
     private val calculators: Map<AmortizationTypeName, AmortizationCalculator> =
         calculatorsList.associateBy { it.type }
 
+    @Transactional(readOnly = true)
     fun getAllInstallments(loanId: Long): List<LoanInstallmentResponse> {
         val loanInstallments = loanInstallmentRepository.findAllByLoanIdOrderByNumberAsc(loanId).map(LoanInstallment::toResponse)
 
@@ -29,6 +31,7 @@ class LoanInstallmentService(
         return loanInstallments
     }
 
+    @Transactional
     fun createInstallmentsSchedule(loan: Loan): List<LoanInstallment> {
         val calculator = calculators[loan.amortizationType.name]
             ?: throw IllegalArgumentException("Unsupported amortization type: ${loan.amortizationType.name}")

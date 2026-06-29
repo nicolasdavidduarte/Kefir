@@ -13,14 +13,15 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional(readOnly = true)
 class LoanTypeService(
     private val loanTypeRepository: LoanTypeRepository,
     private val userService: UserService,
     private val authService: AuthService,
 ) {
+    @Transactional(readOnly = true)
     fun getAllLoanTypesWithResponse(): List<LoanTypeResponse> = loanTypeRepository.findAllByOrderByIdAsc().map(LoanType::toResponse)
 
+    @Transactional(readOnly = true)
     fun getByNameIgnoringCase(name: LoanTypeName): LoanType = loanTypeRepository.findByNameIgnoringCase(name.name).orElseThrow { throw ApiException(ErrorCode.LOAN_TYPE_NOT_FOUND) }
 
     @Transactional

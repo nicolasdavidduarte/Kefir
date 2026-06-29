@@ -40,6 +40,7 @@ public class CustomerService {
     this.userService = userService;
   }
 
+  @Transactional(readOnly = true)
   public List<CustomerResponse> getAllWithResponse() {
     List<CustomerResponse> customers =
         customerRepository.findAllByOrderByIdAsc().stream()
@@ -51,12 +52,14 @@ public class CustomerService {
     return customers;
   }
 
+  @Transactional(readOnly = true)
   public Customer getById(Long id) {
     return customerRepository
         .findById(id)
         .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
   }
 
+  @Transactional(readOnly = true)
   public CustomerResponse getByIdWithResponse(Long id) {
     return customerRepository
         .findById(id)
@@ -98,6 +101,7 @@ public class CustomerService {
     return CustomerResponse.fromEntity(customerSaved);
   }
 
+  @Transactional
   public CustomerResponse update(CustomerUpdateRequest request, Long id) {
     Customer customer =
         customerRepository
@@ -135,32 +139,6 @@ public class CustomerService {
     return CustomerResponse.fromEntity(customerUpdated);
   }
 
-  private String generateFullname(Customer customer) {
-    StringBuilder fullname = new StringBuilder();
-
-    fullname.append(customer.getName1());
-
-    if (customer.getName2() != null) {
-      fullname.append(' ').append(customer.getName2());
-    }
-
-    if (customer.getName3() != null) {
-      fullname.append(' ').append(customer.getName3());
-    }
-
-    fullname.append(' ').append(customer.getLastname1());
-
-    if (customer.getLastname2() != null) {
-      fullname.append(' ').append(customer.getLastname2());
-    }
-
-    if (customer.getLastname3() != null) {
-      fullname.append(' ').append(customer.getLastname3());
-    }
-
-    return fullname.toString();
-  }
-
   @Transactional
   public void delete(Long id) {
     Customer customer =
@@ -194,6 +172,32 @@ public class CustomerService {
     Customer updatedCustomer = customerRepository.save(customer);
 
     return CustomerResponse.fromEntity(updatedCustomer);
+  }
+
+  private String generateFullname(Customer customer) {
+    StringBuilder fullname = new StringBuilder();
+
+    fullname.append(customer.getName1());
+
+    if (customer.getName2() != null) {
+      fullname.append(' ').append(customer.getName2());
+    }
+
+    if (customer.getName3() != null) {
+      fullname.append(' ').append(customer.getName3());
+    }
+
+    fullname.append(' ').append(customer.getLastname1());
+
+    if (customer.getLastname2() != null) {
+      fullname.append(' ').append(customer.getLastname2());
+    }
+
+    if (customer.getLastname3() != null) {
+      fullname.append(' ').append(customer.getLastname3());
+    }
+
+    return fullname.toString();
   }
 
   private CustomerType getCustomerType(com.kefir.enums.CustomerType customerType) {

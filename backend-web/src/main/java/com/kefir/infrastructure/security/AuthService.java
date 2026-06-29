@@ -13,8 +13,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class AuthService {
 
   private final AuthenticationManager authManager;
@@ -73,14 +75,5 @@ public class AuthService {
     AuthenticatedUser principal = (AuthenticatedUser) auth.getPrincipal();
 
     return principal.id();
-  }
-
-  public String getCurrentUsername() {
-
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-    AuthenticatedUser principal = (AuthenticatedUser) auth.getPrincipal();
-
-    return principal.username();
   }
 }

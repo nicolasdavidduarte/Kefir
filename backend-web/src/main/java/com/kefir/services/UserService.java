@@ -12,12 +12,10 @@ import com.kefir.web.dtos.user.UserResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Set;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@EnableCaching
 @Service
 public class UserService {
 
@@ -37,10 +35,12 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
+  @Transactional(readOnly = true)
   public List<UserResponse> getAll() {
     return userRepository.findAllByOrderByIdAsc().stream().map(UserResponse::fromEntity).toList();
   }
 
+  @Transactional(readOnly = true)
   public UserResponse getByIdWithResponse(Integer id) {
     return userRepository
         .findById(id)
@@ -48,6 +48,7 @@ public class UserService {
         .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
   }
 
+  @Transactional(readOnly = true)
   public User getById(Integer id) {
     return userRepository
         .findById(id)

@@ -5,6 +5,7 @@ import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.OperationLogRepository
 import com.kefir.web.dtos.OperationLogCommand
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class OperationLogService(
@@ -13,6 +14,7 @@ class OperationLogService(
     private val authService: AuthService,
 ) {
 
+    @Transactional
     fun log(
         operationLogCommand: OperationLogCommand,
     ) {

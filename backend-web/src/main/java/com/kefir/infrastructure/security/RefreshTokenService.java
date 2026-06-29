@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -20,6 +21,7 @@ public class RefreshTokenService {
     this.repository = repository;
   }
 
+  @Transactional
   public RefreshToken createToken(User user) {
     RefreshToken token = new RefreshToken();
     token.setUser(user);
@@ -30,10 +32,12 @@ public class RefreshTokenService {
     return repository.save(token);
   }
 
+  @Transactional(readOnly = true)
   public Optional<RefreshToken> findByToken(String token) {
     return repository.findByToken(token);
   }
 
+  @Transactional(readOnly = true)
   public RefreshToken verify(String token) {
     RefreshToken refreshToken =
         repository
@@ -47,6 +51,7 @@ public class RefreshTokenService {
     return refreshToken;
   }
 
+  @Transactional
   public void revoke(RefreshToken token) {
     token.setRevoked(true);
     repository.save(token);

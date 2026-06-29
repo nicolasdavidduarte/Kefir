@@ -59,6 +59,7 @@ public class LoanService {
     this.amortizationTypeService = amortizationTypeService;
   }
 
+  @Transactional(readOnly = true)
   public List<LoanResponse> getAll() {
     List<LoanResponse> loans =
         loanRepository.findAllByOrderByIdAsc().stream()
@@ -73,6 +74,7 @@ public class LoanService {
   }
 
   @Observed(name = "loan.service.get")
+  @Transactional(readOnly = true)
   public Loan getById(Long id) {
     return loanRepository
         .findById(id)
@@ -80,6 +82,7 @@ public class LoanService {
   }
 
   @Observed(name = "loan.service.get")
+  @Transactional(readOnly = true)
   public LoanResponse getByIdWithResponse(Long id) {
     Loan loan =
         loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));

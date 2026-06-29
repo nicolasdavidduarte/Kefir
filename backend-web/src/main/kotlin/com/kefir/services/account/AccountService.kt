@@ -28,7 +28,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
 
-@Transactional
 @Service
 class AccountService(
     private val accountRepository: AccountRepository,
@@ -45,10 +44,12 @@ class AccountService(
      * Obtains all accounts from the database
      * @return list of accounts
      */
+    @Transactional(readOnly = true)
     fun getAllAccounts(): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc().map(Account::toResponse).toList().ifEmpty {
         throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND)
     }
 
+    @Transactional(readOnly = true)
     fun getById(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
@@ -60,6 +61,7 @@ class AccountService(
      * @param [accountRequest] account request
      * @return account response
      */
+    @Transactional
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
         val user: User = userService.getById(authService.currentUserId)
 
@@ -97,6 +99,7 @@ class AccountService(
         return accountRepository.save(savedAccount).toResponse()
     }
 
+    @Transactional
     fun open(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.LOAN_NOT_FOUND) }
 
@@ -106,6 +109,7 @@ class AccountService(
         return accountRepository.save(account).toResponse()
     }
 
+    @Transactional
     fun close(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 

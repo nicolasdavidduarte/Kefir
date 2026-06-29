@@ -6,10 +6,12 @@ import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.repositories.AmortizationTypeRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class AmortizationTypeService(private val amortizationTypeRepository: AmortizationTypeRepository) {
 
+    @Transactional(readOnly = true)
     fun getByNameIgnoringCase(amortizationTypeName: AmortizationTypeName): AmortizationType = amortizationTypeRepository.findByName(amortizationTypeName)
         .orElseThrow { throw ApiException(ErrorCode.AMORTIZATION_TYPE_NOT_FOUND) }
 }
