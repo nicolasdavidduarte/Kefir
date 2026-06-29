@@ -87,15 +87,6 @@ public class LoanService {
   }
 
   @Transactional
-  public void delete(Long id) {
-    Loan loan =
-        loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
-    loanRepository.delete(loan);
-
-    log.info("Loan successfully deleted: {}", loan);
-  }
-
-  @Transactional
   public LoanResponse create(LoanRequest loanRequest) {
     // TODO: Add interest rate mode (fixed or variable)
 
@@ -170,5 +161,29 @@ public class LoanService {
       registry.counter("loan.created", "status", "error").increment();
       throw e;
     }
+  }
+
+  @Transactional
+  public LoanResponse close(Long id) {
+    Loan loan =
+        loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
+
+    loan.setStatus(LoanStatus.CLOSED);
+
+    Loan loanUpdated = loanRepository.save(loan);
+
+    return LoanResponse.fromEntity(loanUpdated);
+  }
+
+  @Transactional
+  public LoanResponse approve(Long id) {
+    Loan loan =
+        loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
+
+    loan.setStatus(LoanStatus.ACTIVE);
+
+    Loan loanUpdated = loanRepository.save(loan);
+
+    return LoanResponse.fromEntity(loanUpdated);
   }
 }

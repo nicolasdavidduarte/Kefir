@@ -85,4 +85,18 @@ public class LoanController {
   public LoanResponse createLoan(@RequestBody @Valid LoanRequest loanRequest) {
     return loanService.create(loanRequest);
   }
+
+  @PatchMapping("/{loanId}/approve")
+  @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("hasAnyRole('ADMIN','OPR')")
+  public LoanResponse approveLoan(@PathVariable Long loanId) {
+    return loanService.approve(loanId);
+  }
+
+  @PatchMapping("/{loanId}/close")
+  @ResponseStatus(HttpStatus.OK)
+  @PreAuthorize("hasAnyRole('ADMIN','OPR')")
+  public LoanResponse closeLoan(@PathVariable Long loanId) {
+    return loanService.close(loanId);
+  }
 }
