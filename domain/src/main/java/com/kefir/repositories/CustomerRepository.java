@@ -12,7 +12,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
   List<Customer> findAllByOrderByIdAsc();
 
-  @Query("""
+  @Query(
+"""
     SELECT c
     FROM Customer c
     WHERE LOWER(c.fullname) LIKE LOWER(CONCAT('%', :query, '%'))

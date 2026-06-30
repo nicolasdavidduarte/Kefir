@@ -38,7 +38,6 @@ public class CustomerController {
     return customerService.getByIdWithResponse(id);
   }
 
-
   @GetMapping("/search/{query}")
   @ResponseStatus(HttpStatus.OK)
   public List<CustomerResponse> getAllByFullname(@PathVariable String query) {

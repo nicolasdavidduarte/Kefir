@@ -69,13 +69,12 @@ public class CustomerService {
 
   @Transactional(readOnly = true)
   public List<CustomerResponse> getAllByFullnameOrDocumentNumber(String query) {
-    List<CustomerResponse> customers = customerRepository
-            .findByFullnameOrDocumentNumber(query)
-            .stream()
+    List<CustomerResponse> customers =
+        customerRepository.findByFullnameOrDocumentNumber(query).stream()
             .map(CustomerResponse::fromEntity)
             .toList();
 
-    if(customers.isEmpty()){
+    if (customers.isEmpty()) {
       throw new ApiException(ErrorCode.CUSTOMERS_NOT_FOUND);
     }
 
