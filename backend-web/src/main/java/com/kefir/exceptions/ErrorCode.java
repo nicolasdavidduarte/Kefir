@@ -22,7 +22,7 @@ public enum ErrorCode {
   CURRENCY_NOT_FOUND(HttpStatus.NOT_FOUND, "Currency not found"),
 
   CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer not found"),
-  CUSTOMERS_NOT_FOUND(HttpStatus.NOT_FOUND, "There aren't customers created yet"),
+  CUSTOMERS_NOT_FOUND(HttpStatus.NOT_FOUND, "Customers not found"),
   CUSTOMER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer not valid"),
   CUSTOMER_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Customer creation failed"),
 
@@ -30,7 +30,7 @@ public enum ErrorCode {
   CUSTOMER_TYPE_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer type not valid"),
 
   LOAN_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan not found"),
-  LOANS_NOT_FOUND(HttpStatus.NOT_FOUND, "There aren't loans created yet"),
+  LOANS_NOT_FOUND(HttpStatus.NOT_FOUND, "Loans not found"),
   LOAN_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Loan creation failed"),
 
   LOAN_INSTALLMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan installments not found"),
