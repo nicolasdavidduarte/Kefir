@@ -60,7 +60,7 @@ public class Loan {
   @Column(name = "expiration_date", nullable = false)
   private OffsetDateTime expirationDate;
 
-  @Column(name = "external_id", nullable = false)
+  @Column(name = "external_id")
   private Long externalId;
 
   @Enumerated(EnumType.STRING)

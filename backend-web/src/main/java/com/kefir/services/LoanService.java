@@ -167,11 +167,11 @@ public class LoanService {
   }
 
   @Transactional
-  public LoanResponse close(Long id) {
+  public LoanResponse chargeOff(Long id) {
     Loan loan =
         loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
-    loan.setStatus(LoanStatus.CLOSED);
+    loan.setStatus(LoanStatus.CHARGE_OFF);
 
     Loan loanUpdated = loanRepository.save(loan);
 

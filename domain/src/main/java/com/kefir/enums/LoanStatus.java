@@ -9,5 +9,5 @@ public enum LoanStatus {
   ACTIVE,
   INACTIVE,
   PENDING,
-  CLOSED
+  CHARGE_OFF
 }

@@ -96,7 +96,7 @@ public class LoanController {
   @PatchMapping("/{loanId}/close")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public LoanResponse closeLoan(@PathVariable Long loanId) {
-    return loanService.close(loanId);
+  public LoanResponse chargeOffLoan(@PathVariable Long loanId) {
+    return loanService.chargeOff(loanId);
   }
 }

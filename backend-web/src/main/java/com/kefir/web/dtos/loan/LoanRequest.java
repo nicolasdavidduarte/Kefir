@@ -13,4 +13,4 @@ public record LoanRequest(
     @NotNull(message = "Principal amount is mandatory") BigDecimal principalAmount,
     @NotNull(message = "Currency ISO code is mandatory") CurrencyIsoCodes currencyIsoCode,
     @NotNull(message = "Number of installments is mandatory") Integer numberOfInstallments,
-    @NotNull(message = "External id is mandatory") Long externalId) {}
+    Long externalId) {}
