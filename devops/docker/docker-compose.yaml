@@ -20,7 +20,9 @@ services:
 
   backend:
     container_name: backend
-    image: nduarte93/kefir-backend:latest
+    build:
+      context: ../../
+      dockerfile: devops/docker/Dockerfile
     depends_on:
       db:
         condition: service_healthy
@@ -37,9 +39,9 @@ services:
 
   frontend:
     container_name: frontend
-    image: nduarte93/kefir-frontend:latest
+    image: kefir-frontend:latest
+    ports:
+      - "80:80"
     depends_on:
       backend:
         condition: service_healthy
-    ports:
-      - "80:80"
