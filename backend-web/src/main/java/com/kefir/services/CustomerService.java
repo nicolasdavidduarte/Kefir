@@ -42,14 +42,9 @@ public class CustomerService {
 
   @Transactional(readOnly = true)
   public List<CustomerResponse> getAllWithResponse() {
-    List<CustomerResponse> customers =
-        customerRepository.findAllByOrderByIdAsc().stream()
-            .map(CustomerResponse::fromEntity)
-            .toList();
-
-    if (customers.isEmpty()) throw new ApiException(ErrorCode.CUSTOMERS_NOT_FOUND);
-
-    return customers;
+    return customerRepository.findAllByOrderByIdAsc().stream()
+        .map(CustomerResponse::fromEntity)
+        .toList();
   }
 
   @Transactional(readOnly = true)
@@ -69,16 +64,9 @@ public class CustomerService {
 
   @Transactional(readOnly = true)
   public List<CustomerResponse> getAllByFullnameOrDocumentNumber(String query) {
-    List<CustomerResponse> customers =
-        customerRepository.findByFullnameOrDocumentNumber(query).stream()
-            .map(CustomerResponse::fromEntity)
-            .toList();
-
-    if (customers.isEmpty()) {
-      throw new ApiException(ErrorCode.CUSTOMERS_NOT_FOUND);
-    }
-
-    return customers;
+    return customerRepository.findByFullnameOrDocumentNumber(query).stream()
+        .map(CustomerResponse::fromEntity)
+        .toList();
   }
 
   @Transactional

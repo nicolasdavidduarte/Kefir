@@ -246,14 +246,15 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  void getAllLoansFailWhenDatabaseIsEmpty() throws Exception {
+  void getAllLoansReturnsEmptyListWhenDatabaseIsEmpty() throws Exception {
 
     mockMvc.perform(get("/api/loans"));
 
     mockMvc
         .perform(get("/api/loans").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
-        .andExpect(status().isNotFound());
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(0));
   }
 
   @Test

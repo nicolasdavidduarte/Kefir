@@ -45,9 +45,7 @@ class AccountService(
      * @return list of accounts
      */
     @Transactional(readOnly = true)
-    fun getAllAccounts(): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc().map(Account::toResponse).toList().ifEmpty {
-        throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND)
-    }
+    fun getAllAccounts(): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc().map(Account::toResponse).toList()
 
     @Transactional(readOnly = true)
     fun getById(id: Long): AccountResponse {

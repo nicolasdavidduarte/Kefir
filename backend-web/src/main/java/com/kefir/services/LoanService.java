@@ -61,16 +61,9 @@ public class LoanService {
 
   @Transactional(readOnly = true)
   public List<LoanResponse> getAll() {
-    List<LoanResponse> loans =
-        loanRepository.findAllByOrderByIdAsc().stream()
-            .map(LoanResponse::fromEntity)
-            .collect(Collectors.toCollection(ArrayList::new));
-
-    if (loans.isEmpty()) {
-      throw new ApiException(ErrorCode.LOANS_NOT_FOUND);
-    }
-
-    return loans;
+    return loanRepository.findAllByOrderByIdAsc().stream()
+        .map(LoanResponse::fromEntity)
+        .collect(Collectors.toCollection(ArrayList::new));
   }
 
   @Observed(name = "loan.service.get")

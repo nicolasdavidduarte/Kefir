@@ -196,7 +196,8 @@ class AccountControllerIT : IntegrationTestBase() {
         mockMvc.perform(
             get("/api/accounts"),
         ).andDo(print())
-            .andExpect(status().isNotFound())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("length()").value(0))
     }
 
     @Test

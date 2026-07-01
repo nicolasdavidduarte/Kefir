@@ -175,11 +175,12 @@ class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  void getAllCustomersFailWhenDatabaseIsEmpty() throws Exception {
+  void getAllCustomersReturnsEmptyListWhenDatabaseIsEmpty() throws Exception {
     mockMvc
         .perform(get("/api/customers").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
-        .andExpect(status().isNotFound());
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(0));
   }
 
   @Test
