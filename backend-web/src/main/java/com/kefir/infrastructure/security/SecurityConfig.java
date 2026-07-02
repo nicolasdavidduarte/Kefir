@@ -1,6 +1,7 @@
 package com.kefir.infrastructure.security;
 
 import com.kefir.web.filters.IdempotencyFilter;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -73,9 +74,19 @@ public class SecurityConfig {
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
-    String frontendUrl = System.getenv("FRONTEND_URL");
+
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("http://localhost:5173", frontendUrl));
+
+    List<String> allowedOrigins = new ArrayList<>();
+    allowedOrigins.add("http://localhost:5173");
+
+    String frontendUrl = System.getenv("FRONTEND_URL");
+    if (frontendUrl != null && !frontendUrl.isBlank()) {
+      allowedOrigins.add(frontendUrl);
+    }
+
+    configuration.setAllowedOrigins(allowedOrigins);
+
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
     configuration.setExposedHeaders(List.of("Authorization"));
@@ -83,6 +94,7 @@ public class SecurityConfig {
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
+
     return source;
   }
 
