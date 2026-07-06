@@ -114,8 +114,6 @@ public class LoanService {
 
       Account account = accountService.getById(loanRequest.accountId());
 
-      accountService.addBalance(account, loanRequest.principalAmount());
-
       Loan loan =
           Loan.builder()
               .customer(customer)
@@ -184,6 +182,8 @@ public class LoanService {
   public LoanResponse approve(Long id) {
     Loan loan =
         loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
+
+    accountService.addBalance(loan.getAccount(), loan.getPrincipalAmount());
 
     loan.setStatus(LoanStatus.ACTIVE);
 
