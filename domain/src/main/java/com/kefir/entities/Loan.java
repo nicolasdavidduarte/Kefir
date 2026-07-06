@@ -25,6 +25,10 @@ public class Loan {
   private Customer customer;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "account_id", nullable = false)
+  private Account account;
+
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "loan_type_id", nullable = false)
   private LoanType loanType;
 

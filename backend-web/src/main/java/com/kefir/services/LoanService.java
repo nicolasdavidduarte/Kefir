@@ -7,6 +7,7 @@ import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
+import com.kefir.services.account.AccountService;
 import com.kefir.services.loanInstallment.LoanInstallmentService;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
@@ -29,6 +30,7 @@ public class LoanService {
 
   private final LoanRepository loanRepository;
   private final LoanInstallmentService loanInstallmentService;
+  private final AccountService accountService;
   private final AuthService authService;
   private final UserService userService;
   private final MeterRegistry registry;
@@ -40,9 +42,10 @@ public class LoanService {
   @Autowired
   public LoanService(
       LoanRepository loanRepository,
+      LoanInstallmentService loanInstallmentService,
+      AccountService accountService,
       AuthService authService,
       MeterRegistry registry,
-      LoanInstallmentService loanInstallmentService,
       CustomerService customerService,
       LoanTypeService loanTypeService,
       CurrencyService currencyService,
@@ -57,6 +60,7 @@ public class LoanService {
     this.currencyService = currencyService;
     this.userService = userService;
     this.amortizationTypeService = amortizationTypeService;
+    this.accountService = accountService;
   }
 
   @Transactional(readOnly = true)
@@ -108,9 +112,14 @@ public class LoanService {
 
       Currency currency = currencyService.getByIsoCode(loanRequest.currencyIsoCode());
 
+      Account account = accountService.getById(loanRequest.accountId());
+
+      accountService.addBalance(account, loanRequest.principalAmount());
+
       Loan loan =
           Loan.builder()
               .customer(customer)
+              .account(account)
               .loanType(loanType)
               .amortizationType(amortizationType)
               .principalAmount(loanRequest.principalAmount())

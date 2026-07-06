@@ -1,5 +1,6 @@
 {
   "customerId": 1,
+  "accountId": 1,
   "loanType": "PERSONAL",
   "amortizationType":"AMERICAN",
   "principalAmount": 100.00,

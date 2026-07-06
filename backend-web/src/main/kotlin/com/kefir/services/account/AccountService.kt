@@ -26,6 +26,7 @@ import com.kefir.web.dtos.OperationLogCommand
 import com.kefir.web.dtos.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 @Service
@@ -48,10 +49,19 @@ class AccountService(
     fun getAllAccounts(): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc().map(Account::toResponse).toList()
 
     @Transactional(readOnly = true)
-    fun getById(id: Long): AccountResponse {
+    fun getById(id: Long): Account = accountRepository.findById(id).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+
+    @Transactional(readOnly = true)
+    fun getByIdWithResponse(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
         return account.toResponse()
+    }
+
+    @Transactional
+    fun addBalance(account: Account, amount: BigDecimal) {
+        account.balance += amount
+        accountRepository.save(account)
     }
 
     /**
