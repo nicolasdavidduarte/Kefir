@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
@@ -22,11 +23,21 @@ class AccountController(
 ) {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun getAllAccounts(): List<AccountResponse> = accountService.getAllAccounts().sortedBy { a -> a.id }
+    fun getAllAccountsWithResponse(
+        @RequestParam(name = "customerId", required = false) customerId: Long?,
+    ): List<AccountResponse> {
+        val accounts = if (customerId != null) {
+            accountService.getAllByCustomerWithResponse(customerId)
+        } else {
+            accountService.getAllAccounts()
+        }
+
+        return accounts.sortedBy { it.id }
+    }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getById(@PathVariable id: Long): AccountResponse = accountService.getByIdWithResponse(id)
+    fun getByIdWithResponse(@PathVariable id: Long): AccountResponse = accountService.getByIdWithResponse(id)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

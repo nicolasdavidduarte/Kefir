@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository
 interface AccountRepository : JpaRepository<Account, Long> {
 
     fun findAllByOrderByIdAsc(): List<Account>
+
+    fun findAllByCustomerId(customerId: Long): List<Account>
 }

@@ -58,6 +58,9 @@ class AccountService(
         return account.toResponse()
     }
 
+    @Transactional(readOnly = true)
+    fun getAllByCustomerWithResponse(customerId: Long): List<AccountResponse> = accountRepository.findAllByCustomerId(customerId).map(Account::toResponse)
+
     @Transactional
     fun addBalance(account: Account, amount: BigDecimal) {
         account.balance += amount
