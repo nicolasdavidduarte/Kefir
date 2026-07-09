@@ -37,7 +37,7 @@ class LoanInstallmentService(
         return loanInstallments
     }
 
-    fun payInstallment(loanId: Long, installmentNumber: Int): LoanInstallmentResponse{
+    fun payInstallment(loanId: Long, installmentNumber: Int): LoanInstallmentResponse {
         val loanInstallment = loanInstallmentRepository.findByLoanIdAndNumber(loanId, installmentNumber)
 
         loanInstallment.status = LoanInstallmentStatus.PAID
@@ -45,7 +45,6 @@ class LoanInstallmentService(
         loanInstallment.user = userService.getById(authService.currentUserId)
 
         return loanInstallmentRepository.save(loanInstallment).toResponse()
-
     }
 
     @Transactional
