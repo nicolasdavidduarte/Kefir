@@ -183,8 +183,11 @@ public class LoanService {
         loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
     loan.setStatus(LoanStatus.CHARGE_OFF);
+    loan.setUpdatedAt(OffsetDateTime.now());
 
     Loan loanUpdated = loanRepository.save(loan);
+
+    loanInstallmentService.updateInstallmentsForChargeOff(id);
 
     return LoanResponse.fromEntity(loanUpdated);
   }

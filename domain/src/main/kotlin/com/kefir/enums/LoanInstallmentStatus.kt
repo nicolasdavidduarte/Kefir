@@ -4,5 +4,5 @@ enum class LoanInstallmentStatus {
     PAYMENT_PENDING,
     PAID,
     OVERDUE,
-    CANCELLED,
+    CHARGE_OFF,
 }

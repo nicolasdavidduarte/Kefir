@@ -110,4 +110,15 @@ class LoanInstallmentService(
 
         return loanInstallmentRepository.saveAll(loanInstallments)
     }
+
+    fun updateInstallmentsForChargeOff(loanId: Long) {
+        val installments = loanInstallmentRepository.findByLoanIdForChargeOff(loanId)
+
+        installments.forEach {
+            it.status = LoanInstallmentStatus.CHARGE_OFF
+            it.updatedAt = OffsetDateTime.now()
+        }
+
+        loanInstallmentRepository.saveAll(installments)
+    }
 }
