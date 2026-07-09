@@ -3,17 +3,23 @@ package com.kefir.services.loanInstallment
 import com.kefir.entities.Loan
 import com.kefir.entities.LoanInstallment
 import com.kefir.enums.AmortizationTypeName
+import com.kefir.enums.LoanInstallmentStatus
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
+import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.LoanInstallmentRepository
+import com.kefir.services.UserService
 import com.kefir.web.dtos.LoanInstallmentResponse
 import com.kefir.web.dtos.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.OffsetDateTime
 
 @Service
 class LoanInstallmentService(
     private val loanInstallmentRepository: LoanInstallmentRepository,
+    private val userService: UserService,
+    private val authService: AuthService,
     calculatorsList: List<AmortizationCalculator>,
 ) {
 
@@ -29,6 +35,17 @@ class LoanInstallmentService(
         }
 
         return loanInstallments
+    }
+
+    fun payInstallment(loanId: Long, installmentNumber: Int): LoanInstallmentResponse{
+        val loanInstallment = loanInstallmentRepository.findByLoanIdAndNumber(loanId, installmentNumber)
+
+        loanInstallment.status = LoanInstallmentStatus.PAID
+        loanInstallment.updatedAt = OffsetDateTime.now()
+        loanInstallment.user = userService.getById(authService.currentUserId)
+
+        return loanInstallmentRepository.save(loanInstallment).toResponse()
+
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 data class LoanInstallmentResponse(
+    val loanId: Long,
     val number: Int,
     val principalAmount: BigDecimal,
     val interestAmount: BigDecimal,
@@ -17,6 +18,7 @@ data class LoanInstallmentResponse(
     val updatedAt: OffsetDateTime,
 )
 fun LoanInstallment.toResponse() = LoanInstallmentResponse(
+    loanId = this.loan.id,
     number = this.number,
     principalAmount = this.principalAmount,
     interestAmount = this.interestAmount,
