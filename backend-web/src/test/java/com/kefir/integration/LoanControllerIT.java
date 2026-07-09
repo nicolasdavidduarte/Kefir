@@ -3,7 +3,8 @@ package com.kefir.integration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.kefir.entities.*;
 import com.kefir.entities.AccountType;
@@ -14,7 +15,18 @@ import com.kefir.enums.*;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthenticatedUser;
-import com.kefir.repositories.*;
+import com.kefir.repositories.AccountRepository;
+import com.kefir.repositories.AccountTypeRepository;
+import com.kefir.repositories.AmortizationTypeRepository;
+import com.kefir.repositories.BankRepository;
+import com.kefir.repositories.CurrencyRepository;
+import com.kefir.repositories.CustomerRepository;
+import com.kefir.repositories.CustomerTypeRepository;
+import com.kefir.repositories.DocumentTypeRepository;
+import com.kefir.repositories.LoanRepository;
+import com.kefir.repositories.LoanTypeRepository;
+import com.kefir.repositories.PersonTypeRepository;
+import com.kefir.repositories.UserRepository;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -81,7 +93,7 @@ class LoanControllerIT extends IntegrationTestBase {
 
     Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
 
-    createTestAccount(customer);
+    createTestAccount(customer, AccountStatus.OPENED);
 
     String requestBody;
     try {
@@ -100,9 +112,11 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  void createLoanFailWhenCustomerIsNotActivated() throws Exception {
+  void createLoanFailWhenAccountIsNotOpened() throws Exception {
 
-    createTestCustomer(1, "123456789", CustomerStatus.PENDING);
+    Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+
+    createTestAccount(customer, AccountStatus.PENDING);
 
     String requestBody;
     try {
@@ -165,7 +179,7 @@ class LoanControllerIT extends IntegrationTestBase {
     SecurityContextHolder.getContext().setAuthentication(lowPrivilegeToken);
 
     Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
-    createTestAccount(customer);
+    createTestAccount(customer, AccountStatus.OPENED);
 
     String requestBody;
     try {
@@ -186,7 +200,7 @@ class LoanControllerIT extends IntegrationTestBase {
   void createLoanFailWhenDuplicated() throws Exception {
 
     Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
-    createTestAccount(customer);
+    createTestAccount(customer, AccountStatus.OPENED);
 
     String requestBody;
     try {
@@ -211,11 +225,11 @@ class LoanControllerIT extends IntegrationTestBase {
   @Test
   void getAllLoansSuccessfully() throws Exception {
     Customer customer1 = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
-    createTestAccount(customer1);
+    createTestAccount(customer1, AccountStatus.OPENED);
     createTestLoan(customer1, 998L);
 
     Customer customer2 = createTestCustomer(2, "123456788", CustomerStatus.ACTIVE);
-    createTestAccount(customer2);
+    createTestAccount(customer2, AccountStatus.OPENED);
     createTestLoan(customer2, 999L);
 
     mockMvc
@@ -336,7 +350,7 @@ class LoanControllerIT extends IntegrationTestBase {
             .build());
   }
 
-  private Account createTestAccount(Customer customer) {
+  private Account createTestAccount(Customer customer, AccountStatus status) {
 
     String name = com.kefir.enums.AccountType.SAVINGS_ACCOUNT.getDbName();
     AccountType accountType =
@@ -368,7 +382,7 @@ class LoanControllerIT extends IntegrationTestBase {
             bank,
             cbu,
             initialBalance,
-            AccountStatus.PENDING,
+            status,
             user,
             OffsetDateTime.now(),
             OffsetDateTime.now());
@@ -378,7 +392,7 @@ class LoanControllerIT extends IntegrationTestBase {
 
   private void createTestLoan(Customer customer, Long externalId) {
 
-    Account account = createTestAccount(customer);
+    Account account = createTestAccount(customer, AccountStatus.OPENED);
 
     LoanType loanType =
         loanTypeRepository

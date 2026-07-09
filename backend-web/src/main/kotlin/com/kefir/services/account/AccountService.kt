@@ -67,6 +67,12 @@ class AccountService(
         accountRepository.save(account)
     }
 
+    @Transactional
+    fun subtractBalance(account: Account, amount: BigDecimal) {
+        account.balance -= amount
+        accountRepository.save(account)
+    }
+
     /**
      * Creates a new account
      * @param [accountRequest] account request

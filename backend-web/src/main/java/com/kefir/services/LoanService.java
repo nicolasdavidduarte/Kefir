@@ -1,6 +1,7 @@
 package com.kefir.services;
 
 import com.kefir.entities.*;
+import com.kefir.enums.AccountStatus;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.enums.LoanStatus;
 import com.kefir.exceptions.ApiException;
@@ -92,8 +93,13 @@ public class LoanService {
 
     Customer customer = customerService.getById(loanRequest.customerId());
 
+    Account account = accountService.getById(loanRequest.accountId());
+
     if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
+
+    if (account.getStatus() != AccountStatus.OPENED)
+      throw new ApiException(ErrorCode.ACCOUNT_NOT_VALID);
 
     try {
 
@@ -111,8 +117,6 @@ public class LoanService {
           amortizationTypeService.getByNameIgnoringCase(loanRequest.amortizationType());
 
       Currency currency = currencyService.getByIsoCode(loanRequest.currencyIsoCode());
-
-      Account account = accountService.getById(loanRequest.accountId());
 
       Loan loan =
           Loan.builder()

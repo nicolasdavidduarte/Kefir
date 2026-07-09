@@ -9,6 +9,12 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
   ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "Account not found"),
 
+  ACCOUNT_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Account is not in a valid state"),
+
+  ACCOUNT_WITHOUT_FUNDS(
+      HttpStatus.UNPROCESSABLE_ENTITY,
+      "Account does not have the necessary funds to complete the operation"),
+
   ACCOUNT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Account type not found"),
 
   AMORTIZATION_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Amortization type not found"),
@@ -31,7 +37,15 @@ public enum ErrorCode {
   LOAN_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan not found"),
   LOAN_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Loan creation failed"),
 
+  LOAN_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Loan is not in a valid state"),
+
   LOAN_INSTALLMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan installments not found"),
+
+  LOAN_INSTALLMENT_NOT_VALID_FOR_PAYMENT(
+      HttpStatus.UNPROCESSABLE_ENTITY, "Installment is not valid for payment"),
+
+  LOAN_INSTALLMENT_PENDING(
+      HttpStatus.UNPROCESSABLE_ENTITY, "There is a previous installment pending of payment"),
 
   LOAN_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan type not found"),
   LOAN_TYPE_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Loan type creation failed"),
