@@ -9,11 +9,13 @@ import com.kefir.entities.User
 import com.kefir.entities.close
 import com.kefir.entities.open
 import com.kefir.enums.EntityName
+import com.kefir.enums.LoanStatus
 import com.kefir.enums.LogOperation
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.AccountRepository
+import com.kefir.repositories.LoanRepository
 import com.kefir.services.AccountTypeService
 import com.kefir.services.BankBranchService
 import com.kefir.services.CurrencyService
@@ -32,6 +34,7 @@ import java.time.OffsetDateTime
 @Service
 class AccountService(
     private val accountRepository: AccountRepository,
+    private val loanRepository: LoanRepository,
     private val operationLogService: OperationLogService,
     private val authService: AuthService,
     private val userService: UserService,
@@ -129,6 +132,14 @@ class AccountService(
     @Transactional
     fun close(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+
+        val loans = loanRepository.findAllByAccountId(account.id)
+
+        val loanPending = loans.any { it.status == LoanStatus.ACTIVE }
+
+        if (loanPending) {
+            throw ApiException(ErrorCode.ACCOUNT_NOT_VALID_FOR_CLOSURE)
+        }
 
         account.close()
         account.updatedAt = OffsetDateTime.now()

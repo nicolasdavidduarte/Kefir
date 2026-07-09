@@ -11,6 +11,10 @@ public enum ErrorCode {
 
   ACCOUNT_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Account is not in a valid state"),
 
+  ACCOUNT_NOT_VALID_FOR_CLOSURE(
+      HttpStatus.UNPROCESSABLE_ENTITY,
+      "Account has active loans pending of payment and cannot be closed"),
+
   ACCOUNT_WITHOUT_FUNDS(
       HttpStatus.UNPROCESSABLE_ENTITY,
       "Account does not have the necessary funds to complete the operation"),

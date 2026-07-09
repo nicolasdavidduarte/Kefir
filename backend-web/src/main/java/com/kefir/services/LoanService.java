@@ -87,6 +87,13 @@ public class LoanService {
     return LoanResponse.fromEntity(loan);
   }
 
+  @Transactional(readOnly = true)
+  public List<LoanResponse> getAllByAccountId(Long accountId) {
+    return loanRepository.findAllByAccountId(accountId).stream()
+        .map(LoanResponse::fromEntity)
+        .toList();
+  }
+
   @Transactional
   public LoanResponse create(LoanRequest loanRequest) {
     // TODO: Add interest rate mode (fixed or variable)
