@@ -8,15 +8,19 @@ public record CustomerTypeResponse(
     String name,
     String description,
     Boolean enabled,
-    String user,
-    OffsetDateTime createdAt) {
+    String createdBy,
+    OffsetDateTime createdAt,
+    String updatedBy,
+    OffsetDateTime updatedAt) {
   public static CustomerTypeResponse fromEntity(CustomerType customerType) {
     return new CustomerTypeResponse(
         customerType.getId(),
         customerType.getName(),
         customerType.getDescription(),
         customerType.isEnabled(),
-        customerType.getUserId().getUsername(),
-        customerType.getCreatedAt());
+        customerType.getCreatedBy().getUsername(),
+        customerType.getCreatedAt(),
+        customerType.getUpdatedBy().getUsername(),
+        customerType.getUpdatedAt());
   }
 }

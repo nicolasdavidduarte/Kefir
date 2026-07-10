@@ -4,6 +4,7 @@ import com.kefir.entities.RefreshToken;
 import com.kefir.entities.User;
 import com.kefir.repositories.RefreshTokenRepository;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,7 +25,10 @@ public class RefreshTokenService {
   @Transactional
   public RefreshToken createToken(User user) {
     RefreshToken token = new RefreshToken();
-    token.setUser(user);
+    token.setCreatedBy(user);
+    token.setCreatedAt(OffsetDateTime.now());
+    token.setUpdatedBy(user);
+    token.setUpdatedAt(OffsetDateTime.now());
     token.setToken(UUID.randomUUID().toString());
     token.setExpiryDate(Instant.now().plus(7, ChronoUnit.DAYS));
     token.setRevoked(false);

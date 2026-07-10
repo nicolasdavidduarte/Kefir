@@ -22,8 +22,10 @@ public record LoanResponse(
     OffsetDateTime openingDate,
     OffsetDateTime expirationDate,
     LoanStatus status,
+    String createdBy,
     OffsetDateTime createdAt,
-    String user) {
+    String updatedBy,
+    OffsetDateTime updatedAt) {
 
   public static LoanResponse fromEntity(Loan loan) {
     return new LoanResponse(
@@ -43,7 +45,9 @@ public record LoanResponse(
         loan.getOpeningDate(),
         loan.getExpirationDate(),
         loan.getStatus(),
+        loan.getCreatedBy().getUsername(),
         loan.getCreatedAt(),
-        loan.getUser().getUsername());
+        loan.getUpdatedBy().getUsername(),
+        loan.getUpdatedAt());
   }
 }

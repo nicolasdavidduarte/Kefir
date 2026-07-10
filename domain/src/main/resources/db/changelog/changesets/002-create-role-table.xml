@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
            http://www.liquibase.org/xml/ns/dbchangelog
-           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+           https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="002" author="ndd">
 
@@ -12,16 +12,24 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="VARCHAR(15)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
-            <column name="description" type="VARCHAR(50)">
+            <column name="description" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
             <column name="enabled" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
+            <column name="created_by" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_role_core_user_creation"
+                             references="core_user(id)"/>
+            </column>
             <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_role_core_user_update"
+                             references="core_user(id)"/>
             </column>
             <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>

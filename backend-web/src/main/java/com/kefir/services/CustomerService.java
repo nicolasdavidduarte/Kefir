@@ -92,7 +92,8 @@ public class CustomerService {
             .documentType(documentType)
             .documentNumber(request.documentNumber())
             .customerType(customerType)
-            .user(user)
+            .createdBy(user)
+            .updatedBy(user)
             .build();
 
     String fullname = generateFullname(newCustomer);
@@ -132,7 +133,7 @@ public class CustomerService {
 
     if (request.documentNumber() != null) customer.setDocumentNumber(request.documentNumber());
 
-    customer.setUser(userService.getById(authService.getCurrentUserId()));
+    customer.setUpdatedBy(userService.getById(authService.getCurrentUserId()));
 
     customer.setUpdatedAt(OffsetDateTime.now());
 

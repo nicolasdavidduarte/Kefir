@@ -73,14 +73,20 @@ public class Loan {
   private LoanStatus status = LoanStatus.PENDING;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  @JoinColumn(name = "created_by", nullable = false)
+  private User createdBy;
 
+  @Builder.Default
   @Column(name = "created_at", nullable = false)
-  private OffsetDateTime createdAt;
+  private OffsetDateTime createdAt = OffsetDateTime.now();
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "updated_by", nullable = false)
+  private User updatedBy;
+
+  @Builder.Default
   @Column(name = "updated_at", nullable = false)
-  private OffsetDateTime updatedAt;
+  private OffsetDateTime updatedAt = OffsetDateTime.now();
 
   @Override
   public String toString() {

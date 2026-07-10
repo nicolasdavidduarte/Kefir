@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.math.BigDecimal
+import java.time.OffsetDateTime
 
 class AccountControllerIT : IntegrationTestBase() {
 
@@ -88,7 +89,10 @@ class AccountControllerIT : IntegrationTestBase() {
                 .documentType(documentType)
                 .documentNumber("33111344")
                 .customerType(customerType)
-                .user(user)
+                .createdBy(user)
+                .createdAt(OffsetDateTime.now())
+                .updatedBy(user)
+                .updatedAt(OffsetDateTime.now())
                 .build(),
 
         )
@@ -257,7 +261,7 @@ class AccountControllerIT : IntegrationTestBase() {
 
         val customer = customerRepository.findById(1).orElseThrow { ApiException(ErrorCode.CUSTOMER_NOT_FOUND) }
 
-        val user = userRepository.findById(1).orElseThrow { ApiException(ErrorCode.USER_NOT_FOUND) }
+        val user = userRepository.findById(2).orElseThrow { ApiException(ErrorCode.USER_NOT_FOUND) }
 
         val randomCbu = "001000" + (1000000000000000..9999999999999999).random().toString()
 
@@ -268,7 +272,8 @@ class AccountControllerIT : IntegrationTestBase() {
                 currency = currency,
                 bank = bankBranch.bank,
                 balance = BigDecimal("10000.00"),
-                user = user,
+                createdBy = user,
+                updatedBy = user,
                 cbu = randomCbu,
             ),
         )

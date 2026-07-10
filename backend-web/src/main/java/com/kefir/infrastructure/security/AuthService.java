@@ -55,7 +55,7 @@ public class AuthService {
 
     final RefreshToken oldToken = refreshTokenService.verify(refreshToken);
 
-    final User user = oldToken.getUser();
+    final User user = oldToken.getCreatedBy();
 
     refreshTokenService.revoke(oldToken);
 

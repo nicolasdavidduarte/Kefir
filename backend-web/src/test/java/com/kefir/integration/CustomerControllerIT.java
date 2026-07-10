@@ -158,8 +158,10 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$[0].documentNumber").value("123456788"))
         .andExpect(jsonPath("$[0].customerType").value("RETAIL"))
         .andExpect(jsonPath("$[0].status").value("PENDING"))
-        .andExpect(jsonPath("$[0].createdByUser").value("admin"))
-        .andExpect(jsonPath("$[0].creationDate").exists())
+        .andExpect(jsonPath("$[0].createdBy").value("admin"))
+        .andExpect(jsonPath("$[0].createdAt").exists())
+        .andExpect(jsonPath("$[0].updatedBy").value("admin"))
+        .andExpect(jsonPath("$[0].updatedAt").exists())
         // Second customer data
         .andExpect(jsonPath("$[1].id").value(2))
         .andExpect(jsonPath("$[1].name1").value("John"))
@@ -170,8 +172,10 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$[1].documentNumber").value("123456789"))
         .andExpect(jsonPath("$[1].customerType").value("RETAIL"))
         .andExpect(jsonPath("$[1].status").value("PENDING"))
-        .andExpect(jsonPath("$[1].createdByUser").value("admin"))
-        .andExpect(jsonPath("$[1].creationDate").exists());
+        .andExpect(jsonPath("$[1].createdBy").value("admin"))
+        .andExpect(jsonPath("$[1].createdAt").exists())
+        .andExpect(jsonPath("$[1].updatedBy").value("admin"))
+        .andExpect(jsonPath("$[1].updatedAt").exists());
   }
 
   @Test
@@ -201,8 +205,10 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("documentNumber").value("123456788"))
         .andExpect(jsonPath("customerType").value("RETAIL"))
         .andExpect(jsonPath("status").value("PENDING"))
-        .andExpect(jsonPath("createdByUser").value("admin"))
-        .andExpect(jsonPath("creationDate").exists());
+        .andExpect(jsonPath("createdBy").value("admin"))
+        .andExpect(jsonPath("createdAt").exists())
+        .andExpect(jsonPath("updatedBy").value("admin"))
+        .andExpect(jsonPath("updatedAt").exists());
   }
 
   @Test
@@ -242,9 +248,10 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("documentNumber").value("34555654"))
         .andExpect(jsonPath("customerType").value("CORPORATE"))
         .andExpect(jsonPath("status").value("PENDING"))
-        .andExpect(jsonPath("createdByUser").value("admin"))
-        .andExpect(jsonPath("creationDate").exists())
-        .andExpect(jsonPath("updateDate").exists());
+        .andExpect(jsonPath("createdBy").value("admin"))
+        .andExpect(jsonPath("createdAt").exists())
+        .andExpect(jsonPath("updatedBy").exists())
+        .andExpect(jsonPath("updatedAt").exists());
   }
 
   @Test
@@ -328,7 +335,7 @@ class CustomerControllerIT extends IntegrationTestBase {
             .findById(1)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_TYPE_NOT_FOUND));
     User user =
-        userRepository.findById(1).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+        userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
     customerRepository.save(
         Customer.builder()
@@ -339,7 +346,8 @@ class CustomerControllerIT extends IntegrationTestBase {
             .documentType(documentType)
             .documentNumber(documentNumber)
             .customerType(customerType)
-            .user(user)
+            .createdBy(user)
+            .updatedBy(user)
             .build());
   }
 }

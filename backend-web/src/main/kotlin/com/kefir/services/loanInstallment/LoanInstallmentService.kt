@@ -57,9 +57,12 @@ class LoanInstallmentService(
 
         accountService.subtractBalance(account, loanInstallment.totalAmount)
 
+        val user = userService.getById(authService.currentUserId)
+
         loanInstallment.status = LoanInstallmentStatus.PAID
         loanInstallment.updatedAt = OffsetDateTime.now()
-        loanInstallment.user = userService.getById(authService.currentUserId)
+        loanInstallment.createdBy = user
+        loanInstallment.updatedBy = user
 
         return loanInstallmentRepository.save(loanInstallment).toResponse()
     }
@@ -104,7 +107,7 @@ class LoanInstallmentService(
                 i.totalAmount,
                 i.remainingBalance,
                 loan.openingDate.plusMonths(i.number.toLong()),
-                loan.user,
+                loan.createdBy,
             )
         }
 

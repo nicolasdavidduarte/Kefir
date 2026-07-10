@@ -101,7 +101,8 @@ class AccountService(
                     currency = currency,
                     bank = bankBranch.bank,
                     balance = accountRequest.initialBalance,
-                    user = user,
+                    createdBy = user,
+                    updatedBy = user,
                 ),
             )
 

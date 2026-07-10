@@ -37,7 +37,9 @@ public class UserService {
 
   @Transactional(readOnly = true)
   public List<UserResponse> getAll() {
-    return userRepository.findAllByOrderByIdAsc().stream().map(UserResponse::fromEntity).toList();
+    return userRepository.findAllAvailableUsersOrderById().stream()
+        .map(UserResponse::fromEntity)
+        .toList();
   }
 
   @Transactional(readOnly = true)
@@ -67,8 +69,9 @@ public class UserService {
             .password(passwordEncoder.encode(request.password()))
             .fullName(request.fullname())
             .enabled(false)
-            .userId(userCreator)
+            .createdBy(userCreator)
             .createdAt(OffsetDateTime.now())
+            .updatedBy(userCreator)
             .updatedAt(OffsetDateTime.now())
             .roles(roles)
             .build();

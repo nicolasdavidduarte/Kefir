@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
            http://www.liquibase.org/xml/ns/dbchangelog
-           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+           https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="012" author="ndd">
 
@@ -13,23 +13,19 @@
             </column>
             <column name="type_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_account_account_type"
-                referencedTableName="account_type"
-                referencedColumnNames="id"/>
+                             references="account_type(id)"/>
             </column>
             <column name="customer_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_account_customer"
-                referencedTableName="customer"
-                referencedColumnNames="id"/>
+                             references="customer(id)"/>
             </column>
             <column name="currency_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_account_currency"
-                referencedTableName="currency"
-                referencedColumnNames="id"/>
+                             references="currency(id)"/>
             </column>
             <column name="bank_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_account_bank"
-                referencedTableName="bank"
-                referencedColumnNames="id"/>
+                             references="bank(id)"/>
             </column>
             <column name="CBU" type="VARCHAR(22)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="uk_account_cbu"/>
@@ -40,13 +36,16 @@
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="SMALLINT">
-                <constraints nullable="false" foreignKeyName="fk_account_core_user"
-                             referencedTableName="core_user"
-                             referencedColumnNames="id"/>
+            <column name="created_by" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_account_core_user_creation"
+                             references="core_user(id)"/>
             </column>
             <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_account_core_user_update"
+                             references="core_user(id)"/>
             </column>
             <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>

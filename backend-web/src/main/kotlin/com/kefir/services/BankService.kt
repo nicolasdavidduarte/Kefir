@@ -28,12 +28,17 @@ class BankService(
         .ifEmpty { throw ApiException(ErrorCode.BANK_NOT_FOUND) }
 
     @Transactional
-    fun create(bankRequest: BankRequest): BankResponse = bankRepository.save(
-        Bank(
-            name = requireNotNull(bankRequest.name),
-            user = userService.getById(authService.currentUserId),
-        ),
-    ).toResponse()
+    fun create(bankRequest: BankRequest): BankResponse {
+        val user = userService.getById(authService.currentUserId)
+
+        return bankRepository.save(
+            Bank(
+                name = requireNotNull(bankRequest.name),
+                createdBy = user,
+                updatedBy = user,
+            ),
+        ).toResponse()
+    }
 
     @Transactional
     fun enable(id: Int): EntityOperationResponse {

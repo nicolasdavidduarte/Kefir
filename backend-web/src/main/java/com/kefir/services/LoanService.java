@@ -141,9 +141,10 @@ public class LoanService {
               .numberOfInstallments(loanRequest.numberOfInstallments())
               .expirationDate(now.plusMonths(loanRequest.numberOfInstallments()))
               .status(LoanStatus.PENDING)
-              .user(user)
               .externalId(loanRequest.externalId())
+              .createdBy(user)
               .createdAt(now)
+              .updatedBy(user)
               .updatedAt(now)
               .build();
 

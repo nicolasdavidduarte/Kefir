@@ -26,11 +26,14 @@ class LoanTypeService(
 
     @Transactional
     fun create(loanTypeRequest: LoanTypeRequest): LoanTypeResponse {
+        val user = userService.getById(authService.currentUserId)
+
         val loanType = LoanType(
             name = loanTypeRequest.name,
             description = loanTypeRequest.description,
             annualInterestRate = loanTypeRequest.baseInterestRate,
-            user = userService.getById(authService.currentUserId),
+            createdBy = user,
+            updatedBy = user,
         )
 
         val savedLoanType = loanTypeRepository.save(loanType)

@@ -8,15 +8,19 @@ public record PersonTypeResponse(
     String name,
     String description,
     Boolean enabled,
-    String user,
-    OffsetDateTime createdAt) {
+    String createdBy,
+    OffsetDateTime createdAt,
+    String updatedBy,
+    OffsetDateTime updatedAt) {
   public static PersonTypeResponse fromEntity(PersonType personType) {
     return new PersonTypeResponse(
         personType.getId(),
         personType.getName(),
         personType.getDescription(),
         personType.isEnabled(),
-        personType.getUserId().getUsername(),
-        personType.getCreatedAt());
+        personType.getCreatedBy().getUsername(),
+        personType.getCreatedAt(),
+        personType.getUpdatedBy().getUsername(),
+        personType.getUpdatedAt());
   }
 }

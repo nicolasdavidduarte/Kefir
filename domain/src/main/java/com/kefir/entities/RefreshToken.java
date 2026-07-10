@@ -2,10 +2,8 @@ package com.kefir.entities;
 
 import jakarta.persistence.*;
 import java.time.Instant;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.OffsetDateTime;
+import lombok.*;
 
 @Entity
 @Setter
@@ -22,18 +20,25 @@ public class RefreshToken {
   @Column(nullable = false, unique = true, length = 512)
   private String token;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
-
   @Column(name = "expiry_date", nullable = false)
   private Instant expiryDate;
 
   @Column(nullable = false)
   private Boolean revoked;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "created_by", nullable = false)
+  private User createdBy;
+
   @Column(name = "created_at", nullable = false)
-  private final Instant createdAt = Instant.now();
+  private OffsetDateTime createdAt = OffsetDateTime.now();
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "updated_by", nullable = false)
+  private User updatedBy;
+
+  @Column(name = "updated_at", nullable = false)
+  private OffsetDateTime updatedAt = OffsetDateTime.now();
 
   public boolean isRevoked() {
     return getRevoked();

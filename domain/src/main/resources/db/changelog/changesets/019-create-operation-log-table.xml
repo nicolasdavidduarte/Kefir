@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
            http://www.liquibase.org/xml/ns/dbchangelog
-           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+           https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="019" author="ndd">
 
@@ -25,9 +25,8 @@
             </column>
             <column name="user_id" type="SMALLINT">
                 <constraints nullable="false"
-                    foreignKeyName="fk_operation_log_core_user"
-                    referencedTableName="core_user"
-                    referencedColumnNames="id"/>
+                             foreignKeyName="fk_operation_log_core_user"
+                             references="core_user(id)"/>
             </column>
             <column name="operation_date" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>

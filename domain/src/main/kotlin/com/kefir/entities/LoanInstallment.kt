@@ -51,11 +51,15 @@ class LoanInstallment(
     var status: LoanInstallmentStatus = LoanInstallmentStatus.PAYMENT_PENDING,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    var user: User,
+    @JoinColumn(name = "created_by", nullable = false)
+    var createdBy: User,
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    val createdAt: OffsetDateTime = OffsetDateTime.now(),
+    @Column(name = "created_at", nullable = false)
+    var createdAt: OffsetDateTime = OffsetDateTime.now(),
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by", nullable = false)
+    var updatedBy: User,
 
     @Column(name = "updated_at", nullable = false, updatable = true)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
@@ -70,7 +74,7 @@ class LoanInstallment(
             totalAmount: BigDecimal,
             remainingBalance: BigDecimal,
             paymentDueDate: OffsetDateTime,
-            user: User,
+            createdBy: User,
         ): LoanInstallment = LoanInstallment(
             loan = loan,
             number = number,
@@ -80,7 +84,8 @@ class LoanInstallment(
             remainingBalance = remainingBalance,
             paymentDueDate = paymentDueDate,
             status = LoanInstallmentStatus.PAYMENT_PENDING,
-            user = user,
+            createdBy = createdBy,
+            updatedBy = createdBy,
         )
     }
 }

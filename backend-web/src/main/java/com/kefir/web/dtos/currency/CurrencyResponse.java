@@ -8,15 +8,19 @@ public record CurrencyResponse(
     String isoCode,
     String description,
     Boolean enabled,
-    String user,
-    OffsetDateTime createdAt) {
+    String createdBy,
+    OffsetDateTime createdAt,
+    String updatedBy,
+    OffsetDateTime updatedAt) {
   public static CurrencyResponse fromEntity(Currency currency) {
     return new CurrencyResponse(
         currency.getId(),
         currency.getIsoCode(),
         currency.getDescription(),
         currency.isEnabled(),
-        currency.getUserId().getUsername(),
-        currency.getCreatedAt());
+        currency.getCreatedBy().getUsername(),
+        currency.getCreatedAt(),
+        currency.getUpdatedBy().getUsername(),
+        currency.getUpdatedAt());
   }
 }

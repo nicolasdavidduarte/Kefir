@@ -252,8 +252,11 @@ class LoanControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$[0].openingDate").exists())
         .andExpect(jsonPath("$[0].expirationDate").exists())
         .andExpect(jsonPath("$[0].status").value("ACTIVE"))
+        .andExpect(jsonPath("$[0].createdBy").value("admin"))
         .andExpect(jsonPath("$[0].createdAt").exists())
-        .andExpect(jsonPath("$[0].user").value("admin"))
+        .andExpect(jsonPath("$[0].updatedBy").exists())
+        .andExpect(jsonPath("$[0].updatedAt").exists())
+
         //                // Second customer data
         .andExpect(jsonPath("$[1].id").exists())
         .andExpect(jsonPath("$[1].externalId").exists())
@@ -269,8 +272,10 @@ class LoanControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$[1].openingDate").exists())
         .andExpect(jsonPath("$[1].expirationDate").exists())
         .andExpect(jsonPath("$[1].status").value("ACTIVE"))
+        .andExpect(jsonPath("$[1].createdBy").value("admin"))
         .andExpect(jsonPath("$[1].createdAt").exists())
-        .andExpect(jsonPath("$[1].user").value("admin"));
+        .andExpect(jsonPath("$[1].updatedBy").exists())
+        .andExpect(jsonPath("$[1].updatedAt").exists());
   }
 
   @Test
@@ -308,8 +313,10 @@ class LoanControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("openingDate").exists())
         .andExpect(jsonPath("expirationDate").exists())
         .andExpect(jsonPath("status").value("ACTIVE"))
+        .andExpect(jsonPath("createdBy").value("admin"))
         .andExpect(jsonPath("createdAt").exists())
-        .andExpect(jsonPath("user").value("admin"));
+        .andExpect(jsonPath("updatedBy").exists())
+        .andExpect(jsonPath("updatedAt").exists());
   }
 
   @Test
@@ -334,7 +341,7 @@ class LoanControllerIT extends IntegrationTestBase {
             .findById(1)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_TYPE_NOT_FOUND));
     User user =
-        userRepository.findById(1).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+        userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
     return customerRepository.save(
         Customer.builder()
@@ -345,7 +352,8 @@ class LoanControllerIT extends IntegrationTestBase {
             .documentType(documentType)
             .documentNumber(documentNumber)
             .customerType(customerType)
-            .user(user)
+            .createdBy(user)
+            .updatedBy(user)
             .status(status)
             .build());
   }
@@ -369,7 +377,7 @@ class LoanControllerIT extends IntegrationTestBase {
     BigDecimal initialBalance = new BigDecimal("10000.00");
 
     User user =
-        userRepository.findById(1).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+        userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
     String cbu = UUID.randomUUID().toString().substring(1, 22);
 
@@ -385,6 +393,7 @@ class LoanControllerIT extends IntegrationTestBase {
             status,
             user,
             OffsetDateTime.now(),
+            user,
             OffsetDateTime.now());
 
     return accountRepository.save(account);
@@ -412,7 +421,7 @@ class LoanControllerIT extends IntegrationTestBase {
     OffsetDateTime now = OffsetDateTime.now();
 
     User user =
-        userRepository.findById(1).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+        userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
     loanRepository.save(
         Loan.builder()
@@ -431,8 +440,9 @@ class LoanControllerIT extends IntegrationTestBase {
             .expirationDate(now.plusMonths(4))
             .externalId(externalId)
             .status(LoanStatus.ACTIVE)
-            .user(user)
+            .createdBy(user)
             .createdAt(now)
+            .updatedBy(user)
             .updatedAt(now)
             .build());
   }

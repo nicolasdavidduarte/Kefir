@@ -42,11 +42,15 @@ class LoanType(
     var enabled: Boolean = false,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: User,
+    @JoinColumn(name = "created_by", nullable = false)
+    var createdBy: User,
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    val createdAt: OffsetDateTime = OffsetDateTime.now(),
+    @Column(name = "created_at", nullable = false)
+    var createdAt: OffsetDateTime = OffsetDateTime.now(),
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "updated_by", nullable = false)
+    var updatedBy: User,
 
     @Column(name = "updated_at", nullable = false, updatable = true)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
@@ -57,12 +61,13 @@ class LoanType(
             name: String,
             description: String,
             annualInterestRate: BigDecimal,
-            user: User,
+            createdBy: User,
         ): LoanType = LoanType(
             name = name,
             description = description,
             annualInterestRate = annualInterestRate,
-            user = user,
+            createdBy = createdBy,
+            updatedBy = createdBy,
         )
     }
 }

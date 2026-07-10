@@ -3,7 +3,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
            http://www.liquibase.org/xml/ns/dbchangelog
-           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+           https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="016" author="ndd">
 
@@ -13,31 +13,26 @@
             </column>
             <column name="customer_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_loan_customer"
-                             referencedTableName="customer"
-                             referencedColumnNames="id"/>
+                             references="customer(id)"/>
             </column>
             <column name="account_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_loan_account"
-                             referencedTableName="account"
-                             referencedColumnNames="id"/>
+                             references="account(id)"/>
             </column>
             <column name="loan_type_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_loan_loan_type"
-                             referencedTableName="loan_type"
-                             referencedColumnNames="id"/>
+                             references="loan_type(id)"/>
             </column>
             <column name="number_of_installments" type="SMALLINT">
                 <constraints nullable="false"/>
             </column>
             <column name="currency_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_loan_currency"
-                referencedTableName="currency"
-                referencedColumnNames="id"/>
+                             references="currency(id)"/>
             </column>
             <column name="amortization_type_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_loan_amortization_type"
-                referencedTableName="amortization_type"
-                referencedColumnNames="id"/>
+                             references="amortization_type(id)"/>
             </column>
             <column name="annual_interest_rate" type="NUMERIC(19,4)">
                 <constraints nullable="false"/>
@@ -66,13 +61,16 @@
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="SMALLINT">
-                <constraints nullable="false" foreignKeyName="fk_loan_core_user"
-                             referencedTableName="core_user"
-                             referencedColumnNames="id"/>
+            <column name="created_by" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_loan_core_user_creation"
+                             references="core_user(id)"/>
             </column>
             <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_loan_core_user_update"
+                             references="core_user(id)"/>
             </column>
             <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>

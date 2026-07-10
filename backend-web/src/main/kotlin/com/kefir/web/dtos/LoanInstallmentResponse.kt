@@ -13,8 +13,9 @@ data class LoanInstallmentResponse(
     val paymentDueDate: OffsetDateTime,
     val remainingBalance: BigDecimal,
     val status: String,
-    val user: String,
+    val createdBy: String,
     val createdAt: OffsetDateTime,
+    val updatedBy: String,
     val updatedAt: OffsetDateTime,
 )
 fun LoanInstallment.toResponse() = LoanInstallmentResponse(
@@ -26,7 +27,8 @@ fun LoanInstallment.toResponse() = LoanInstallmentResponse(
     paymentDueDate = this.paymentDueDate,
     remainingBalance = this.remainingBalance,
     status = this.status.name,
-    user = this.user.username,
+    createdBy = this.createdBy.username,
     createdAt = this.createdAt,
+    updatedBy = this.updatedBy.username,
     updatedAt = this.updatedAt,
 )

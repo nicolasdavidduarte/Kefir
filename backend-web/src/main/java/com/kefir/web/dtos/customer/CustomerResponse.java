@@ -17,9 +17,10 @@ public record CustomerResponse(
     String documentNumber,
     String customerType,
     String status,
-    String createdByUser,
-    OffsetDateTime creationDate,
-    OffsetDateTime updateDate) {
+    String createdBy,
+    OffsetDateTime createdAt,
+    String updatedBy,
+    OffsetDateTime updatedAt) {
 
   public static CustomerResponse fromEntity(Customer customer) {
     return new CustomerResponse(
@@ -36,8 +37,9 @@ public record CustomerResponse(
         customer.getDocumentNumber(),
         customer.getCustomerType().getName(),
         customer.getStatus().name(),
-        customer.getUser().getUsername(),
+        customer.getCreatedBy().getUsername(),
         customer.getCreatedAt(),
+        customer.getUpdatedBy().getUsername(),
         customer.getUpdatedAt());
   }
 }

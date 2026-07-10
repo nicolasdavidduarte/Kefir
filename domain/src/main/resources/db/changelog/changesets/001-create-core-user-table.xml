@@ -3,16 +3,16 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
            http://www.liquibase.org/xml/ns/dbchangelog
-           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+           https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="001" author="ndd">
 
         <createTable tableName="core_user">
             <column name="id" type="SMALLINT" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" checkConstraint="item_count > 0"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="username" type="VARCHAR(10)">
-                <constraints nullable="false" />
+                <constraints nullable="false" unique="true" />
             </column>
             <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -23,10 +23,9 @@
             <column name="enabled" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="SMALLINT">
-                <constraints nullable="true" foreignKeyName="fk_core_user_core_user"
-                             referencedTableName="core_user"
-                             referencedColumnNames="id"/>
+            <column name="created_by" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_core_user_core_user_create"
+                             references="core_user(id)"/>
             </column>
             <column name="created_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
@@ -34,13 +33,16 @@
             <column name="updated_at" type="TIMESTAMPTZ" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
+            <column name="updated_by" type="SMALLINT">
+                <constraints nullable="false" foreignKeyName="fk_core_user_core_user_update"
+                             references="core_user(id)"/>
+            </column>
         </createTable>
 
         <addUniqueConstraint
                 tableName="core_user"
                 columnNames="username"
                 constraintName="uk_core_user_key"/>
-
 
     </changeSet>
 

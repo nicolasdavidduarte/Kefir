@@ -27,11 +27,19 @@ public class Role {
   @Column(name = "enabled", nullable = false)
   private boolean enabled;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "created_by", nullable = false)
+  private User createdBy;
+
   @Column(name = "created_at", nullable = false)
-  private OffsetDateTime createdAt;
+  private OffsetDateTime createdAt = OffsetDateTime.now();
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "updated_by", nullable = false)
+  private User updatedBy;
 
   @Column(name = "updated_at", nullable = false)
-  private OffsetDateTime updatedAt;
+  private OffsetDateTime updatedAt = OffsetDateTime.now();
 
   @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
   @JsonIgnore

@@ -23,6 +23,7 @@ abstract class BaseAmortizationCalculator : AmortizationCalculator {
         paymentDueDate = loan.openingDate.plusMonths(
             installmentNumber.toLong(),
         ),
-        user = loan.user,
+        createdBy = loan.createdBy,
+        updatedBy = loan.updatedBy,
     )
 }
