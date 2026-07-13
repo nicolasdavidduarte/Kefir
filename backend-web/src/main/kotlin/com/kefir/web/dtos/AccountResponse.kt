@@ -3,6 +3,7 @@ package com.kefir.web.dtos
 import com.kefir.entities.Account
 import com.kefir.enums.AccountStatus
 import java.math.BigDecimal
+import java.time.OffsetDateTime
 
 data class AccountResponse(
     val id: Long,
@@ -13,6 +14,10 @@ data class AccountResponse(
     val cbu: String,
     val balance: BigDecimal?,
     val status: AccountStatus,
+    val createdBy: String,
+    val createdAt: OffsetDateTime,
+    val updatedBy: String,
+    val updatedAt: OffsetDateTime,
 )
 
 fun Account.toResponse() = AccountResponse(
@@ -24,4 +29,8 @@ fun Account.toResponse() = AccountResponse(
     cbu = this.cbu,
     balance = this.balance,
     status = this.status,
+    createdBy = this.createdBy.username,
+    createdAt = this.createdAt,
+    updatedBy = this.updatedBy.username,
+    updatedAt = this.updatedAt,
 )
