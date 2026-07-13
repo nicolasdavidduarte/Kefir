@@ -11,6 +11,7 @@ import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.LoanInstallmentRepository
+import com.kefir.repositories.LoanRepository
 import com.kefir.services.UserService
 import com.kefir.services.account.AccountService
 import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
@@ -24,6 +25,7 @@ import java.time.OffsetDateTime
 
 @Service
 class LoanInstallmentService(
+    private val loanRepository: LoanRepository,
     private val loanInstallmentRepository: LoanInstallmentRepository,
     private val paymentMethodService: PaymentMethodService,
     private val loanInstallmentPaymentService: LoanInstallmentPaymentService,
@@ -48,10 +50,12 @@ class LoanInstallmentService(
     }
 
     fun payInstallment(loanId: Long, installmentNumber: Int): LoanInstallmentResponse {
-        val loanInstallment = loanInstallmentRepository.findByLoanIdAndNumber(loanId, installmentNumber)
+        val paymentSchedule = loanInstallmentRepository.findAllByLoanIdOrderByNumberAsc(loanId)
+
+        val currentInstallment = paymentSchedule[installmentNumber - 1]
 
         val previousInstallment: LoanInstallment? = if (installmentNumber > 1) {
-            loanInstallmentRepository.findByLoanIdAndNumber(loanId, installmentNumber - 1)
+            paymentSchedule[installmentNumber - 2]
         } else {
             null
         }
@@ -59,22 +63,32 @@ class LoanInstallmentService(
         // TODO: Add payment method from a PaymentRequest
         val paymentMethod = paymentMethodService.getByName(PaymentMethodName.HOMEBANKING.name)
 
-        val account = loanInstallment.loan.account
+        val account = currentInstallment.loan.account
 
-        paymentValidations(loanInstallment, previousInstallment, account)
+        paymentValidations(currentInstallment, previousInstallment, account)
 
-        accountService.subtractBalance(account, loanInstallment.totalAmount)
+        accountService.subtractBalance(account, currentInstallment.totalAmount)
 
         val user = userService.getById(authService.currentUserId)
 
-        loanInstallment.status = LoanInstallmentStatus.PAID
-        loanInstallment.updatedAt = OffsetDateTime.now()
-        loanInstallment.createdBy = user
-        loanInstallment.updatedBy = user
+        currentInstallment.status = LoanInstallmentStatus.PAID
+        currentInstallment.updatedAt = OffsetDateTime.now()
+        currentInstallment.createdBy = user
+        currentInstallment.updatedBy = user
 
-        loanInstallmentPaymentService.create(loanInstallment, paymentMethod)
+        loanInstallmentPaymentService.create(currentInstallment, paymentMethod)
 
-        return loanInstallmentRepository.save(loanInstallment).toResponse()
+        if (currentInstallment.number == paymentSchedule.last().number) {
+            val loan = currentInstallment.loan
+
+            loan.status = LoanStatus.CLOSED
+            loan.updatedBy = user
+            loan.updatedAt = OffsetDateTime.now()
+
+            loanRepository.save(loan)
+        }
+
+        return loanInstallmentRepository.save(currentInstallment).toResponse()
     }
 
     fun paymentValidations(loanInstallment: LoanInstallment, previousInstallment: LoanInstallment?, account: Account) {

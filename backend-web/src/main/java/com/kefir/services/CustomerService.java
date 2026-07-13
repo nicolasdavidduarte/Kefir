@@ -182,21 +182,21 @@ public class CustomerService {
 
     fullname.append(customer.getName1());
 
-    if (!customer.getName2().isBlank()) {
+    if ((customer.getName2() != null) && (!customer.getName2().isBlank())) {
       fullname.append(' ').append(customer.getName2());
     }
 
-    if (!customer.getName3().isBlank()) {
+    if ((customer.getName3() != null) && (!customer.getName3().isBlank())) {
       fullname.append(' ').append(customer.getName3());
     }
 
     fullname.append(' ').append(customer.getLastname1());
 
-    if (!customer.getLastname2().isBlank()) {
+    if ((customer.getLastname2() != null) && (!customer.getLastname2().isBlank())) {
       fullname.append(' ').append(customer.getLastname2());
     }
 
-    if (!customer.getLastname3().isBlank()) {
+    if ((customer.getLastname3() != null) && (!customer.getLastname3().isBlank())) {
       fullname.append(' ').append(customer.getLastname3());
     }
 

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum LoanStatus {
   ACTIVE,
-  INACTIVE,
+  CLOSED,
   PENDING,
   CHARGE_OFF
 }
