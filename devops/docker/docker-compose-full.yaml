@@ -29,7 +29,7 @@ services:
     env_file:
       - .env
     environment:
-      JAVA_TOOL_OPTIONS: "-Xms128m -Xmx256m"
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
     mem_limit: 512m
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
