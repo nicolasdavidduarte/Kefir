@@ -3,15 +3,15 @@ name: kefir
 services:
   db:
     build: postgres-custom
-    container_name: db
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: kefir_db
       POSTGRES_INITDB_ARGS: "--data-checksums"
     command: postgres -c listen_addresses='*' -c port=5432
-    ports:
-      - "5433:5432"
+    expose:
+      - "5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
@@ -19,8 +19,8 @@ services:
       retries: 5
 
   backend:
-    container_name: backend
     image: nduarte93/kefir-backend:latest
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -28,6 +28,9 @@ services:
       - "8080:8080"
     env_file:
       - .env
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xms128m -Xmx256m"
+    mem_limit: 512m
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 10s
@@ -36,8 +39,8 @@ services:
       start_period: 30s
 
   frontend:
-    container_name: frontend
     image: nduarte93/kefir-frontend:latest
+    restart: unless-stopped
     depends_on:
       backend:
         condition: service_healthy
