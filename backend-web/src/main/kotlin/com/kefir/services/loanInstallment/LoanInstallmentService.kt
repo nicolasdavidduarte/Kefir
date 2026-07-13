@@ -6,12 +6,15 @@ import com.kefir.entities.LoanInstallment
 import com.kefir.enums.AmortizationTypeName
 import com.kefir.enums.LoanInstallmentStatus
 import com.kefir.enums.LoanStatus
+import com.kefir.enums.PaymentMethodName
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.LoanInstallmentRepository
 import com.kefir.services.UserService
 import com.kefir.services.account.AccountService
+import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
+import com.kefir.services.loanInstallment.payment.PaymentMethodService
 import com.kefir.web.dtos.LoanInstallmentResponse
 import com.kefir.web.dtos.toResponse
 import org.springframework.stereotype.Service
@@ -22,6 +25,8 @@ import java.time.OffsetDateTime
 @Service
 class LoanInstallmentService(
     private val loanInstallmentRepository: LoanInstallmentRepository,
+    private val paymentMethodService: PaymentMethodService,
+    private val loanInstallmentPaymentService: LoanInstallmentPaymentService,
     private val accountService: AccountService,
     private val userService: UserService,
     private val authService: AuthService,
@@ -51,6 +56,9 @@ class LoanInstallmentService(
             null
         }
 
+        // TODO: Add payment method from a PaymentRequest
+        val paymentMethod = paymentMethodService.getByName(PaymentMethodName.HOMEBANKING.name)
+
         val account = loanInstallment.loan.account
 
         paymentValidations(loanInstallment, previousInstallment, account)
@@ -63,6 +71,8 @@ class LoanInstallmentService(
         loanInstallment.updatedAt = OffsetDateTime.now()
         loanInstallment.createdBy = user
         loanInstallment.updatedBy = user
+
+        loanInstallmentPaymentService.create(loanInstallment, paymentMethod)
 
         return loanInstallmentRepository.save(loanInstallment).toResponse()
     }

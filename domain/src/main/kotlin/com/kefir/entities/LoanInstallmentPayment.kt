@@ -32,7 +32,7 @@ class LoanInstallmentPayment(
     val paymentDate: OffsetDateTime,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_method", nullable = false)
+    @JoinColumn(name = "payment_method_id", nullable = false)
     val paymentMethod: PaymentMethod,
 
     @ManyToOne(fetch = FetchType.LAZY)
