@@ -28,9 +28,6 @@ services:
       - "8080:8080"
     env_file:
       - .env
-    environment:
-      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx160m"
-    mem_limit: 300m
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
       interval: 10s
