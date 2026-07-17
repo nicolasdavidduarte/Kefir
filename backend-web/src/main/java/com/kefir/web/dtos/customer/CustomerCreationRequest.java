@@ -11,10 +11,10 @@ public record CustomerCreationRequest(
     @NotBlank(message = "Name1 is mandatory") @Size(max = 20) String name1,
     @Size(max = 20) String name2,
     @Size(max = 20) String name3,
-    @Size(max = 20) @NotBlank(message = "Lastname1 is mandatory") String lastname1,
+    @NotBlank(message = "Lastname1 is mandatory") @Size(max = 20) String lastname1,
     @Size(max = 20) String lastname2,
     @Size(max = 20) String lastname3,
     @NotNull(message = "Person type is mandatory") PersonType personType,
     @NotNull(message = "Document type is mandatory") DocumentType documentType,
-    @NotNull(message = "Document number is mandatory") String documentNumber,
+    @NotNull(message = "Document number is mandatory") @Size(max = 20) String documentNumber,
     @NotNull(message = "Customer type is mandatory") CustomerType customerType) {}
