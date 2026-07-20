@@ -11,6 +11,9 @@ infrastructure, batch processing, and modern development practices.
 * Gradle 
 * Docker
 
+## Live Demo
+https://kefir.dedyn.io
+
 ## Main Components
 * Hibernate (JPA) for data persistence 
 * Liquibase for database schema versioning and migrations 
