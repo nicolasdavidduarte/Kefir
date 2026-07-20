@@ -32,14 +32,11 @@ public enum ErrorCode {
   CURRENCY_NOT_FOUND(HttpStatus.NOT_FOUND, "Currency not found"),
 
   CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer not found"),
-  CUSTOMER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer not valid"),
-  CUSTOMER_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Customer creation failed"),
+  CUSTOMER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer is not valid"),
 
   CUSTOMER_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer type not found"),
-  CUSTOMER_TYPE_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer type not valid"),
 
   LOAN_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan not found"),
-  LOAN_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Loan creation failed"),
 
   LOAN_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Loan is not in a valid state"),
 
@@ -52,17 +49,12 @@ public enum ErrorCode {
       HttpStatus.UNPROCESSABLE_ENTITY, "There is a previous installment pending of payment"),
 
   LOAN_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan type not found"),
-  LOAN_TYPE_NOT_CREATED(HttpStatus.UNPROCESSABLE_ENTITY, "Loan type creation failed"),
   LOAN_TYPE_INTEREST_RATE_ZERO(
       HttpStatus.UNPROCESSABLE_ENTITY, "Loan type interest cannot be zero"),
 
   PERSON_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Person type not found"),
 
   ROLES_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "One or more roles are not valid"),
-
-  SECURITY_CONTEXT_HOLDER_EXCEPTION(HttpStatus.CONFLICT, "Unexpected error during authentication"),
-
-  SNS_MESSAGE_SENDING_EXCEPTION(HttpStatus.CONFLICT, "SNS message cannot be delivered"),
 
   USER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "User not valid"),
 

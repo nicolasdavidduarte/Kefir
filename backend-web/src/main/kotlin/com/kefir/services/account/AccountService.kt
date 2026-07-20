@@ -8,6 +8,7 @@ import com.kefir.entities.Customer
 import com.kefir.entities.User
 import com.kefir.entities.close
 import com.kefir.entities.open
+import com.kefir.enums.CustomerStatus
 import com.kefir.enums.EntityName
 import com.kefir.enums.LoanStatus
 import com.kefir.enums.LogOperation
@@ -83,11 +84,15 @@ class AccountService(
      */
     @Transactional
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
+        val customer: Customer = customerService.getById(accountRequest.customerId)
+
+        if (customer.status != CustomerStatus.ACTIVE) {
+            throw ApiException(ErrorCode.CUSTOMER_NOT_VALID)
+        }
+
         val user: User = userService.getById(authService.currentUserId)
 
         val accountType: AccountType = accountTypeService.getByName(accountRequest.type?.dbName)
-
-        val customer: Customer = customerService.getById(accountRequest.customerId)
 
         val bankBranch: BankBranch = bankBranchService.getByBranchNumberAndBank(requireNotNull(accountRequest.bankBranchId), requireNotNull(accountRequest.bankId))
 

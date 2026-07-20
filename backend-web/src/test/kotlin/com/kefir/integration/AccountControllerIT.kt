@@ -4,6 +4,7 @@ import com.kefir.entities.Account
 import com.kefir.entities.Customer
 import com.kefir.enums.AccountType
 import com.kefir.enums.CurrencyIsoCodes
+import com.kefir.enums.CustomerStatus
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthenticatedUser
@@ -93,6 +94,7 @@ class AccountControllerIT : IntegrationTestBase() {
                 .createdAt(OffsetDateTime.now())
                 .updatedBy(user)
                 .updatedAt(OffsetDateTime.now())
+                .status(CustomerStatus.ACTIVE)
                 .build(),
 
         )
