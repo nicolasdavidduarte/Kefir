@@ -30,16 +30,12 @@ dependencies {
     // Kotlin
     implementation(kotlin("stdlib"))
 
-    // Logging
-    implementation("ch.qos.logback:logback-classic:1.5.25")
-    implementation("ch.qos.logback:logback-core:1.5.25")
-
     // Hibernate
     implementation("org.hibernate.orm:hibernate-core:6.2.11.Final")
     implementation("org.hibernate:hibernate-validator:6.2.0.Final")
 
     // Data Base
-    runtimeOnly("org.postgresql:postgresql:42.7.11")
+    runtimeOnly("org.postgresql:postgresql:42.7.12")
 
     // JAXB
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")

@@ -7,6 +7,8 @@ plugins {
     id("io.spring.dependency-management")
     id("com.diffplug.spotless")
     id("com.github.ben-manes.versions")
+    kotlin("plugin.lombok")
+    kotlin("kapt")
 }
 
 java {
@@ -22,11 +24,6 @@ repositories {
     mavenCentral()
 }
 
-extra["junit-jupiter.version"] = "6.0.3"
-extra["tomcat.version"] = "10.1.55"
-extra["micrometer-tracing.version"] = "1.4.3"
-extra["opentelemetry.version"] = "1.62.0"
-
 dependencies {
 
     constraints {
@@ -40,6 +37,11 @@ dependencies {
         implementation("io.netty:netty-buffer:$secureNettyVersion")
         implementation("io.netty:netty-transport:$secureNettyVersion")
         implementation("io.netty:netty-resolver:$secureNettyVersion")
+
+        implementation("org.apache.logging.log4j:log4j-to-slf4j:2.25.5")
+
+        implementation("tools.jackson.core:jackson-databind:3.1.5")
+
         // Fixes High Severity Uncontrolled Recursion in Commons Lang
         implementation("org.apache.commons:commons-lang3:3.18.0")
         // Fixes CVE-2024-25710 and CVE-2024-26308
@@ -61,7 +63,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     // Database & Infrastructure
-    runtimeOnly("org.postgresql:postgresql:42.7.11")
+    runtimeOnly("org.postgresql:postgresql:42.7.12")
     implementation("org.liquibase:liquibase-core:5.0.2")
 
     // AWS
@@ -96,6 +98,7 @@ dependencies {
     testImplementation("io.mockk:mockk:1.14.9")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -139,4 +142,7 @@ configurations.all {
             because("fixes High Severity Uncontrolled Recursion")
         }
     }
+}
+kapt {
+    keepJavacAnnotationProcessors = true
 }

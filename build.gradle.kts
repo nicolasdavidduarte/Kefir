@@ -11,6 +11,14 @@ plugins {
 }
 
 subprojects {
+    extra["logback.version"] = "1.5.36"
+    extra["jackson.version"] = "2.21.5"
+    extra["log4j2.version"] = "2.25.5"
+    extra["tomcat.version"] = "10.1.56"
+    extra["micrometer-tracing.version"] = "1.4.3"
+    extra["opentelemetry.version"] = "1.62.0"
+    extra["junit-jupiter.version"] = "6.0.3"
+
     pluginManager.apply("com.diffplug.spotless")
     pluginManager.apply("org.jetbrains.dokka")
 
