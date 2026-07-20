@@ -12,15 +12,14 @@ infrastructure, batch processing, and modern development practices.
 * Docker
 
 ## Live Demo
-https://kefir.dedyn.io
+https://kefir.dedyn.io _(deployed in Google Cloud Platform)_
 
 ## Main Components
 * Hibernate (JPA) for data persistence 
 * Liquibase for database schema versioning and migrations 
 * Micrometer for application metrics and observability 
 * Spring Security for authentication and authorization 
-* Spring Batch for batch and bulk processing 
-* Amazon SNS for event notifications and message delivery
+* Spring Batch for batch and bulk processing
 
 ## Build Tool
 This project uses Gradle for dependency management and build automation.
