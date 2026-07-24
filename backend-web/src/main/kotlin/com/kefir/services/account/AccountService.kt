@@ -72,9 +72,14 @@ class AccountService(
     }
 
     @Transactional
-    fun subtractBalance(account: Account, amount: BigDecimal) {
+    fun subtractBalance(accountId: Long, amount: BigDecimal) {
+        val account = accountRepository.findByIdForUpdate(accountId).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+
+        if (account.balance < amount) {
+            throw ApiException(ErrorCode.ACCOUNT_WITHOUT_FUNDS)
+        }
+
         account.balance -= amount
-        accountRepository.save(account)
     }
 
     /**

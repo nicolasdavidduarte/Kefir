@@ -1,6 +1,5 @@
 package com.kefir.services.loanInstallment
 
-import com.kefir.entities.Account
 import com.kefir.entities.Loan
 import com.kefir.entities.LoanInstallment
 import com.kefir.enums.AmortizationTypeName
@@ -20,7 +19,6 @@ import com.kefir.web.dtos.LoanInstallmentResponse
 import com.kefir.web.dtos.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 @Service
@@ -66,11 +64,9 @@ class LoanInstallmentService(
         // TODO: Add payment method from a PaymentRequest
         val paymentMethod = paymentMethodService.getByName(PaymentMethodName.HOMEBANKING.name)
 
-        val account = loan.account
+        paymentValidations(currentInstallment, previousInstallment)
 
-        paymentValidations(currentInstallment, previousInstallment, account)
-
-        accountService.subtractBalance(account, currentInstallment.totalAmount)
+        accountService.subtractBalance(loan.account.id, currentInstallment.totalAmount)
 
         val user = userService.getById(authService.currentUserId)
 
@@ -90,13 +86,9 @@ class LoanInstallmentService(
         return currentInstallment.toResponse()
     }
 
-    fun paymentValidations(loanInstallment: LoanInstallment, previousInstallment: LoanInstallment?, account: Account) {
+    fun paymentValidations(loanInstallment: LoanInstallment, previousInstallment: LoanInstallment?) {
         if (loanInstallment.loan.status != LoanStatus.ACTIVE) {
             throw ApiException(ErrorCode.LOAN_NOT_VALID)
-        }
-
-        if (account.balance.subtract(loanInstallment.totalAmount) < BigDecimal.ZERO) {
-            throw ApiException(ErrorCode.ACCOUNT_WITHOUT_FUNDS)
         }
 
         if (loanInstallment.status != LoanInstallmentStatus.PAYMENT_PENDING && loanInstallment.status != LoanInstallmentStatus.OVERDUE) {
