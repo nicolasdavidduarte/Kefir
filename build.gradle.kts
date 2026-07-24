@@ -18,6 +18,8 @@ subprojects {
     extra["micrometer-tracing.version"] = "1.4.3"
     extra["opentelemetry.version"] = "1.62.0"
     extra["junit-jupiter.version"] = "6.0.3"
+    extra["netty.version"] = "4.1.136.Final"
+    extra["commons-lang3.version"] = "3.18.0"
 
     pluginManager.apply("com.diffplug.spotless")
     pluginManager.apply("org.jetbrains.dokka")

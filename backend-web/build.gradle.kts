@@ -27,16 +27,15 @@ repositories {
 dependencies {
 
     constraints {
-        // Fixes High Severity Netty Smuggling & Resource Allocation
-        val secureNettyVersion = "4.1.135.Final"
-        implementation("io.netty:netty-codec:$secureNettyVersion")
-        implementation("io.netty:netty-codec-http:$secureNettyVersion")
-        implementation("io.netty:netty-codec-http2:$secureNettyVersion")
-        implementation("io.netty:netty-handler:$secureNettyVersion")
-        implementation("io.netty:netty-common:$secureNettyVersion")
-        implementation("io.netty:netty-buffer:$secureNettyVersion")
-        implementation("io.netty:netty-transport:$secureNettyVersion")
-        implementation("io.netty:netty-resolver:$secureNettyVersion")
+        val nettyVersion = "4.1.136.Final"
+        implementation("io.netty:netty-codec:$nettyVersion")
+        implementation("io.netty:netty-codec-http:$nettyVersion")
+        implementation("io.netty:netty-codec-http2:$nettyVersion")
+        implementation("io.netty:netty-handler:$nettyVersion")
+        implementation("io.netty:netty-common:$nettyVersion")
+        implementation("io.netty:netty-buffer:$nettyVersion")
+        implementation("io.netty:netty-transport:$nettyVersion")
+        implementation("io.netty:netty-resolver:$nettyVersion")
 
         implementation("org.apache.logging.log4j:log4j-to-slf4j:2.25.5")
 
@@ -65,9 +64,6 @@ dependencies {
     // Database & Infrastructure
     runtimeOnly("org.postgresql:postgresql:42.7.12")
     implementation("org.liquibase:liquibase-core:5.0.2")
-
-    // AWS
-    implementation("software.amazon.awssdk:sns:2.44.4")
 
     // Monitoring
     implementation("io.micrometer:micrometer-registry-prometheus")
@@ -131,18 +127,6 @@ tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("
     }
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "io.netty") {
-            useVersion("4.1.135.Final")
-            because("fixes High Severity Netty Smuggling and DoS vulnerabilities")
-        }
-        if (requested.group == "org.apache.commons" && requested.name == "commons-lang3") {
-            useVersion("3.18.0")
-            because("fixes High Severity Uncontrolled Recursion")
-        }
-    }
-}
 kapt {
     keepJavacAnnotationProcessors = true
 }
