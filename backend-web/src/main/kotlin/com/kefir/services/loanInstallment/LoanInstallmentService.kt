@@ -49,7 +49,10 @@ class LoanInstallmentService(
         return loanInstallments
     }
 
+    @Transactional
     fun payInstallment(loanId: Long, installmentNumber: Int): LoanInstallmentResponse {
+        val loan = loanRepository.findByIdForUpdate(loanId).orElseThrow { throw ApiException(ErrorCode.LOAN_NOT_FOUND) }
+
         val paymentSchedule = loanInstallmentRepository.findAllByLoanIdOrderByNumberAsc(loanId)
 
         val currentInstallment = paymentSchedule[installmentNumber - 1]
@@ -63,7 +66,7 @@ class LoanInstallmentService(
         // TODO: Add payment method from a PaymentRequest
         val paymentMethod = paymentMethodService.getByName(PaymentMethodName.HOMEBANKING.name)
 
-        val account = currentInstallment.loan.account
+        val account = loan.account
 
         paymentValidations(currentInstallment, previousInstallment, account)
 
@@ -79,16 +82,12 @@ class LoanInstallmentService(
         loanInstallmentPaymentService.create(currentInstallment, paymentMethod)
 
         if (currentInstallment.number == paymentSchedule.last().number) {
-            val loan = currentInstallment.loan
-
             loan.status = LoanStatus.CLOSED
             loan.updatedBy = user
             loan.updatedAt = OffsetDateTime.now()
-
-            loanRepository.save(loan)
         }
 
-        return loanInstallmentRepository.save(currentInstallment).toResponse()
+        return currentInstallment.toResponse()
     }
 
     fun paymentValidations(loanInstallment: LoanInstallment, previousInstallment: LoanInstallment?, account: Account) {
