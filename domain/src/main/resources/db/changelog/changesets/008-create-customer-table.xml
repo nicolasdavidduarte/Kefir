@@ -39,6 +39,9 @@
                 <constraints nullable="false" foreignKeyName="fk_customer_customer_type"
                              references="customer_type(id)"/>
             </column>
+            <column name="email" type="VARCHAR(50)">
+                <constraints nullable="true"/>
+            </column>
             <column name="status" type="VARCHAR(20)">
                 <constraints nullable="false"/>
             </column>

@@ -58,6 +58,9 @@ public class Customer {
   @JoinColumn(name = "customer_type_id", nullable = false)
   private CustomerType customerType;
 
+  @Column(name = "email")
+  private String email;
+
   @Enumerated(EnumType.STRING)
   @Builder.Default
   @Column(name = "status", nullable = false)
