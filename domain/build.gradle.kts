@@ -6,7 +6,6 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.spring")
     kotlin("plugin.jpa")
-    kotlin("plugin.lombok")
 }
 
 group = "org.kefir"

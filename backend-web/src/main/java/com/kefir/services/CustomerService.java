@@ -92,7 +92,7 @@ public class CustomerService {
             .documentType(documentType)
             .documentNumber(request.documentNumber())
             .customerType(customerType)
-                .email(request.email())
+            .email(request.email())
             .createdBy(user)
             .updatedBy(user)
             .build();

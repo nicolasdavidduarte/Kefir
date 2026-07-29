@@ -7,8 +7,6 @@ plugins {
     id("io.spring.dependency-management")
     id("com.diffplug.spotless")
     id("com.github.ben-manes.versions")
-    kotlin("plugin.lombok")
-    kotlin("kapt")
 }
 
 java {
@@ -94,7 +92,6 @@ dependencies {
     testImplementation("io.mockk:mockk:1.14.9")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    kapt("org.springframework.boot:spring-boot-configuration-processor")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -125,8 +122,4 @@ tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("
         val unstableKeywords = listOf("alpha", "beta", "rc", "cr", "m", "preview", "b", "ea")
         unstableKeywords.any { candidate.version.lowercase().contains(it) }
     }
-}
-
-kapt {
-    keepJavacAnnotationProcessors = true
 }
