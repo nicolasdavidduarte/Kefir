@@ -2,27 +2,33 @@ name: kefir
 
 services:
   db:
-    build: postgres-custom
-    container_name: db
+    image: postgres:16-alpine
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: kefir_db
-      POSTGRES_INITDB_ARGS: "--data-checksums"
-    command: postgres -c listen_addresses='*' -c port=5432
-    ports:
-      - "5433:5432"
+    command:
+      - postgres
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - max_connections=20
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kefir-network
 
   backend:
-    container_name: backend
     build:
-      context: ../../
+      context: ../..
       dockerfile: devops/docker/Dockerfile
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -31,17 +37,26 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1" ]
       interval: 10s
       timeout: 5s
-      retries: 5
-      start_period: 30s
+      retries: 10
+    networks:
+      - kefir-network
 
   frontend:
-    container_name: frontend
-    image: kefir-frontend:latest
-    ports:
-      - "80:80"
+    image: nduarte93/kefir-frontend:latest
+    restart: unless-stopped
     depends_on:
       backend:
         condition: service_healthy
+    ports:
+      - "80:80"
+    networks:
+      - kefir-network
+
+volumes:
+  postgres_data:
+
+networks:
+  kefir-network:

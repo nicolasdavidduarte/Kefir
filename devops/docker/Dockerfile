@@ -1,21 +1,40 @@
-FROM eclipse-temurin:21-jdk-alpine AS builder
+FROM eclipse-temurin:21-jdk-alpine AS build
 
 WORKDIR /app
+
+COPY gradlew .
+COPY gradle gradle
+COPY gradle.properties .
+COPY settings.gradle.kts .
+COPY build.gradle.kts .
+
+COPY backend-web/build.gradle.kts backend-web/
+COPY batch-jobs/build.gradle.kts batch-jobs/
+COPY domain/build.gradle.kts domain/
+
+COPY --chmod=755 gradlew .
+
+RUN --mount=type=cache,target=/root/.gradle \
+    ./gradlew dependencies --no-daemon
 
 COPY . .
 
-RUN chmod +x gradlew
-RUN ./gradlew :backend-web:bootJar --no-daemon
+RUN --mount=type=cache,target=/root/.gradle \
+    ./gradlew :backend-web:bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre-alpine
 
-RUN apk update && \
-    apk add --no-cache iputils curl busybox-extras && \
-    rm -rf /var/cache/apk/*
-
 WORKDIR /app
 
-COPY --from=builder /app/backend-web/build/libs/*.jar app.jar
+RUN addgroup -S spring && \
+    adduser -S spring -G spring
+
+COPY --chown=spring:spring \
+    --from=build \
+    /app/backend-web/build/libs/*.jar \
+    app.jar
+
+USER spring
 
 EXPOSE 8080
 
