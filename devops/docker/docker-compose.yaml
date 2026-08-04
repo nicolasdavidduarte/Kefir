@@ -4,9 +4,11 @@ services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
+    secrets:
+      - postgres_password
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_DB: kefir_db
     command:
       - postgres
@@ -34,8 +36,14 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
-    env_file:
-      - .env
+    secrets:
+      - spring.datasource.password
+      - jwt.secret
+    command:
+      - --spring.config.import=optional:configtree:/run/secrets/
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/kefir_db
+      SPRING_DATASOURCE_USERNAME: postgres
     healthcheck:
       test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1" ]
       interval: 10s
@@ -60,3 +68,13 @@ volumes:
 
 networks:
   kefir-network:
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+
+  spring.datasource.password:
+    file: ./secrets/spring.datasource.password
+
+  jwt.secret:
+    file: ./secrets/jwt.secret

@@ -54,19 +54,39 @@ The scans check for:
 ## Environment Variables
 Before running the application, configure the following environment variable:
 
+* Generate a secure value for JWT_SECRET env variable:
+
 ```bash
-JWT_SECRET=<your-secret-key>
+export JWT_SECRET=$(openssl rand -base64 32)
 ```
 
-For Docker deployments:
-* Copy .env.example to .env 
-* Set a value for JWT_SECRET. You can create a secure key with the following command:
+### Running with Docker:
+
+1. Copy the example secrets:
 ```bash
-openssl rand -base64 32
+cp devops/docker/secrets/postgres_password.txt.example devops/docker/secrets/postgres_password.txt
+cp devops/docker/secrets/spring.datasource.password.example devops/docker/secrets/spring.datasource.password
+cp devops/docker/secrets/jwt.secret.example devops/docker/secrets/jwt.secret
 ```
+
+2. Generate a secure PostgreSQL password:
+```bash
+openssl rand -base64 32 > devops/docker/secrets/postgres_password.txt
+```
+3. Copy it so Spring Boot uses the same password:
+
+```bash
+cp devops/docker/secrets/postgres_password.txt devops/docker/secrets/spring.datasource.password
+```
+
+4. Generate a value for JWT_SECRET:
+```bash
+openssl rand -base64 32 > devops/docker/secrets/jwt.secret
+```
+
 * Start the environment:
 ```bash
-docker compose -f docker-compose-full.yaml up --build
+docker compose up -d
 ```
 
 # Features
