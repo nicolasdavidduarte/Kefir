@@ -28,8 +28,8 @@ services:
 
   backend:
     build:
-      context: ../..
-      dockerfile: devops/docker/Dockerfile
+      context: ../../..
+      dockerfile: ../Dockerfile
     restart: unless-stopped
     depends_on:
       db:
@@ -71,10 +71,10 @@ networks:
 
 secrets:
   postgres_password:
-    file: ./secrets/postgres_password.txt
+    file: secrets/postgres_password.txt
 
   spring.datasource.password:
-    file: ./secrets/spring.datasource.password
+    file: secrets/spring.datasource.password
 
   jwt.secret:
-    file: ./secrets/jwt.secret
+    file: secrets/jwt.secret

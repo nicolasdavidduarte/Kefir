@@ -1,0 +1,58 @@
+name: kefir
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kefir_db
+      POSTGRES_USER: kefir
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    command:
+      - postgres
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - max_connections=20
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kefir-network
+
+  backend:
+    image: nduarte93/kefir-backend:latest
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/kefir_db
+      SPRING_DATASOURCE_USERNAME: kefir
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: "http://$${PUBLIC_IP}:3000"
+    networks:
+      - kefir-network
+
+  frontend:
+    image: nduarte93/kefir-frontend:latest
+    pull_policy: always
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    networks:
+      - kefir-network
+
+volumes:
+  postgres_data:
+
+networks:
+  kefir-network:
