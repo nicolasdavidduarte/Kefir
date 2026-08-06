@@ -36,7 +36,7 @@ services:
       SPRING_DATASOURCE_USERNAME: kefir
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
-      FRONTEND_URL: "http://$${PUBLIC_IP}:3000"
+      FRONTEND_URL: ${FRONTEND_URL}
     networks:
       - kefir-network
 
