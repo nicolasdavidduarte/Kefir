@@ -11,6 +11,7 @@ import com.kefir.web.dtos.user.UserRequest;
 import com.kefir.web.dtos.user.UserResponse;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -83,6 +84,10 @@ public class UserService {
 
   @Transactional
   public String updateStatus(Integer id, EntityStatusUpdate status) {
+
+    User currentUser = getById(authService.getCurrentUserId());
+
+    if(Objects.equals(currentUser.getId(), id)) throw new ApiException(ErrorCode.USER_NOT_VALID_TO_DEACTIVATE);
 
     User user =
         userRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));

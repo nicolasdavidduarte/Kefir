@@ -29,6 +29,8 @@ public enum ErrorCode {
 
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User not found"),
 
+  USER_NOT_VALID_TO_DEACTIVATE(HttpStatus.NOT_FOUND, "You aren't allowed to deactivate your own user!"),
+
   CURRENCY_NOT_FOUND(HttpStatus.NOT_FOUND, "Currency not found"),
 
   CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer not found"),
