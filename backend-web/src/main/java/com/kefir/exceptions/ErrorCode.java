@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
   ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "Account not found"),
 
-  ACCOUNT_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Account is not in a valid state"),
+  ACCOUNT_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Account is not in a valid state. Approve it in the account details page"),
 
   ACCOUNT_NOT_VALID_FOR_CLOSURE(
       HttpStatus.UNPROCESSABLE_ENTITY,
@@ -32,13 +32,13 @@ public enum ErrorCode {
   CURRENCY_NOT_FOUND(HttpStatus.NOT_FOUND, "Currency not found"),
 
   CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer not found"),
-  CUSTOMER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer is not valid"),
+  CUSTOMER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer is not valid. Approve it in the customer details page"),
 
   CUSTOMER_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer type not found"),
 
   LOAN_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan not found"),
 
-  LOAN_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Loan is not in a valid state"),
+  LOAN_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Loan is not in a valid state. Approve it in the loan details page"),
 
   LOAN_INSTALLMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan installments not found"),
 
