@@ -60,7 +60,7 @@
         <insert schemaName="public" tableName="core_user">
             <column name="id" valueComputed="nextval('core_user_id_seq')"/>
             <column name="username" value="admin"/>
-            <column name="password" value="$2a$12$yR0/hohoNqS.OZ1UmlGi6ObZKjguvZQvE9BOXMNsDasVR/6Expm5C"/>
+            <column name="password" value="$2a$04$ItWL7xCMizAxXCV5zB154uZJcIWT4rOMwpUz5HA60t0ofztzvpRHe"/>
             <column name="fullname" value="Core administrator User"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="created_by" valueComputed="(SELECT id FROM core_user WHERE username = 'SYSTEM')"/>
