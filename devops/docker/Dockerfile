@@ -13,12 +13,12 @@ COPY domain/build.gradle.kts domain/
 
 COPY --chmod=755 gradlew .
 
-RUN --mount=type=cache,target=/root/.gradle \
+RUN --mount=type=cache,target=/root/.gradle,sharing=locked \
     ./gradlew dependencies --no-daemon
 
 COPY . .
 
-RUN --mount=type=cache,target=/root/.gradle \
+RUN --mount=type=cache,target=/root/.gradle,sharing=locked \
     ./gradlew :backend-web:bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre-alpine
