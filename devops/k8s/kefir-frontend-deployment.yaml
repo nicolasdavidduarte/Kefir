@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kefir-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kefir-frontend
+  template:
+    metadata:
+      labels:
+        app: kefir-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: nduarte93/kefir-frontend:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: kefir-nginx-config

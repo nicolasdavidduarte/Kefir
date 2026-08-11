@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kefir-backend-v2
+spec:
+  selector:
+    app: kefir-backend
+    version: v2
+  ports:
+    - port: 8080
+      targetPort: 8080

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kefir-config
+data:
+  SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/kefir
+  SPRING_DATASOURCE_USERNAME: postgres

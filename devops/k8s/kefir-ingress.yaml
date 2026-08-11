@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kefir-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: kefir.local
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: kefir-backend-v1
+                port:
+                  number: 8080
+
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kefir-frontend
+                port:
+                  number: 3000
