@@ -59,10 +59,11 @@ dist/
 # Others
 gradle.properties
 /.githooks
-CODE_IMPROVEMENT_REPORT.md
 devops/docker/dev/secrets/spring.datasource.password
 devops/docker/dev/secrets/postgres_password.txt
 devops/docker/dev/secrets/jwt.secret
+
+*.md
 
 # Kotlin
 *.salive
