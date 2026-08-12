@@ -18,11 +18,3 @@ spec:
                 name: kefir-backend-v2
                 port:
                   number: 8080
-
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: kefir-frontend
-                port:
-                  number: 3000
