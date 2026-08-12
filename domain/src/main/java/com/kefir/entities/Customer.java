@@ -89,7 +89,7 @@ public class Customer {
         + " / name: "
         + fullname
         + " / status: "
-        + CustomerStatus.ACTIVE
+        + status
         + "}";
   }
 }
