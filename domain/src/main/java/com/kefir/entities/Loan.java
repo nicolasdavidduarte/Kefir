@@ -90,6 +90,14 @@ public class Loan {
 
   @Override
   public String toString() {
-    return "{Id: " + this.id + " / Amount: " + this.totalOperationAmount;
+    return "{Id: " + this.id
+            + " / Type: " + this.loanType.getName()
+            + " / Amount: " + this.totalOperationAmount
+            + " / Currency: " + this.currency.getIsoCode()
+            + " / Installments number: " + this.numberOfInstallments
+            + " / Amortization type: " + this.amortizationType.getName()
+            + " / MIR: " + this.monthlyInterestRate
+            + " / Expiration date: " + this.expirationDate
+            + " / Status: " + this.status;
   }
 }
