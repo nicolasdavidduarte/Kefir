@@ -68,7 +68,7 @@ public class LoanService {
   public List<LoanResponse> getAll() {
     return loanRepository.findAllByOrderByIdAsc().stream()
         .map(LoanResponse::fromEntity)
-        .collect(Collectors.toCollection(ArrayList::new));
+        .toList();
   }
 
   @Observed(name = "loan.service.get")
