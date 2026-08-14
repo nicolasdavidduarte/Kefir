@@ -39,17 +39,15 @@ public class User {
   @JoinColumn(name = "created_by", nullable = false)
   private User createdBy;
 
-  @Builder.Default
   @Column(name = "created_at", nullable = false)
-  private OffsetDateTime createdAt = OffsetDateTime.now();
+  private OffsetDateTime createdAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "updated_by", nullable = false)
   private User updatedBy;
 
-  @Builder.Default
   @Column(name = "updated_at", nullable = false)
-  private OffsetDateTime updatedAt = OffsetDateTime.now();
+  private OffsetDateTime updatedAt;
 
   @ManyToMany(fetch = FetchType.LAZY)
   @Builder.Default
@@ -58,4 +56,16 @@ public class User {
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();
+
+  @Override
+  public String toString() {
+    return "Id: "
+        + id
+        + " / Username: "
+        + username
+        + " / Fullname: "
+        + fullName
+        + " / enabled: "
+        + enabled;
+  }
 }

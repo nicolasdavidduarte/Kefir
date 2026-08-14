@@ -343,6 +343,8 @@ class LoanControllerIT extends IntegrationTestBase {
     User user =
         userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
+    OffsetDateTime now = OffsetDateTime.now();
+
     return customerRepository.save(
         Customer.builder()
             .name1("John")
@@ -353,7 +355,9 @@ class LoanControllerIT extends IntegrationTestBase {
             .documentNumber(documentNumber)
             .customerType(customerType)
             .createdBy(user)
+            .createdAt(now)
             .updatedBy(user)
+            .updatedAt(now)
             .status(status)
             .build());
   }

@@ -31,16 +31,21 @@ public class RefreshToken {
   private User createdBy;
 
   @Column(name = "created_at", nullable = false)
-  private OffsetDateTime createdAt = OffsetDateTime.now();
+  private OffsetDateTime createdAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "updated_by", nullable = false)
   private User updatedBy;
 
   @Column(name = "updated_at", nullable = false)
-  private OffsetDateTime updatedAt = OffsetDateTime.now();
+  private OffsetDateTime updatedAt;
 
   public boolean isRevoked() {
     return getRevoked();
+  }
+
+  @Override
+  public String toString() {
+    return "Id: " + id + " / Expiry date: " + expiryDate + " / revoked: " + revoked;
   }
 }

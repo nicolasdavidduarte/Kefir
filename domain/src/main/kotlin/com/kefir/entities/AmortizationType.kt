@@ -43,4 +43,6 @@ class AmortizationType(
 
     @Column(name = "updated_at", nullable = false, updatable = true)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
-)
+) {
+    override fun toString(): String = "{Id: $id / Name: $name / Description: $description / Enabled: $enabled}"
+}

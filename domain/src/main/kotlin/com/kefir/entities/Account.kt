@@ -62,7 +62,9 @@ class Account(
 
     @Column(name = "updated_at", nullable = false, updatable = true)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
-)
+) {
+    override fun toString(): String = "{Id: $id / CBU: $cbu / Balance: $balance / Status: $status}"
+}
 
 fun Account.open() {
     status = AccountStatus.OPENED

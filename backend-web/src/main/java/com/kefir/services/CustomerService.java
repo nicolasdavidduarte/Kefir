@@ -94,7 +94,9 @@ public class CustomerService {
             .customerType(customerType)
             .email(request.email())
             .createdBy(user)
+            .createdAt(OffsetDateTime.now())
             .updatedBy(user)
+            .updatedAt(OffsetDateTime.now())
             .build();
 
     String fullname = generateFullname(newCustomer);

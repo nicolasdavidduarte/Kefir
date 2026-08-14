@@ -64,6 +64,12 @@ class LoanInstallment(
     @Column(name = "updated_at", nullable = false, updatable = true)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
 ) {
+
+    override fun toString(): String = "{Id: $id / Installment number: $number " +
+        "/ Principal: $principalAmount / Interest: $interestAmount " +
+        "/ Total: $totalAmount / Payment due date: $paymentDueDate " +
+        "/ Remaining balance: $remainingBalance / Status: $status}"
+
     companion object {
         @JvmStatic
         fun createNew(

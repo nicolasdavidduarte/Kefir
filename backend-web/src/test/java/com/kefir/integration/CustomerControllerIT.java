@@ -12,6 +12,7 @@ import com.kefir.infrastructure.security.AuthenticatedUser;
 import com.kefir.repositories.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -337,6 +338,8 @@ class CustomerControllerIT extends IntegrationTestBase {
     User user =
         userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
+    OffsetDateTime now = OffsetDateTime.now();
+
     customerRepository.save(
         Customer.builder()
             .name1("John")
@@ -347,7 +350,9 @@ class CustomerControllerIT extends IntegrationTestBase {
             .documentNumber(documentNumber)
             .customerType(customerType)
             .createdBy(user)
+            .createdAt(now)
             .updatedBy(user)
+            .updatedAt(now)
             .build());
   }
 }

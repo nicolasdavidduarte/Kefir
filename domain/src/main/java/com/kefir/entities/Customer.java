@@ -70,20 +70,28 @@ public class Customer {
   @JoinColumn(name = "created_by", nullable = false)
   private User createdBy;
 
-  @Builder.Default
   @Column(name = "created_at", nullable = false)
-  private OffsetDateTime createdAt = OffsetDateTime.now();
+  private OffsetDateTime createdAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "updated_by", nullable = false)
   private User updatedBy;
 
-  @Builder.Default
   @Column(name = "updated_at", nullable = false)
-  private OffsetDateTime updatedAt = OffsetDateTime.now();
+  private OffsetDateTime updatedAt;
 
   @Override
   public String toString() {
-    return "{Customer Id: " + id + " / name: " + fullname + " / status: " + status + "}";
+    return "{Id: "
+        + id
+        + " / Fullname: "
+        + fullname
+        + " / Document number: "
+        + documentNumber
+        + " / E-mail : "
+        + email
+        + " / Status: "
+        + status
+        + "}";
   }
 }

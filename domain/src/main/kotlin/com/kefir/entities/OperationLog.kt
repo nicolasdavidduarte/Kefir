@@ -38,4 +38,7 @@ class OperationLog(
 
     @Column(name = "operation_date", nullable = false)
     val operationDate: OffsetDateTime = OffsetDateTime.now(),
-)
+) {
+    override fun toString(): String = "{Id: $id / Entity: $entity / Entity id: $entityId " +
+        "/ Operation : $operation / Comments: $comments / Operation date: $operationDate}"
+}
