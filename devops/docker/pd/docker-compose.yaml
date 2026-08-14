@@ -25,7 +25,7 @@ services:
       - kefir-network
 
   backend:
-    image: nduarte93/kefir-backend:corspatch
+    image: nduarte93/kefir-backend:latest
     pull_policy: always
     restart: unless-stopped
     depends_on:
