@@ -132,7 +132,7 @@ class AccountService(
 
     @Transactional
     fun open(id: Long): AccountResponse {
-        val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.LOAN_NOT_FOUND) }
+        val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
         account.open()
         account.updatedAt = OffsetDateTime.now()

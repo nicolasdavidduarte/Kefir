@@ -72,7 +72,6 @@ class LoanInstallmentService(
 
         currentInstallment.status = LoanInstallmentStatus.PAID
         currentInstallment.updatedAt = OffsetDateTime.now()
-        currentInstallment.createdBy = user
         currentInstallment.updatedBy = user
 
         loanInstallmentPaymentService.create(currentInstallment, paymentMethod)

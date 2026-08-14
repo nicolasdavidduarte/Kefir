@@ -30,7 +30,7 @@ public class CurrencyService {
     Currency currency =
         currencyRepository
             .findById(id)
-            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
+            .orElseThrow(() -> new ApiException(ErrorCode.CURRENCY_NOT_FOUND));
     return CurrencyResponse.fromEntity(currency);
   }
 

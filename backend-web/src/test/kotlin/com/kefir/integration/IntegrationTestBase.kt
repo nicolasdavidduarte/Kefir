@@ -42,7 +42,5 @@ abstract class IntegrationTestBase {
     @BeforeEach
     fun cleanDatabase() {
         databaseCleanup.truncateTestData()
-
-        println("Loans after cleanup: " + loanRepository.count())
     }
 }
