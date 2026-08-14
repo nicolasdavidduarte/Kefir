@@ -1,15 +1,14 @@
 package com.kefir.infrastructure.security;
 
 import com.kefir.web.filters.IdempotencyFilter;
-import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,17 +28,20 @@ public class SecurityConfig {
   private final CustomSecurityExceptionHandler customSecurityExceptionHandler;
   private final AuthenticationEntryPoint authenticationEntryPoint;
   private final IdempotencyFilter idempotencyFilter;
+  private final List<String> allowedOrigins;
 
   public SecurityConfig(
       JwtAuthFilter jwtAuthFilter,
       CustomSecurityExceptionHandler customSecurityExceptionHandler,
       AuthenticationEntryPoint authenticationEntryPoint,
-      IdempotencyFilter idempotencyFilter) {
+      IdempotencyFilter idempotencyFilter,
+      @Value("${app.cors.allowed-origins}") List<String> allowedOrigins) {
 
     this.jwtAuthFilter = jwtAuthFilter;
     this.customSecurityExceptionHandler = customSecurityExceptionHandler;
     this.authenticationEntryPoint = authenticationEntryPoint;
     this.idempotencyFilter = idempotencyFilter;
+    this.allowedOrigins = allowedOrigins;
   }
 
   @Bean
@@ -51,15 +53,11 @@ public class SecurityConfig {
             session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             auth ->
-                auth.requestMatchers("/api/auth/login")
+                auth.requestMatchers("/", "/api/auth/login", "/api/auth/refresh")
                     .permitAll()
                     .requestMatchers("/actuator/**")
                     .permitAll()
-                    .requestMatchers("/api/auth/refresh")
-                    .permitAll()
-                    .requestMatchers("/error")
-                    .permitAll()
-                    .requestMatchers("/api/version")
+                    .requestMatchers("/error", "/api/version")
                     .permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
                     .permitAll()
@@ -78,19 +76,9 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
 
     CorsConfiguration configuration = new CorsConfiguration();
-
-    List<String> allowedOrigins = new ArrayList<>();
-    allowedOrigins.add("http://localhost:5173");
-
-    String frontendUrl = System.getenv("FRONTEND_URL");
-    if (frontendUrl != null && !frontendUrl.isBlank()) {
-      allowedOrigins.add(frontendUrl);
-    }
-
     configuration.setAllowedOrigins(allowedOrigins);
-
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Idempotency-Key"));
     configuration.setExposedHeaders(List.of("Authorization"));
     configuration.setAllowCredentials(true);
 
@@ -109,11 +97,5 @@ public class SecurityConfig {
   public AuthenticationManager authenticationManager(AuthenticationConfiguration config)
       throws Exception {
     return config.getAuthenticationManager();
-  }
-
-  @Bean
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    // This bypasses the entire FilterChain for these paths
-    return web -> web.ignoring().requestMatchers("/actuator/**", "/");
   }
 }
