@@ -87,7 +87,8 @@ public class UserService {
 
     User currentUser = getById(authService.getCurrentUserId());
 
-    if(Objects.equals(currentUser.getId(), id)) throw new ApiException(ErrorCode.USER_NOT_VALID_TO_DEACTIVATE);
+    if (Objects.equals(currentUser.getId(), id))
+      throw new ApiException(ErrorCode.USER_NOT_VALID_TO_DEACTIVATE);
 
     User user =
         userRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
