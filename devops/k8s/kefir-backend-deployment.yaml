@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: nduarte93/kefir-backend:1.0.0
+          image: nduarte93/kefir-backend:corspatch
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
