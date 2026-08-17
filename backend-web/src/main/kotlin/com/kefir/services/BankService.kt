@@ -25,7 +25,6 @@ class BankService(
         .findAllByOrderByIdAsc()
         .map(Bank::toResponse)
         .toList()
-        .ifEmpty { throw ApiException(ErrorCode.BANK_NOT_FOUND) }
 
     @Transactional
     fun create(bankRequest: BankRequest): BankResponse {
