@@ -276,6 +276,7 @@ class AccountControllerIT : IntegrationTestBase() {
                 balance = BigDecimal("10000.00"),
                 createdBy = user,
                 updatedBy = user,
+                accountNumber = "fdfdfd",
                 cbu = randomCbu,
             ),
         )
