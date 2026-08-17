@@ -30,7 +30,7 @@ public class LoanReportJobConfig {
   public Job loanReportJob(JobRepository jobRepository, Step loanReportStep) {
     return new JobBuilder("loanReportJob", jobRepository)
         .start(loanReportStep)
-        .listener(databaseCheckListener) // Asociamos el listener aquí
+        .listener(databaseCheckListener)
         .build();
   }
 
@@ -61,7 +61,7 @@ public class LoanReportJobConfig {
 
   @Bean
   public ItemProcessor<Loan, Loan> loanProcessor() {
-    return loan -> loan; // No hace nada por ahora
+    return loan -> loan;
   }
 
   @Bean
