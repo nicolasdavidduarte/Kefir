@@ -45,10 +45,6 @@ class AccountService(
     private val bankBranchService: BankBranchService,
 ) {
 
-    /**
-     * Obtains all accounts from the database
-     * @return list of accounts
-     */
     @Transactional(readOnly = true)
     fun getAllAccounts(): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc().map(Account::toResponse).toList()
 
@@ -82,11 +78,6 @@ class AccountService(
         account.balance -= amount
     }
 
-    /**
-     * Creates a new account
-     * @param [accountRequest] account request
-     * @return account response
-     */
     @Transactional
     fun createAccount(accountRequest: AccountRequest): AccountResponse {
         val customer: Customer = customerService.getById(accountRequest.customerId)
@@ -103,6 +94,12 @@ class AccountService(
 
         val currency: Currency = currencyService.getByIsoCode(requireNotNull(accountRequest.currencyIsoCode))
 
+        val sequence = accountRepository.findNextAccountNumberSequence()
+
+        val accountNumber = AccountNumberGenerator.generate(accountTypeCode = accountType.code, sequence = sequence)
+
+        val cbu = CBUGenerator.generate(bankBranch.bank.id, requireNotNull(accountRequest.bankBranchId), accountNumber)
+
         val savedAccount =
             accountRepository.save(
                 Account(
@@ -113,10 +110,10 @@ class AccountService(
                     balance = accountRequest.initialBalance,
                     createdBy = user,
                     updatedBy = user,
+                    accountNumber = accountNumber,
+                    cbu = cbu,
                 ),
             )
-
-        savedAccount.cbu = CBUGenerator.generate(savedAccount.bank.id, requireNotNull(accountRequest.bankBranchId), savedAccount.id)
 
         operationLogService.log(
             OperationLogCommand(

@@ -16,10 +16,9 @@ interface AccountRepository : JpaRepository<Account, Long> {
     fun findAllByCustomerId(customerId: Long): List<Account>
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query(
-        """
-        select a from Account a where a.id = :id
-            """,
-    )
+    @Query(value = "select a from Account a where a.id = :id")
     fun findByIdForUpdate(id: Long): Optional<Account>
+
+    @Query(value = "SELECT nextval('account_number_seq')", nativeQuery = true)
+    fun findNextAccountNumberSequence(): Long
 }
