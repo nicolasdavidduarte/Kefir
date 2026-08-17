@@ -10,6 +10,11 @@ plugins {
     id("org.jetbrains.dokka") version "2.2.0" apply false
 }
 
+allprojects {
+    group = "com.kefir"
+    version = "1.0-SNAPSHOT"
+}
+
 subprojects {
     extra["logback.version"] = "1.5.36"
     extra["jackson.version"] = "2.21.5"

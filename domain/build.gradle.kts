@@ -8,9 +8,6 @@ plugins {
     kotlin("plugin.jpa")
 }
 
-group = "org.kefir"
-version = "1.0-SNAPSHOT"
-
 repositories {
     mavenCentral()
 }

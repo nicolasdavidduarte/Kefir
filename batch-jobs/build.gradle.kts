@@ -12,9 +12,6 @@ java {
     }
 }
 
-group = "org.kefir"
-version = "1.0-SNAPSHOT"
-
 repositories {
     mavenCentral()
 }
