@@ -5,7 +5,7 @@
            http://www.liquibase.org/xml/ns/dbchangelog
            https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
-    <changeSet id="012" author="ndd">
+    <changeSet id="012-a" author="ndd">
 
         <createTable tableName="account">
             <column name="id" type="BIGINT" autoIncrement="true">
@@ -26,6 +26,9 @@
             <column name="bank_id" type="SMALLINT">
                 <constraints nullable="false" foreignKeyName="fk_account_bank"
                              references="bank(id)"/>
+            </column>
+            <column name="account_number" type="VARCHAR(13)">
+                <constraints nullable="false"/>
             </column>
             <column name="CBU" type="VARCHAR(22)">
                 <constraints nullable="false" unique="true" uniqueConstraintName="uk_account_cbu"/>
@@ -52,6 +55,10 @@
             </column>
         </createTable>
 
+    </changeSet>
+
+    <changeSet id="012-b" author="ndd">
+        <createSequence sequenceName="account_number_seq" startValue="100000001" incrementBy="1"/>
     </changeSet>
 
 </databaseChangeLog>

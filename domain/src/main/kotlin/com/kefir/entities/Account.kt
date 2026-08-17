@@ -39,6 +39,9 @@ class Account(
     @JoinColumn(name = "bank_id", nullable = false)
     val bank: Bank,
 
+    @Column(name = "account_number", nullable = false)
+    val accountNumber: String,
+
     @Column(name = "cbu", nullable = false)
     var cbu: String = "",
 

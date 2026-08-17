@@ -23,6 +23,12 @@ class AccountType(
     @Column(name = "name", nullable = false)
     val name: String,
 
+    @Column(name = "code", nullable = false)
+    val code: Int,
+
+    @Column(name = "description", nullable = false)
+    val description: String,
+
     @Column(name = "enabled", nullable = false)
     var enabled: Boolean,
 
@@ -41,5 +47,5 @@ class AccountType(
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
 
 ) {
-    override fun toString(): String = "{Id: $id / Name: $name / enabled: $enabled}"
+    override fun toString(): String = "{Id: $id / Name: $name / Description: $description / Enabled: $enabled}"
 }

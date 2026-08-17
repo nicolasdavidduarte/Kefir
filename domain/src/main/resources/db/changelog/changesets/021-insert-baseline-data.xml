@@ -141,6 +141,7 @@
         <insert schemaName="public" tableName="account_type">
             <column name="id" valueComputed="nextval('account_type_id_seq')"/>
             <column name="name" value="SAVINGS ACCOUNT"/>
+            <column name="code" value="100"/>
             <column name="description" value="An interest-bearing account used to store and protect secondary business reserves."/>
             <column name="enabled" valueBoolean="true"/>
             <column name="created_by" valueComputed="(SELECT id FROM core_user WHERE username = 'SYSTEM')"/>
@@ -151,6 +152,7 @@
         <insert schemaName="public" tableName="account_type">
             <column name="id" valueComputed="nextval('account_type_id_seq')"/>
             <column name="name" value="CHECKING ACCOUNT"/>
+            <column name="code" value="200"/>
             <column name="description" value="A transactional account used for daily business spending and paying operational bills."/>
             <column name="enabled" valueBoolean="true"/>
             <column name="created_by" valueComputed="(SELECT id FROM core_user WHERE username = 'SYSTEM')"/>
