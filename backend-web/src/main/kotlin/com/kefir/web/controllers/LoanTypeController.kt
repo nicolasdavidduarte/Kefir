@@ -1,8 +1,8 @@
 package com.kefir.web.controllers
 
 import com.kefir.services.LoanTypeService
-import com.kefir.web.dtos.LoanTypeRequest
-import com.kefir.web.dtos.LoanTypeResponse
+import com.kefir.web.dtos.loanType.LoanTypeRequest
+import com.kefir.web.dtos.loanType.LoanTypeResponse
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize

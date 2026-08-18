@@ -1,7 +1,7 @@
 package com.kefir.services.loanInstallment
 
 import com.kefir.enums.AmortizationTypeName
-import com.kefir.web.dtos.InstallmentData
+import com.kefir.web.dtos.loanInstallment.InstallmentData
 import java.math.BigDecimal
 
 interface AmortizationCalculator {

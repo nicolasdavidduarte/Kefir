@@ -23,10 +23,11 @@ import com.kefir.services.CurrencyService
 import com.kefir.services.CustomerService
 import com.kefir.services.OperationLogService
 import com.kefir.services.UserService
-import com.kefir.web.dtos.AccountRequest
-import com.kefir.web.dtos.AccountResponse
-import com.kefir.web.dtos.OperationLogCommand
-import com.kefir.web.dtos.toResponse
+import com.kefir.web.dtos.account.AccountRequest
+import com.kefir.web.dtos.account.AccountResponse
+import com.kefir.web.dtos.account.toResponse
+import com.kefir.web.dtos.loanInstallmentPayment.toResponse
+import com.kefir.web.dtos.operationLog.OperationLogCommand
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal

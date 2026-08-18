@@ -3,7 +3,7 @@ package com.kefir.services.loanInstallment
 import com.kefir.enums.AmortizationTypeName
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
-import com.kefir.web.dtos.InstallmentData
+import com.kefir.web.dtos.loanInstallment.InstallmentData
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode

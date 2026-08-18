@@ -1,4 +1,4 @@
-package com.kefir.web.dtos
+package com.kefir.web.dtos.loanInstallmentPayment
 
 import com.kefir.entities.LoanInstallment
 import java.math.BigDecimal
