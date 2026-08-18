@@ -1,4 +1,4 @@
-package com.kefir.web.dtos
+package com.kefir.web.dtos.account
 
 import com.kefir.entities.Account
 import com.kefir.enums.AccountStatus

@@ -1,12 +1,15 @@
 package com.kefir.web.controllers
 
 import com.kefir.services.loanInstallment.LoanInstallmentService
-import com.kefir.web.dtos.LoanInstallmentResponse
+import com.kefir.web.dtos.loanInstallmentPayment.LoanInstallmentPaymentRequest
+import com.kefir.web.dtos.loanInstallmentPayment.LoanInstallmentResponse
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -23,5 +26,5 @@ class LoanInstallmentController(
     @PostMapping("/{installmentNumber}/payment")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-    fun createPayment(@PathVariable loanId: Long, @PathVariable installmentNumber: Int): LoanInstallmentResponse = loanInstallmentService.payInstallment(loanId, installmentNumber)
+    fun createPayment(@PathVariable loanId: Long, @PathVariable installmentNumber: Int, @RequestBody @Valid loanInstallmentPaymentRequest: LoanInstallmentPaymentRequest): LoanInstallmentResponse = loanInstallmentService.createPayment(loanId, installmentNumber, loanInstallmentPaymentRequest.paymentMethod)
 }

@@ -1,4 +1,4 @@
-package com.kefir.web.dtos
+package com.kefir.web.dtos.entityOperation
 
 import java.time.LocalDateTime
 

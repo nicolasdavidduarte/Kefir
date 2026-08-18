@@ -6,10 +6,10 @@ import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.BankRepository
-import com.kefir.web.dtos.BankRequest
-import com.kefir.web.dtos.BankResponse
-import com.kefir.web.dtos.EntityOperationResponse
-import com.kefir.web.dtos.toResponse
+import com.kefir.web.dtos.bank.BankRequest
+import com.kefir.web.dtos.bank.BankResponse
+import com.kefir.web.dtos.bank.toResponse
+import com.kefir.web.dtos.entityOperation.EntityOperationResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime

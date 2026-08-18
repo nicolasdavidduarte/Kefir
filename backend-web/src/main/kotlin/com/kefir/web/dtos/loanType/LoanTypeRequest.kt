@@ -1,4 +1,4 @@
-package com.kefir.web.dtos
+package com.kefir.web.dtos.loanType
 
 import jakarta.validation.constraints.NotBlank
 import org.jetbrains.annotations.NotNull

@@ -1,4 +1,4 @@
-package com.kefir.web.dtos
+package com.kefir.web.dtos.bank
 
 import com.kefir.entities.Bank
 import com.kefir.enums.BankStatus

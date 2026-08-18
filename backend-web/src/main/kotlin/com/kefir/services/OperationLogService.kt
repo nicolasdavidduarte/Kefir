@@ -3,7 +3,7 @@ package com.kefir.services
 import com.kefir.entities.OperationLog
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.OperationLogRepository
-import com.kefir.web.dtos.OperationLogCommand
+import com.kefir.web.dtos.operationLog.OperationLogCommand
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

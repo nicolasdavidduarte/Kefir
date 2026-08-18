@@ -1,4 +1,4 @@
-package com.kefir.web.dtos
+package com.kefir.web.dtos.operationLog
 
 import com.kefir.enums.EntityName
 import com.kefir.enums.LogOperation

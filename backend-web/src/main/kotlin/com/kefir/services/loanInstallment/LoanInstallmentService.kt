@@ -15,8 +15,8 @@ import com.kefir.services.UserService
 import com.kefir.services.account.AccountService
 import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
 import com.kefir.services.loanInstallment.payment.PaymentMethodService
-import com.kefir.web.dtos.LoanInstallmentResponse
-import com.kefir.web.dtos.toResponse
+import com.kefir.web.dtos.loanInstallmentPayment.LoanInstallmentResponse
+import com.kefir.web.dtos.loanInstallmentPayment.toResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
@@ -48,7 +48,7 @@ class LoanInstallmentService(
     }
 
     @Transactional
-    fun payInstallment(loanId: Long, installmentNumber: Int): LoanInstallmentResponse {
+    fun createPayment(loanId: Long, installmentNumber: Int, paymentMethod: PaymentMethodName): LoanInstallmentResponse {
         val loan = loanRepository.findByIdForUpdate(loanId).orElseThrow { throw ApiException(ErrorCode.LOAN_NOT_FOUND) }
 
         val paymentSchedule = loanInstallmentRepository.findAllByLoanIdOrderByNumberAsc(loanId)
@@ -61,8 +61,7 @@ class LoanInstallmentService(
             null
         }
 
-        // TODO: Add payment method from a PaymentRequest
-        val paymentMethod = paymentMethodService.getByName(PaymentMethodName.HOMEBANKING.name)
+        val paymentMethod = paymentMethodService.getByName(paymentMethod.name)
 
         paymentValidations(currentInstallment, previousInstallment)
 

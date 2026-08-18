@@ -1,9 +1,9 @@
 package com.kefir.web.controllers
 
 import com.kefir.services.BankService
-import com.kefir.web.dtos.BankRequest
-import com.kefir.web.dtos.BankResponse
-import com.kefir.web.dtos.EntityOperationResponse
+import com.kefir.web.dtos.bank.BankRequest
+import com.kefir.web.dtos.bank.BankResponse
+import com.kefir.web.dtos.entityOperation.EntityOperationResponse
 import jakarta.validation.Valid
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping

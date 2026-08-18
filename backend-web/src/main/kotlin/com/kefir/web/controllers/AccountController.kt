@@ -1,8 +1,8 @@
 package com.kefir.web.controllers
 
 import com.kefir.services.account.AccountService
-import com.kefir.web.dtos.AccountRequest
-import com.kefir.web.dtos.AccountResponse
+import com.kefir.web.dtos.account.AccountRequest
+import com.kefir.web.dtos.account.AccountResponse
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize

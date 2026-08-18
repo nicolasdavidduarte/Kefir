@@ -1,4 +1,4 @@
-package com.kefir.web.dtos
+package com.kefir.web.dtos.bank
 
 import org.jetbrains.annotations.NotNull
 
