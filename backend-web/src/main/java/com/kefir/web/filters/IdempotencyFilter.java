@@ -19,6 +19,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -75,7 +76,6 @@ public class IdempotencyFilter extends OncePerRequestFilter {
 
         if (!existing.getEndpoint().equals(request.getRequestURI())) {
           writeErrorResponse(response, "Idempotency-Key used for different endpoint");
-          response.flushBuffer();
           return;
         }
 
@@ -98,18 +98,16 @@ public class IdempotencyFilter extends OncePerRequestFilter {
       }
 
     } else {
-      // Create PROCESSING record
-      IdempotentRequest newRequest = new IdempotentRequest();
-      newRequest.setIdempotencyKey(key);
-      newRequest.setRequestHash(requestHash);
-      newRequest.setState(IdempotencyState.PROCESSING);
-      newRequest.setEndpoint(request.getRequestURI());
-
-      repository.save(newRequest);
+      if (createIdempotentRequest(request, response, key, requestHash)) return;
     }
 
     // Execute real request
-    filterChain.doFilter(wrappedRequest, wrappedResponse);
+    try {
+      filterChain.doFilter(wrappedRequest, wrappedResponse);
+    } catch (Exception e) {
+      repository.findByIdempotencyKey(key).ifPresent(repository::delete);
+      throw e;
+    }
 
     // Capture response
     byte[] content = wrappedResponse.getContentAsByteArray();
@@ -125,10 +123,30 @@ public class IdempotencyFilter extends OncePerRequestFilter {
       existing.setHttpStatus(wrappedResponse.getStatus());
       existing.setResponseBody(responseBody);
 
-      repository.save(existing);
+      repository.saveAndFlush(existing);
     }
 
     wrappedResponse.copyBodyToResponse();
+  }
+
+  private boolean createIdempotentRequest(
+      HttpServletRequest request, HttpServletResponse response, String key, String requestHash)
+      throws IOException {
+
+    IdempotentRequest newRequest = new IdempotentRequest();
+
+    newRequest.setIdempotencyKey(key);
+    newRequest.setRequestHash(requestHash);
+    newRequest.setState(IdempotencyState.PROCESSING);
+    newRequest.setEndpoint(request.getRequestURI());
+
+    try {
+      repository.saveAndFlush(newRequest);
+    } catch (DataIntegrityViolationException e) {
+      writeErrorResponse(response, "Request already in progress for this Idempotency-Key");
+      return true;
+    }
+    return false;
   }
 
   private static boolean validatesAuth(
@@ -154,6 +172,9 @@ public class IdempotencyFilter extends OncePerRequestFilter {
   }
 
   private String normalizeJson(String body) {
+    if (body == null || body.isBlank()) {
+      return "";
+    }
     try {
       Object json = objectMapper.readValue(body, Object.class);
       return objectMapper.writeValueAsString(json);

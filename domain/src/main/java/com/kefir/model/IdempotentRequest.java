@@ -2,7 +2,7 @@ package com.kefir.model;
 
 import com.kefir.enums.IdempotencyState;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,10 +38,10 @@ public class IdempotentRequest {
   private int httpStatus;
 
   @Column(nullable = false, updatable = false)
-  private LocalDateTime createdAt;
+  private OffsetDateTime createdAt;
 
   @PrePersist
   public void prePersist() {
-    this.createdAt = LocalDateTime.now();
+    this.createdAt = OffsetDateTime.now();
   }
 }
