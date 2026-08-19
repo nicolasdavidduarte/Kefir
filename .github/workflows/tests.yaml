@@ -4,10 +4,17 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -17,9 +24,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: gradle
 
-      - name: Make gradlew executable
-        run: chmod +x gradlew
-
-      - name: Executing tests
-        run: ./gradlew test
+      - name: Run tests
+        run: ./gradlew test --no-daemon
