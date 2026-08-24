@@ -60,7 +60,7 @@
         <insert schemaName="public" tableName="core_user">
             <column name="id" valueComputed="nextval('core_user_id_seq')"/>
             <column name="username" value="admin"/>
-            <column name="password" value="$2a$04$ItWL7xCMizAxXCV5zB154uZJcIWT4rOMwpUz5HA60t0ofztzvpRHe"/>
+            <column name="password" value="$2a$12$8iTS1t5nttLWQuq1gMvRtONQTRqTZxoDgBBfcqcNQZVUDTb7eIUVm"/>
             <column name="fullname" value="Core administrator User"/>
             <column name="enabled" valueBoolean="true"/>
             <column name="created_by" valueComputed="(SELECT id FROM core_user WHERE username = 'SYSTEM')"/>
@@ -90,6 +90,17 @@
             <column name="updated_by" valueComputed="(SELECT id FROM core_user WHERE username = 'SYSTEM')"/>
             <column name="updated_at" valueDate="2026-05-14 00:00:00.000"/>
         </insert>
+        <insert schemaName="public" tableName="core_user">
+            <column name="id" valueComputed="nextval('core_user_id_seq')"/>
+            <column name="username" value="demo"/>
+            <column name="password" value="$2a$04$98J7zL3nZEpa9kZgdzu4S.apXA1HPOtOQPTR2sT5dQ4wEaTvkPURS"/>
+            <column name="fullname" value="Read-Only User"/>
+            <column name="enabled" valueBoolean="true"/>
+            <column name="created_by" valueComputed="(SELECT id FROM core_user WHERE username = 'SYSTEM')"/>
+            <column name="created_at" valueDate="2026-08-24 00:00:00.000"/>
+            <column name="updated_by" valueComputed="(SELECT id FROM core_user WHERE username = 'SYSTEM')"/>
+            <column name="updated_at" valueDate="2026-08-24 00:00:00.000"/>
+        </insert>
     </changeSet>
 
     <!-- 4. USER/ROLE MAPPING -->
@@ -105,6 +116,10 @@
         <insert schemaName="public" tableName="user_role">
             <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'viewer')"/>
             <column name="role_id" valueComputed="(SELECT id FROM role WHERE name = 'VIEWER')"/>
+        </insert>
+        <insert schemaName="public" tableName="user_role">
+            <column name="user_id" valueComputed="(SELECT id FROM core_user WHERE username = 'demo')"/>
+            <column name="role_id" valueComputed="(SELECT id FROM role WHERE name = 'OPR')"/>
         </insert>
     </changeSet>
 
