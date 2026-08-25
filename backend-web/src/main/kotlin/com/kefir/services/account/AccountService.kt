@@ -63,9 +63,10 @@ class AccountService(
     fun getAllByCustomerWithResponse(customerId: Long): List<AccountResponse> = accountRepository.findAllByCustomerId(customerId).map(Account::toResponse)
 
     @Transactional
-    fun addBalance(account: Account, amount: BigDecimal) {
+    fun addBalance(accountId: Long, amount: BigDecimal) {
+        val account = accountRepository.findByIdForUpdate(accountId).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+
         account.balance += amount
-        accountRepository.save(account)
     }
 
     @Transactional

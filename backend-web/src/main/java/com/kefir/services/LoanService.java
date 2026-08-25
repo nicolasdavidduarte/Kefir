@@ -192,9 +192,11 @@ public class LoanService {
   @Transactional
   public LoanResponse approve(Long id) {
     Loan loan =
-        loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
+        loanRepository
+            .findByIdForUpdate(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
-    accountService.addBalance(loan.getAccount(), loan.getPrincipalAmount());
+    accountService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount());
 
     loan.setStatus(LoanStatus.ACTIVE);
 
