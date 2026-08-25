@@ -1,18 +1,21 @@
 # What is Kefir?
-Kefir is a simplified banking core system built to deepen my understanding of software engineering concepts and explore 
-new technologies. It serves as a learning platform where I can experiment with architecture, security, cloud 
+Kefir is a simplified banking core system built as a learning project to deepen my understanding of software engineering 
+and explore modern technologies. It provides a hands-on environment for experimenting with architecture, security, cloud 
 infrastructure, batch processing, and modern development practices.
+
 
 # Technology Stack
 * Java 21
-* Kotlin 
-* Spring Boot
+* Kotlin 2.3
+* Spring Boot 3.5
 * PostgreSQL 
 * Gradle 
 * Docker
 
+
 ## Live Demo
 https://kefir.dedyn.io _(deployed in Google Cloud Platform)_
+
 
 ## Main Components
 * Hibernate (JPA) for data persistence 
@@ -20,6 +23,15 @@ https://kefir.dedyn.io _(deployed in Google Cloud Platform)_
 * Micrometer for application metrics and observability 
 * Spring Security for authentication and authorization 
 * Spring Batch for batch and bulk processing
+
+
+## Java & Kotlin
+Kefir intentionally uses both Java and Kotlin, with roughly half of the system written in each. The reason is primarily 
+learning: I use Kefir to experiment with Kotlin features and apply them to a real-world application, while keeping 
+existing Java code rather than rewriting it solely for consistency.
+This does increase the cognitive load of the codebase, but it is an intentional trade-off that allows me to learn and 
+compare both languages in practice.
+
 
 ## Build Tool
 This project uses Gradle for dependency management and build automation.
@@ -33,6 +45,7 @@ The scans check for:
 * Security misconfigurations 
 * Exposed secrets and sensitive data
 
+
 #### Quick Security Scan
 ### Trivy
 ```bash
@@ -45,7 +58,8 @@ The scans check for:
 ```
 
 ## Requirements
-* Java 21 
+* Java 21
+* Kotlin 2.3
 * PostgreSQL 
 * Gradle 
 * Docker (optional)
@@ -89,6 +103,7 @@ openssl rand -base64 32 > devops/docker/secrets/jwt.secret
 docker compose up -d
 ```
 
+
 # Features
 * Customer management 
 * Account management
@@ -129,7 +144,6 @@ http://localhost:8080/swagger-ui/index.html
 
 
 ### Authentication
-
 Most endpoints require JWT authentication.
 
 1. Execute `POST /api/auth/login`
@@ -142,8 +156,8 @@ Swagger will automatically include the following header in all requests:
 
 Authorization: Bearer <your-token>
 
-### OpenAPI Specification
 
+### OpenAPI Specification
 The OpenAPI definition is available at:
 
 http://localhost:8080/v3/api-docs
