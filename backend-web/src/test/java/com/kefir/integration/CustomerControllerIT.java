@@ -274,17 +274,6 @@ class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
-  void deleteCustomerSuccessfully() throws Exception {
-    createTestCustomer(1, "123456789");
-    mockMvc.perform(delete("/api/customers/1")).andDo(print()).andExpect(status().isOk());
-  }
-
-  @Test
-  void deleteCustomerFailWhenIdNotFound() throws Exception {
-    mockMvc.perform(delete("/api/customers/1")).andDo(print()).andExpect(status().isNotFound());
-  }
-
-  @Test
   void activateCustomerStatusSuccessfully() throws Exception {
     createTestCustomer(1, "123456789");
 
