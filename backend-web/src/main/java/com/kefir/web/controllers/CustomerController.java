@@ -24,14 +24,12 @@ public class CustomerController {
     this.customerService = customerService;
   }
 
-  // Endpoint to retrieve all records from the core_user table
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public List<CustomerResponse> getAll() {
     return customerService.getAllWithResponse();
   }
 
-  // Endpoint to retrieve a single record by ID
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public CustomerResponse getById(@PathVariable Long id) {
@@ -44,7 +42,6 @@ public class CustomerController {
     return customerService.getAllByFullnameOrDocumentNumber(query);
   }
 
-  // Create a new customer
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
@@ -59,17 +56,6 @@ public class CustomerController {
   public CustomerResponse updateCustomer(
       @RequestBody @Valid CustomerUpdateRequest request, @PathVariable Long id) {
     return customerService.update(request, id);
-  }
-
-  // Endpoint to delete a loan
-  @DeleteMapping("/{id}")
-  @ResponseStatus(HttpStatus.OK)
-  @PreAuthorize("hasAnyRole('ADMIN')")
-  public ApiEntityResponse deleteCustomer(@PathVariable Long id) {
-
-    customerService.delete(id);
-
-    return new ApiEntityResponse(id, "Customer successfully deleted", OffsetDateTime.now());
   }
 
   @PostMapping("/{id}/status/activate")
