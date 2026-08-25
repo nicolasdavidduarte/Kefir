@@ -67,3 +67,4 @@ devops/docker/dev/secrets/jwt.secret
 
 # Kotlin
 *.salive
+/devops/docker/dev/docker-compose-infra.yaml
