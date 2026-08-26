@@ -14,7 +14,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
   @EntityGraph(attributePaths = {"createdBy", "updatedBy", "roles"})
   @Query("SELECT u FROM User u WHERE u.id=:id")
-  Optional<User> findByIdWithDetails(@Param("id") Integer Id);
+  Optional<User> findByIdWithDetails(@Param("id") Integer id);
 
   Optional<User> findByUsername(String username);
 

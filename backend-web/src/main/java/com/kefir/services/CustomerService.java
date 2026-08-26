@@ -57,7 +57,7 @@ public class CustomerService {
   @Transactional(readOnly = true)
   public CustomerResponse getByIdWithResponse(Long id) {
     return customerRepository
-        .findById(id)
+        .findByIdWithDetails(id)
         .map(CustomerResponse::fromEntity)
         .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
   }

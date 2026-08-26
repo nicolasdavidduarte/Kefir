@@ -28,7 +28,7 @@ public class CustomerTypeService {
   public CustomerTypeResponse getByIdWithResponse(Integer id) {
     CustomerType customerType =
         customerTypeRepository
-            .findById(id)
+            .findByIdWithDetails(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_TYPE_NOT_FOUND));
 
     return CustomerTypeResponse.fromEntity(customerType);

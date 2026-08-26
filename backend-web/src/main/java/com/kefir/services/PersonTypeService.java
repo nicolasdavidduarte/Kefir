@@ -28,7 +28,7 @@ public class PersonTypeService {
   public PersonTypeResponse getByIdWithResponse(Integer id) {
     PersonType personType =
         personTypeRepository
-            .findById(id)
+            .findByIdWithDetails(id)
             .orElseThrow(() -> new ApiException(ErrorCode.PERSON_TYPE_NOT_FOUND));
 
     return PersonTypeResponse.fromEntity(personType);
