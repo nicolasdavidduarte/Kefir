@@ -146,15 +146,6 @@ public class CustomerService {
   }
 
   @Transactional
-  public void delete(Long id) {
-    Customer customer =
-        customerRepository
-            .findById(id)
-            .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
-    customerRepository.delete(customer);
-  }
-
-  @Transactional
   public CustomerResponse activate(Long id) {
     Customer customer =
         customerRepository
