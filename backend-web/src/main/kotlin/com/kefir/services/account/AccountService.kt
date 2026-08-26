@@ -26,7 +26,6 @@ import com.kefir.services.UserService
 import com.kefir.web.dtos.account.AccountRequest
 import com.kefir.web.dtos.account.AccountResponse
 import com.kefir.web.dtos.account.toResponse
-import com.kefir.web.dtos.loanInstallmentPayment.toResponse
 import com.kefir.web.dtos.operationLog.OperationLogCommand
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

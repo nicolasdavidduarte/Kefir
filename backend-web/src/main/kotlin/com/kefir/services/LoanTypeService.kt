@@ -6,7 +6,6 @@ import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.LoanTypeRepository
-import com.kefir.web.dtos.loanInstallmentPayment.toResponse
 import com.kefir.web.dtos.loanType.LoanTypeRequest
 import com.kefir.web.dtos.loanType.LoanTypeResponse
 import com.kefir.web.dtos.loanType.toResponse
