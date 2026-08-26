@@ -37,6 +37,6 @@ public class PersonTypeService {
   public PersonType getByName(com.kefir.enums.PersonType personType) {
     return personTypeRepository
         .findByNameIgnoreCase(personType.name())
-        .orElseThrow(() -> new RuntimeException("Person type not found"));
+        .orElseThrow(() -> new ApiException(ErrorCode.PERSON_TYPE_NOT_FOUND));
   }
 }
