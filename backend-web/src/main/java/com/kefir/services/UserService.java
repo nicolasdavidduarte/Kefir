@@ -46,7 +46,7 @@ public class UserService {
   @Transactional(readOnly = true)
   public UserResponse getByIdWithResponse(Integer id) {
     return userRepository
-        .findById(id)
+        .findByIdWithDetails(id)
         .map(UserResponse::fromEntity)
         .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
   }
