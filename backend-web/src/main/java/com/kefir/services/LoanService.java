@@ -96,7 +96,8 @@ public class LoanService {
 
     Customer customer = customerService.getById(loanRequest.customerId());
 
-    Account account = accountService.getById(loanRequest.accountId());
+    Account account =
+        accountService.getByIdAndCustomerId(loanRequest.accountId(), loanRequest.customerId());
 
     if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);

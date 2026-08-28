@@ -135,6 +135,30 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
+  void createLoanFailWhenAccountDoesNotBelongToCustomer() throws Exception {
+
+    Customer customer1 = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+
+    createTestCustomer(2, "123456790", CustomerStatus.ACTIVE);
+
+    createTestAccount(customer1, AccountStatus.PENDING, 100000001L);
+
+    String requestBody;
+    try {
+      requestBody =
+          new ClassPathResource("requests/loan/create-loan-fail-wrong-account.json")
+              .getContentAsString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("File not found or unreadable", e);
+    }
+
+    mockMvc
+        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andDo(print())
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
   void createLoanFailWhenPayloadIsInvalid() throws Exception {
 
     String invalidRequestBody = "{}";
