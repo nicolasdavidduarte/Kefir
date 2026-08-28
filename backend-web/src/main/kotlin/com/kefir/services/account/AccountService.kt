@@ -52,6 +52,9 @@ class AccountService(
     fun getById(id: Long): Account = accountRepository.findById(id).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
     @Transactional(readOnly = true)
+    fun getByIdAndCustomerId(id: Long, customerId: Long): Account = accountRepository.findByIdAndCustomerId(id, customerId).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+
+    @Transactional(readOnly = true)
     fun getByIdWithResponse(id: Long): AccountResponse {
         val account = accountRepository.findByIdWithDetails(id).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 

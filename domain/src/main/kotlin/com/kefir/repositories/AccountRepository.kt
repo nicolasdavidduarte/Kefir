@@ -13,6 +13,8 @@ import java.util.Optional
 @Repository
 interface AccountRepository : JpaRepository<Account, Long> {
 
+    fun findByIdAndCustomerId(id: Long, customerId: Long): Optional<Account>
+
     @EntityGraph(attributePaths = ["type", "customer", "currency", "bank", "createdBy", "updatedBy"])
     @Query(value = "select a from Account a where a.id = :id")
     fun findByIdWithDetails(@Param("id") id: Long): Optional<Account>

@@ -1,0 +1,10 @@
+{
+  "customerId": 2,
+  "accountId": 1,
+  "loanType": "PERSONAL",
+  "amortizationType":"AMERICAN",
+  "principalAmount": 100.00,
+  "currencyIsoCode": "USD",
+  "numberOfInstallments": 4,
+  "externalId": 2122
+}
