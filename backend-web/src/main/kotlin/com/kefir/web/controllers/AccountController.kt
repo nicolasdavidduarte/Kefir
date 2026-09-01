@@ -3,6 +3,7 @@ package com.kefir.web.controllers
 import com.kefir.services.account.AccountService
 import com.kefir.web.dtos.account.AccountRequest
 import com.kefir.web.dtos.account.AccountResponse
+import com.kefir.web.utils.Pagination
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.security.access.prepost.PreAuthorize
@@ -25,11 +26,13 @@ class AccountController(
     @ResponseStatus(HttpStatus.OK)
     fun getAllAccountsWithResponse(
         @RequestParam(name = "customerId", required = false) customerId: Long?,
+        @RequestParam(name = "page", required = false) page: Int?,
+        @RequestParam(name = "size", required = false) size: Int?,
     ): List<AccountResponse> {
         val accounts = if (customerId != null) {
             accountService.getAllByCustomerWithResponse(customerId)
         } else {
-            accountService.getAllAccounts()
+            accountService.getAllAccounts(Pagination.from(page, size))
         }
 
         return accounts.sortedBy { it.id }
