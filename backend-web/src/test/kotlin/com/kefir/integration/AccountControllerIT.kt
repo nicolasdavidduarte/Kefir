@@ -287,7 +287,7 @@ class AccountControllerIT : IntegrationTestBase() {
         expectedMessage: String?,
     ) {
         mockMvc
-            .perform(get("/api/accounts?" + queryParams))
+            .perform(get("/api/accounts?" +queryParams))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").value(expectedMessage))
     }
