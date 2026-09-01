@@ -17,6 +17,8 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
@@ -311,14 +313,47 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(status().isNotFound());
   }
 
-  void createTestCustomer(Integer id, String documentNumber) {
+  @Test
+  void getAllCustomersWithPagination() throws Exception {
+    createTestCustomer(1, "123456786");
+    createTestCustomer(2, "123456787");
+    createTestCustomer(1, "123456788");
+    createTestCustomer(2, "123456789");
+
+    mockMvc
+            .perform(get("/api/customers?page=2&size=2").contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(2))
+            // First customer data
+            .andExpect(jsonPath("$[0].id").value(3))
+            // Second customer data
+            .andExpect(jsonPath("$[1].id").value(4));
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+          "'page=0&size=2', 'Page must be greater than 0'",
+          "'page=1&size=-3', 'Size must be greater than 0'",
+          "'page=1&size=23', 'Size must not exceed 20'",
+          "'page=2', 'Page and size must be provided together'",
+          "'size=23', 'Page and size must be provided together'"
+  })
+  void getAllCustomersWithInvalidPaginationParameters_returnsBadRequest(String queryParams, String expectedMessage) throws Exception {
+    mockMvc
+            .perform(get("/api/customers?" + queryParams))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").value(expectedMessage));
+  }
+
+  void createTestCustomer(Integer documentTypeId, String documentNumber) {
     PersonType personType =
         personTypeRepository
             .findById(1)
             .orElseThrow(() -> new ApiException(ErrorCode.PERSON_TYPE_NOT_FOUND));
     DocumentType documentType =
         documentTypeRepository
-            .findById(id)
+            .findById(documentTypeId)
             .orElseThrow(() -> new ApiException(ErrorCode.DOCUMENT_TYPE_NOT_FOUND));
     CustomerType customerType =
         customerTypeRepository

@@ -4,6 +4,7 @@ import com.kefir.services.CustomerService;
 import com.kefir.web.dtos.customer.CustomerCreationRequest;
 import com.kefir.web.dtos.customer.CustomerResponse;
 import com.kefir.web.dtos.customer.CustomerUpdateRequest;
+import com.kefir.web.utils.Pagination;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -24,8 +25,8 @@ public class CustomerController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public List<CustomerResponse> getAll() {
-    return customerService.getAllWithResponse();
+  public List<CustomerResponse> getAll(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+    return customerService.getAllWithResponse(Pagination.from(page, size));
   }
 
   @GetMapping("/{id}")
