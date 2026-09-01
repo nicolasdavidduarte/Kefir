@@ -27,6 +27,7 @@ import com.kefir.web.dtos.account.AccountRequest
 import com.kefir.web.dtos.account.AccountResponse
 import com.kefir.web.dtos.account.toResponse
 import com.kefir.web.dtos.operationLog.OperationLogCommand
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
@@ -46,7 +47,7 @@ class AccountService(
 ) {
 
     @Transactional(readOnly = true)
-    fun getAllAccounts(): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc().map(Account::toResponse).toList()
+    fun getAllAccounts(pageable: Pageable): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc(pageable).map(Account::toResponse).toList()
 
     @Transactional(readOnly = true)
     fun getById(id: Long): Account = accountRepository.findById(id).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }

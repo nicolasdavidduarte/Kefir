@@ -21,6 +21,8 @@ import com.kefir.repositories.UserRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -252,6 +254,42 @@ class AccountControllerIT : IntegrationTestBase() {
         ).andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("status").value("CLOSED"))
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun getAllAccountsWithPagination() {
+        createTestAccount(AccountType.SAVINGS_ACCOUNT)
+        createTestAccount(AccountType.CHECKING_ACCOUNT)
+        createTestAccount(AccountType.SAVINGS_ACCOUNT)
+        createTestAccount(AccountType.CHECKING_ACCOUNT)
+
+        mockMvc
+            .perform(get("/api/accounts?page=2&size=2").contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.length()").value(2)) // First customer data
+            .andExpect(jsonPath("$[0].id").value(3)) // Second customer data
+            .andExpect(jsonPath("$[1].id").value(4))
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "'page=0&size=2', 'Page must be greater than 0'",
+        "'page=1&size=-3', 'Size must be greater than 0'",
+        "'page=1&size=23', 'Size must not exceed 20'",
+        "'page=2', 'Page and size must be provided together'",
+        "'size=23', 'Page and size must be provided together'",
+    )
+    @Throws(Exception::class)
+    fun getAllCustomersWithInvalidPaginationParameters_returnsBadRequest(
+        queryParams: String?,
+        expectedMessage: String?,
+    ) {
+        mockMvc
+            .perform(get("/api/accounts?" + queryParams))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").value(expectedMessage))
     }
 
     private fun createTestAccount(accountType: AccountType): Account {
