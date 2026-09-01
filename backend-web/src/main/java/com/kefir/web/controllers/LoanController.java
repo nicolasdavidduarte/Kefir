@@ -3,6 +3,7 @@ package com.kefir.web.controllers;
 import com.kefir.services.LoanService;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
+import com.kefir.web.utils.Pagination;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,8 +34,9 @@ public class LoanController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public List<LoanResponse> getAll() {
-    return loanService.getAll();
+  public List<LoanResponse> getAll(
+      @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+    return loanService.getAll(Pagination.from(page, size));
   }
 
   // Endpoint to retrieve a single record by ID using a JSON request body

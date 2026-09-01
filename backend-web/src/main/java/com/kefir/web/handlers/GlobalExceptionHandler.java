@@ -38,6 +38,11 @@ public class GlobalExceptionHandler {
     return buildResponse(HttpStatus.BAD_REQUEST, fieldErrors);
   }
 
+  @ExceptionHandler(InvalidPaginationException.class)
+  public ResponseEntity<ApiErrorResponse> handleInvalidPagination(InvalidPaginationException e) {
+    return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+  }
+
   @ExceptionHandler(ExpiredJwtException.class)
   public ResponseEntity<ApiErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
     return buildResponse(HttpStatus.UNAUTHORIZED, "Authentication token expired");

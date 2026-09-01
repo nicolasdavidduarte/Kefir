@@ -37,6 +37,8 @@ import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
@@ -351,6 +353,43 @@ class LoanControllerIT extends IntegrationTestBase {
         .perform(get("/api/loans/1").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void getAllLoansWithPagination() throws Exception {
+    Customer customer1 = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
+    Account account1 = createTestAccount(customer1, AccountStatus.OPENED, 100000001L);
+
+    createTestLoan(customer1, account1, 996L);
+    createTestLoan(customer1, account1, 997L);
+    createTestLoan(customer1, account1, 998L);
+    createTestLoan(customer1, account1, 999L);
+
+    mockMvc
+        .perform(get("/api/loans?page=2&size=2").contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(jsonPath("$.length()").value(2))
+        // First loan / id = 3
+        .andExpect(jsonPath("$[0].id").value("3"))
+        // Second loan data / id = 4
+        .andExpect(jsonPath("$[1].id").value("4"));
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+    "'page=0&size=2', 'Page must be greater than 0'",
+    "'page=1&size=-3', 'Size must be greater than 0'",
+    "'page=1&size=23', 'Size must not exceed 20'",
+    "'page=2', 'Page and size must be provided together'",
+    "'size=23', 'Page and size must be provided together'"
+  })
+  void getAllLoansWithInvalidPaginationParameters_returnsBadRequest(
+      String queryParams, String expectedMessage) throws Exception {
+
+    mockMvc
+        .perform(get("/api/loans?" + queryParams))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value(expectedMessage));
   }
 
   private Customer createTestCustomer(Integer id, String documentNumber, CustomerStatus status) {
