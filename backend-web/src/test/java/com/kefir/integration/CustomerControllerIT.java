@@ -321,29 +321,30 @@ class CustomerControllerIT extends IntegrationTestBase {
     createTestCustomer(2, "123456789");
 
     mockMvc
-            .perform(get("/api/customers?page=2&size=2").contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(2))
-            // First customer data
-            .andExpect(jsonPath("$[0].id").value(3))
-            // Second customer data
-            .andExpect(jsonPath("$[1].id").value(4));
+        .perform(get("/api/customers?page=2&size=2").contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        // First customer data
+        .andExpect(jsonPath("$[0].id").value(3))
+        // Second customer data
+        .andExpect(jsonPath("$[1].id").value(4));
   }
 
   @ParameterizedTest
   @CsvSource({
-          "'page=0&size=2', 'Page must be greater than 0'",
-          "'page=1&size=-3', 'Size must be greater than 0'",
-          "'page=1&size=23', 'Size must not exceed 20'",
-          "'page=2', 'Page and size must be provided together'",
-          "'size=23', 'Page and size must be provided together'"
+    "'page=0&size=2', 'Page must be greater than 0'",
+    "'page=1&size=-3', 'Size must be greater than 0'",
+    "'page=1&size=23', 'Size must not exceed 20'",
+    "'page=2', 'Page and size must be provided together'",
+    "'size=23', 'Page and size must be provided together'"
   })
-  void getAllCustomersWithInvalidPaginationParameters_returnsBadRequest(String queryParams, String expectedMessage) throws Exception {
+  void getAllCustomersWithInvalidPaginationParameters_returnsBadRequest(
+      String queryParams, String expectedMessage) throws Exception {
     mockMvc
-            .perform(get("/api/customers?" + queryParams))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").value(expectedMessage));
+        .perform(get("/api/customers?" + queryParams))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message").value(expectedMessage));
   }
 
   void createTestCustomer(Integer documentTypeId, String documentNumber) {

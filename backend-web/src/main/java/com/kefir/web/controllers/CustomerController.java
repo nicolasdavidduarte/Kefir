@@ -25,7 +25,8 @@ public class CustomerController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public List<CustomerResponse> getAll(@RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
+  public List<CustomerResponse> getAll(
+      @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
     return customerService.getAllWithResponse(Pagination.from(page, size));
   }
 
