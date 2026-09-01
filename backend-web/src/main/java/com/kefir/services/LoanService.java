@@ -20,6 +20,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,8 +64,10 @@ public class LoanService {
   }
 
   @Transactional(readOnly = true)
-  public List<LoanResponse> getAll() {
-    return loanRepository.findAllByOrderByIdAsc().stream().map(LoanResponse::fromEntity).toList();
+  public List<LoanResponse> getAll(Pageable pageable) {
+    return loanRepository.findAllByOrderByIdAsc(pageable).stream()
+        .map(LoanResponse::fromEntity)
+        .toList();
   }
 
   @Observed(name = "loan.service.get")
