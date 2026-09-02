@@ -24,7 +24,7 @@ class OperationLogService(
                 entity = operationLogCommand.entity.name,
                 entityId = requireNotNull(operationLogCommand.entityId),
                 comments = requireNotNull(operationLogCommand.comments),
-                user = userService.getById(authService.currentUserId),
+                user = operationLogCommand.user,
             )
 
         operationLogRepository.save(operationLog)
