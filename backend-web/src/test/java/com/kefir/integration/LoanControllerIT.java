@@ -12,6 +12,7 @@ import com.kefir.entities.CustomerType;
 import com.kefir.entities.DocumentType;
 import com.kefir.entities.PersonType;
 import com.kefir.enums.*;
+import com.kefir.events.LoanRequestAuditEvent;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthenticatedUser;
@@ -42,6 +43,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,6 +75,8 @@ class LoanControllerIT extends IntegrationTestBase {
   @Autowired private AccountTypeRepository accountTypeRepository;
 
   @Autowired private BankBranchRepository bankBranchRepository;
+
+  @Autowired private KafkaTemplate<Long, LoanRequestAuditEvent> kafkaTemplate;
 
   @BeforeEach
   void setup() {

@@ -81,6 +81,12 @@ dependencies {
     annotationProcessor("org.projectlombok:lombok:1.18.34")
     implementation(kotlin("stdlib"))
 
+    // Kafka
+    implementation("org.springframework.kafka:spring-kafka")
+
+    // Logger
+    implementation("org.slf4j:slf4j-api")
+
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")

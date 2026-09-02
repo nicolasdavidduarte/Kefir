@@ -4,6 +4,7 @@ import com.kefir.entities.*;
 import com.kefir.enums.AccountStatus;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.enums.LoanStatus;
+import com.kefir.events.LoanRequestAuditEvent;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
@@ -16,11 +17,14 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +42,7 @@ public class LoanService {
   private final LoanTypeService loanTypeService;
   private final CurrencyService currencyService;
   private final AmortizationTypeService amortizationTypeService;
+  private final KafkaTemplate<Long, LoanRequestAuditEvent> kafkaTemplate;
 
   @Autowired
   public LoanService(
@@ -50,7 +55,8 @@ public class LoanService {
       LoanTypeService loanTypeService,
       CurrencyService currencyService,
       UserService userService,
-      AmortizationTypeService amortizationTypeService) {
+      AmortizationTypeService amortizationTypeService,
+      KafkaTemplate<Long, LoanRequestAuditEvent> kafkaTemplate) {
     this.loanRepository = loanRepository;
     this.registry = registry;
     this.authService = authService;
@@ -61,6 +67,7 @@ public class LoanService {
     this.userService = userService;
     this.amortizationTypeService = amortizationTypeService;
     this.accountService = accountService;
+    this.kafkaTemplate = kafkaTemplate;
   }
 
   @Transactional(readOnly = true)
@@ -169,6 +176,15 @@ public class LoanService {
       registry.counter("loan.created", "status", "success").increment();
 
       log.info("Loan successfully created - id: {}", loanSaved);
+
+      LoanRequestAuditEvent event =
+          new LoanRequestAuditEvent(
+              UUID.randomUUID(),
+              loanRequest.customerId(),
+              loanRequest.principalAmount(),
+              Instant.now());
+
+      kafkaTemplate.send("bank.loan-security.events", event.customerId(), event);
 
       return LoanResponse.fromEntity(loanSaved);
 
