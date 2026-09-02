@@ -181,6 +181,7 @@ public class LoanService {
           new LoanRequestAuditEvent(
               UUID.randomUUID(),
               loanRequest.customerId(),
+              loanRequest.accountId(),
               loanRequest.principalAmount(),
               Instant.now());
 
