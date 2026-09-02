@@ -8,6 +8,7 @@ import com.kefir.entities.Customer
 import com.kefir.entities.User
 import com.kefir.entities.close
 import com.kefir.entities.open
+import com.kefir.enums.AccountStatus
 import com.kefir.enums.CustomerStatus
 import com.kefir.enums.EntityName
 import com.kefir.enums.LoanStatus
@@ -45,6 +46,10 @@ class AccountService(
     private val accountTypeService: AccountTypeService,
     private val bankBranchService: BankBranchService,
 ) {
+
+    companion object {
+        private const val SYSTEM_USER = 1
+    }
 
     @Transactional(readOnly = true)
     fun getAllAccounts(pageable: Pageable): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc(pageable).map(Account::toResponse).toList()
@@ -126,6 +131,7 @@ class AccountService(
                 entity = EntityName.ACCOUNT,
                 entityId = savedAccount.id,
                 comments = "Account with id: ${savedAccount.id} created",
+                user = user,
             ),
         )
 
@@ -140,6 +146,26 @@ class AccountService(
         account.updatedAt = OffsetDateTime.now()
 
         return accountRepository.save(account).toResponse()
+    }
+
+    @Transactional
+    fun suspend(id: Long, reason: String) {
+        val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+
+        account.status = AccountStatus.SUSPENDED
+        account.updatedAt = OffsetDateTime.now()
+
+        val user: User = userService.getById(SYSTEM_USER)
+
+        operationLogService.log(
+            OperationLogCommand(
+                LogOperation.SUSPENSION,
+                EntityName.ACCOUNT,
+                id,
+                reason,
+                user,
+            ),
+        )
     }
 
     @Transactional
