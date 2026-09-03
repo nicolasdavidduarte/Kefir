@@ -57,6 +57,7 @@ dist/
 .npm
 
 # Others
+reports/
 gradle.properties
 /.githooks
 devops/docker/dev/secrets/spring.datasource.password
