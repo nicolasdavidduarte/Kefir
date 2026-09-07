@@ -183,6 +183,9 @@ public class LoanService {
     Loan loan =
         loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
+    if (!loan.getStatus().equals(LoanStatus.ACTIVE))
+      throw new ApiException(ErrorCode.LOAN_NOT_VALID);
+
     loan.setStatus(LoanStatus.CHARGE_OFF);
     loan.setUpdatedAt(OffsetDateTime.now());
 
