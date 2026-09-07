@@ -51,9 +51,9 @@ public class FraudDetectionConsumer {
             log.warn(
                 "[FRAUD ALERT] Customer {} executed {} loan requests in less than a minute with"
                     + " account {}. Last amount requested ${}",
-                id,
-                accountId,
-                timestamps.size(),
+                customerId,
+                    timestamps.size(),
+                    accountId,
                 event.requestedAmount());
 
             produceAccountDeactivationEvent(accountId);
@@ -63,7 +63,7 @@ public class FraudDetectionConsumer {
                 "[Fraud Check OK] Customer {} with account {}: {}/{} transactions in the current"
                     + " window.",
                 customerId,
-                event.accountId(),
+                accountId,
                 timestamps.size(),
                 MAX_TRANSACTIONS);
           }
