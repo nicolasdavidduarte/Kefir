@@ -193,10 +193,11 @@ public class LoanService {
     if (!loan.getStatus().equals(LoanStatus.ACTIVE))
       throw new ApiException(ErrorCode.LOAN_NOT_VALID);
 
+    User user = userService.getById(authService.getCurrentUserId());
+
     loan.setStatus(LoanStatus.CHARGE_OFF);
     loan.setUpdatedAt(OffsetDateTime.now());
-
-    User user = userService.getById(authService.getCurrentUserId());
+    loan.setUpdatedBy(user);
 
     loanInstallmentService.updateInstallmentsForChargeOff(id, user);
 
