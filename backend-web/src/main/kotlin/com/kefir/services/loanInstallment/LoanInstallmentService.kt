@@ -2,6 +2,7 @@ package com.kefir.services.loanInstallment
 
 import com.kefir.entities.Loan
 import com.kefir.entities.LoanInstallment
+import com.kefir.entities.User
 import com.kefir.enums.AmortizationTypeName
 import com.kefir.enums.LoanInstallmentStatus
 import com.kefir.enums.LoanStatus
@@ -127,14 +128,13 @@ class LoanInstallmentService(
         return loanInstallmentRepository.saveAll(loanInstallments)
     }
 
-    fun updateInstallmentsForChargeOff(loanId: Long) {
+    fun updateInstallmentsForChargeOff(loanId: Long, user: User) {
         val installments = loanInstallmentRepository.findByLoanIdForChargeOff(loanId)
 
         installments.forEach {
             it.status = LoanInstallmentStatus.CHARGE_OFF
             it.updatedAt = OffsetDateTime.now()
+            it.updatedBy = user
         }
-
-        loanInstallmentRepository.saveAll(installments)
     }
 }

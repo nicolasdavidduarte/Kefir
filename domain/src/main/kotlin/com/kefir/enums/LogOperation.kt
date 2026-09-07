@@ -6,4 +6,5 @@ enum class LogOperation {
     OPENING,
     SUSPENSION,
     CLOSING,
+    CHARGE_OFF,
 }

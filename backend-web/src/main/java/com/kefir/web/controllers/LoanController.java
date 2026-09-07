@@ -1,6 +1,7 @@
 package com.kefir.web.controllers;
 
 import com.kefir.services.LoanService;
+import com.kefir.web.dtos.loan.LoanChargeOffRequest;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
 import com.kefir.web.utils.Pagination;
@@ -95,10 +96,11 @@ public class LoanController {
     return loanService.approve(loanId);
   }
 
-  @PatchMapping("/{loanId}/close")
+  @PostMapping("/{loanId}/chargeoff")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public LoanResponse chargeOffLoan(@PathVariable Long loanId) {
-    return loanService.chargeOff(loanId);
+  public LoanResponse chargeOffLoan(
+      @PathVariable Long loanId, @RequestBody @Valid LoanChargeOffRequest chargeOffRequest) {
+    return loanService.chargeOff(loanId, chargeOffRequest);
   }
 }

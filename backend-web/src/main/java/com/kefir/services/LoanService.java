@@ -3,15 +3,19 @@ package com.kefir.services;
 import com.kefir.entities.*;
 import com.kefir.enums.AccountStatus;
 import com.kefir.enums.CustomerStatus;
+import com.kefir.enums.EntityName;
 import com.kefir.enums.LoanStatus;
+import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
 import com.kefir.services.account.AccountService;
 import com.kefir.services.loanInstallment.LoanInstallmentService;
+import com.kefir.web.dtos.loan.LoanChargeOffRequest;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
+import com.kefir.web.dtos.operationLog.OperationLogCommand;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
 import java.math.BigDecimal;
@@ -38,6 +42,7 @@ public class LoanService {
   private final LoanTypeService loanTypeService;
   private final CurrencyService currencyService;
   private final AmortizationTypeService amortizationTypeService;
+  private final OperationLogService operationLogService;
 
   @Autowired
   public LoanService(
@@ -50,7 +55,8 @@ public class LoanService {
       LoanTypeService loanTypeService,
       CurrencyService currencyService,
       UserService userService,
-      AmortizationTypeService amortizationTypeService) {
+      AmortizationTypeService amortizationTypeService,
+      OperationLogService operationLogService) {
     this.loanRepository = loanRepository;
     this.registry = registry;
     this.authService = authService;
@@ -61,6 +67,7 @@ public class LoanService {
     this.userService = userService;
     this.amortizationTypeService = amortizationTypeService;
     this.accountService = accountService;
+    this.operationLogService = operationLogService;
   }
 
   @Transactional(readOnly = true)
@@ -179,18 +186,30 @@ public class LoanService {
   }
 
   @Transactional
-  public LoanResponse chargeOff(Long id) {
+  public LoanResponse chargeOff(Long id, LoanChargeOffRequest chargeOffRequest) {
     Loan loan =
         loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
+    if (!loan.getStatus().equals(LoanStatus.ACTIVE))
+      throw new ApiException(ErrorCode.LOAN_NOT_VALID);
+
+    User user = userService.getById(authService.getCurrentUserId());
+
     loan.setStatus(LoanStatus.CHARGE_OFF);
     loan.setUpdatedAt(OffsetDateTime.now());
+    loan.setUpdatedBy(user);
 
-    Loan loanUpdated = loanRepository.save(loan);
+    loanInstallmentService.updateInstallmentsForChargeOff(id, user);
 
-    loanInstallmentService.updateInstallmentsForChargeOff(id);
+    operationLogService.log(
+        new OperationLogCommand(
+            LogOperation.CHARGE_OFF,
+            EntityName.LOAN,
+            loan.getId(),
+            chargeOffRequest.reason(),
+            user));
 
-    return LoanResponse.fromEntity(loanUpdated);
+    return LoanResponse.fromEntity(loan);
   }
 
   @Transactional
