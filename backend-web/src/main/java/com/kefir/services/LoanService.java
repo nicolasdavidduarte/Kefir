@@ -102,7 +102,6 @@ public class LoanService {
 
   @Transactional
   public LoanResponse create(LoanRequest loanRequest) {
-    // TODO: Add interest rate mode (fixed or variable)
 
     Customer customer = customerService.getById(loanRequest.customerId());
 
@@ -155,10 +154,10 @@ public class LoanService {
               .updatedAt(now)
               .build();
 
-      Loan loanSaved = loanRepository.saveAndFlush(loan);
+      loanRepository.save(loan);
 
       List<LoanInstallment> loanInstallments =
-          loanInstallmentService.createInstallmentsSchedule(loanSaved);
+          loanInstallmentService.createInstallmentsSchedule(loan);
 
       BigDecimal totalOperationAmount =
           loanInstallments.stream()
@@ -170,14 +169,22 @@ public class LoanService {
               .map(LoanInstallment::getInterestAmount)
               .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-      loanSaved.setTotalOperationAmount(totalOperationAmount);
-      loanSaved.setInterestAmount(interestAmount);
+      loan.setTotalOperationAmount(totalOperationAmount);
+      loan.setInterestAmount(interestAmount);
+
+      operationLogService.log(
+          new OperationLogCommand(
+              LogOperation.CREATION,
+              EntityName.LOAN,
+              loan.getId(),
+              "Loan successfully created",
+              user));
 
       registry.counter("loan.created", "status", "success").increment();
 
-      log.info("Loan successfully created - id: {}", loanSaved);
+      log.info("Loan successfully created - id: {}", loan);
 
-      return LoanResponse.fromEntity(loanSaved);
+      return LoanResponse.fromEntity(loan);
 
     } catch (Exception e) {
       registry.counter("loan.created", "status", "error").increment();
@@ -223,8 +230,16 @@ public class LoanService {
 
     loan.setStatus(LoanStatus.ACTIVE);
 
-    Loan loanUpdated = loanRepository.save(loan);
+    User user = userService.getById(authService.getCurrentUserId());
 
-    return LoanResponse.fromEntity(loanUpdated);
+    operationLogService.log(
+        new OperationLogCommand(
+            LogOperation.APPROVAL,
+            EntityName.LOAN,
+            loan.getId(),
+            "Loan successfully approved",
+            user));
+
+    return LoanResponse.fromEntity(loan);
   }
 }

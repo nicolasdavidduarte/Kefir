@@ -125,7 +125,7 @@ class LoanInstallmentService(
             )
         }
 
-        return loanInstallmentRepository.saveAll(loanInstallments)
+        return loanInstallments
     }
 
     fun updateInstallmentsForChargeOff(loanId: Long, user: User) {
