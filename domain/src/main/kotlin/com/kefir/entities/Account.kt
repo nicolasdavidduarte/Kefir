@@ -68,11 +68,3 @@ class Account(
 ) {
     override fun toString(): String = "{Id: $id / CBU: $cbu / Balance: $balance / Status: $status}"
 }
-
-fun Account.open() {
-    status = AccountStatus.OPENED
-}
-
-fun Account.close() {
-    status = AccountStatus.CLOSED
-}

@@ -226,6 +226,9 @@ public class LoanService {
             .findByIdForUpdate(id)
             .orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
+    if (!loan.getStatus().equals(LoanStatus.PENDING))
+      throw new ApiException(ErrorCode.LOAN_NOT_VALID);
+
     accountService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount());
 
     loan.setStatus(LoanStatus.ACTIVE);

@@ -24,7 +24,7 @@ class AccountController(
 ) {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    fun getAllAccountsWithResponse(
+    fun getAll(
         @RequestParam(name = "customerId", required = false) customerId: Long?,
         @RequestParam(name = "page", required = false) page: Int?,
         @RequestParam(name = "size", required = false) size: Int?,
@@ -32,34 +32,33 @@ class AccountController(
         val accounts = if (customerId != null) {
             accountService.getAllByCustomerWithResponse(customerId)
         } else {
-            accountService.getAllAccounts(Pagination.from(page, size))
+            accountService.getAll(Pagination.from(page, size))
         }
-
         return accounts.sortedBy { it.id }
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getByIdWithResponse(@PathVariable id: Long): AccountResponse = accountService.getByIdWithResponse(id)
+    fun getById(@PathVariable id: Long): AccountResponse = accountService.getByIdWithResponse(id)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-    fun createAccount(
+    fun create(
         @RequestBody @Valid accountRequest: AccountRequest,
-    ) = accountService.createAccount(accountRequest)
+    ) = accountService.create(accountRequest)
 
     @PatchMapping("/{id}/open")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-    fun openAccount(
+    fun open(
         @PathVariable id: Long,
     ) = accountService.open(id)
 
     @PatchMapping("/{id}/close")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-    fun closeAccount(
+    fun close(
         @PathVariable id: Long,
     ) = accountService.close(id)
 }
