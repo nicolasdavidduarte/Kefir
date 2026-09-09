@@ -3,6 +3,7 @@ package com.kefir.web.controllers
 import com.kefir.services.account.AccountService
 import com.kefir.web.dtos.account.AccountRequest
 import com.kefir.web.dtos.account.AccountResponse
+import com.kefir.web.dtos.loan.AccountSuspensionRequest
 import com.kefir.web.utils.Pagination
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
@@ -61,4 +62,12 @@ class AccountController(
     fun close(
         @PathVariable id: Long,
     ) = accountService.close(id)
+
+    @PatchMapping("/{id}/suspend")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMIN','OPR')")
+    fun suspend(
+        @PathVariable id: Long,
+        @RequestBody @Valid accountSuspensionRequest: AccountSuspensionRequest,
+    ) = accountService.suspend(id, accountSuspensionRequest.reason)
 }

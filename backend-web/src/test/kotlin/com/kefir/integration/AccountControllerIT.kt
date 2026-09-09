@@ -3,6 +3,7 @@ package com.kefir.integration
 import com.jayway.jsonpath.JsonPath
 import com.kefir.entities.Account
 import com.kefir.entities.Customer
+import com.kefir.enums.AccountStatus
 import com.kefir.enums.AccountType
 import com.kefir.enums.CurrencyIsoCodes
 import com.kefir.enums.CustomerStatus
@@ -32,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.EnumSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -194,8 +196,8 @@ class AccountControllerIT : IntegrationTestBase() {
 
     @Test
     fun getAllAccountsSuccessfully() {
-        createTestAccount(AccountType.SAVINGS_ACCOUNT)
-        createTestAccount(AccountType.CHECKING_ACCOUNT)
+        createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.PENDING)
+        createTestAccount(AccountType.CHECKING_ACCOUNT, AccountStatus.OPENED)
 
         mockMvc.get("/api/accounts") {
             contentType = MediaType.APPLICATION_JSON
@@ -220,7 +222,7 @@ class AccountControllerIT : IntegrationTestBase() {
             jsonPath("[1]bank") { value("KEFIR BANK") }
             jsonPath("[1]cbu") { exists() }
             jsonPath("[1]balance") { value(BigDecimal("10000.0")) }
-            jsonPath("[1]status") { value("PENDING") }
+            jsonPath("[1]status") { value("OPENED") }
         }
     }
 
@@ -237,7 +239,7 @@ class AccountControllerIT : IntegrationTestBase() {
 
     @Test
     fun getAccountByIdSuccessfully() {
-        createTestAccount(AccountType.SAVINGS_ACCOUNT)
+        createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.PENDING)
 
         mockMvc.get("/api/accounts/1") {
             contentType = MediaType.APPLICATION_JSON
@@ -264,7 +266,7 @@ class AccountControllerIT : IntegrationTestBase() {
 
     @Test
     fun openAccountSuccessfully() {
-        createTestAccount(AccountType.SAVINGS_ACCOUNT)
+        createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.PENDING)
 
         mockMvc
             .patch("/api/accounts/1/open") { contentType = MediaType.APPLICATION_JSON }.andExpect {
@@ -275,7 +277,7 @@ class AccountControllerIT : IntegrationTestBase() {
 
     @Test
     fun closeAccountSuccessfully() {
-        createTestAccount(AccountType.SAVINGS_ACCOUNT)
+        createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.OPENED)
 
         mockMvc
             .patch("/api/accounts/1/close") { contentType = MediaType.APPLICATION_JSON }.andExpect {
@@ -285,12 +287,52 @@ class AccountControllerIT : IntegrationTestBase() {
     }
 
     @Test
+    fun suspendAccountSuccessfully() {
+        val account = createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.OPENED)
+
+        val requestBody = javaClass.classLoader
+            .getResource("requests/account/suspend-account-success.json")
+            ?.readText() ?: throw IllegalStateException("File not found")
+
+        mockMvc
+            .patch("/api/accounts/1/suspend") {
+                contentType = MediaType.APPLICATION_JSON
+                content = requestBody
+            }.andExpect {
+                status { isOk() }
+                jsonPath("status") { value("SUSPENDED") }
+            }
+
+        val operationLog = operationLogRepository.findByEntityAndEntityIdAndOperation(EntityName.ACCOUNT.name, account.id, LogOperation.SUSPENSION.name).orElseThrow()
+        assertThat(operationLog.comments).isEqualTo("Too many requests in short time")
+    }
+
+    @ParameterizedTest
+    @EnumSource(AccountStatus::class, names = ["OPENED"], mode = EnumSource.Mode.EXCLUDE)
+    fun suspendAccountFailWhenAccountIsNotOpened(status: AccountStatus) {
+        val account = createTestAccount(AccountType.SAVINGS_ACCOUNT, status)
+
+        val requestBody = javaClass.classLoader
+            .getResource("requests/account/suspend-account-success.json")
+            ?.readText() ?: throw IllegalStateException("File not found")
+
+        mockMvc
+            .patch("/api/accounts/${account.id}/suspend") {
+                contentType = MediaType.APPLICATION_JSON
+                content = requestBody
+            }.andExpect {
+                status { isUnprocessableEntity() }
+                jsonPath("message") { value("Account is not in a valid state") }
+            }
+    }
+
+    @Test
     @Throws(Exception::class)
     fun getAllAccountsWithPagination() {
-        createTestAccount(AccountType.SAVINGS_ACCOUNT)
-        createTestAccount(AccountType.CHECKING_ACCOUNT)
-        createTestAccount(AccountType.SAVINGS_ACCOUNT)
-        createTestAccount(AccountType.CHECKING_ACCOUNT)
+        createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.OPENED)
+        createTestAccount(AccountType.CHECKING_ACCOUNT, AccountStatus.OPENED)
+        createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.OPENED)
+        createTestAccount(AccountType.CHECKING_ACCOUNT, AccountStatus.OPENED)
 
         mockMvc
             .get("/api/accounts?page=2&size=2") { contentType = MediaType.APPLICATION_JSON }.andExpect {
@@ -321,7 +363,7 @@ class AccountControllerIT : IntegrationTestBase() {
             }
     }
 
-    private fun createTestAccount(accountType: AccountType): Account {
+    private fun createTestAccount(accountType: AccountType, status: AccountStatus): Account {
         val accountType = accountTypeRepository.findByNameIgnoreCase(accountType.dbName).orElseThrow { ApiException(ErrorCode.ACCOUNT_TYPE_NOT_FOUND) }
 
         val bankBranch = bankBranchRepository.findByBranchNumberAndBankId(1, 1).orElseThrow { ApiException(ErrorCode.BANK_BRANCH_NOT_FOUND) }
@@ -334,7 +376,7 @@ class AccountControllerIT : IntegrationTestBase() {
 
         val randomCbu = "001000" + (1000000000000000..9999999999999999).random().toString()
 
-        return accountRepository.save(
+        return accountRepository.saveAndFlush(
             Account(
                 type = accountType,
                 customer = customer,
@@ -345,6 +387,7 @@ class AccountControllerIT : IntegrationTestBase() {
                 updatedBy = user,
                 accountNumber = "11111",
                 cbu = randomCbu,
+                status = status,
             ),
         )
     }
