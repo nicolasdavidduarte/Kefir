@@ -215,7 +215,7 @@ class AccountService(
 
         operationLogService.log(
             OperationLogCommand(
-                LogOperation.SUSPENSION,
+                LogOperation.CLOSING,
                 EntityName.ACCOUNT,
                 id,
                 "Account with id: ${account.id} closed",
