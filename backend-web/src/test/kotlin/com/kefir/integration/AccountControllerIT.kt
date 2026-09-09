@@ -239,9 +239,9 @@ class AccountControllerIT : IntegrationTestBase() {
 
     @Test
     fun getAccountByIdSuccessfully() {
-        createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.PENDING)
+        val account = createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.PENDING)
 
-        mockMvc.get("/api/accounts/1") {
+        mockMvc.get("/api/accounts/${account.id}") {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
@@ -259,30 +259,61 @@ class AccountControllerIT : IntegrationTestBase() {
     @Test
     fun getAccountByIdFailWhenIdNotFound() {
         mockMvc
-            .get("/api/accounts/1") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+            .get("/api/accounts/99") { contentType = MediaType.APPLICATION_JSON }.andExpect {
                 status { isNotFound() }
             }
     }
 
     @Test
     fun openAccountSuccessfully() {
-        createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.PENDING)
+        val account = createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.PENDING)
 
         mockMvc
-            .patch("/api/accounts/1/open") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+            .patch("/api/accounts/${account.id}/open") { contentType = MediaType.APPLICATION_JSON }.andExpect {
                 status { isOk() }
                 jsonPath("status") { value("OPENED") }
             }
+
+        val operationLog = operationLogRepository.findByEntityAndEntityIdAndOperation(EntityName.ACCOUNT.name, account.id, LogOperation.OPENING.name).orElseThrow()
+        assertThat(operationLog.comments).isEqualTo("Account with id: ${account.id} opened")
     }
 
-    @Test
-    fun closeAccountSuccessfully() {
-        createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.OPENED)
+    @ParameterizedTest
+    @EnumSource(AccountStatus::class, names = ["PENDING"], mode = EnumSource.Mode.EXCLUDE)
+    fun openAccountFailWhenAccountIsNotPending(status: AccountStatus) {
+        val account = createTestAccount(AccountType.SAVINGS_ACCOUNT, status)
 
         mockMvc
-            .patch("/api/accounts/1/close") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+            .patch("/api/accounts/${account.id}/open") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+                status { isUnprocessableEntity() }
+                jsonPath("message") { value("Account is not in a valid state") }
+            }
+    }
+
+    @ParameterizedTest
+    @EnumSource(AccountStatus::class, names = ["PENDING", "OPENED"], mode = EnumSource.Mode.INCLUDE)
+    fun closeAccountSuccessfully(status: AccountStatus) {
+        val account = createTestAccount(AccountType.SAVINGS_ACCOUNT, status)
+
+        mockMvc
+            .patch("/api/accounts/${account.id}/close") { contentType = MediaType.APPLICATION_JSON }.andExpect {
                 status { isOk() }
                 jsonPath("status") { value("CLOSED") }
+            }
+
+        val operationLog = operationLogRepository.findByEntityAndEntityIdAndOperation(EntityName.ACCOUNT.name, account.id, LogOperation.CLOSING.name).orElseThrow()
+        assertThat(operationLog.comments).isEqualTo("Account with id: ${account.id} closed")
+    }
+
+    @ParameterizedTest
+    @EnumSource(AccountStatus::class, names = ["CLOSED", "SUSPENDED"], mode = EnumSource.Mode.INCLUDE)
+    fun closeAccountFailWhenAccountStateIsNotValid(status: AccountStatus) {
+        val account = createTestAccount(AccountType.SAVINGS_ACCOUNT, status)
+
+        mockMvc
+            .patch("/api/accounts/${account.id}/open") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+                status { isUnprocessableEntity() }
+                jsonPath("message") { value("Account is not in a valid state") }
             }
     }
 
@@ -295,7 +326,7 @@ class AccountControllerIT : IntegrationTestBase() {
             ?.readText() ?: throw IllegalStateException("File not found")
 
         mockMvc
-            .patch("/api/accounts/1/suspend") {
+            .patch("/api/accounts/${account.id}/suspend") {
                 contentType = MediaType.APPLICATION_JSON
                 content = requestBody
             }.andExpect {
