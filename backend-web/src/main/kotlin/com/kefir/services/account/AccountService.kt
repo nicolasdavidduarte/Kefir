@@ -167,7 +167,7 @@ class AccountService(
     }
 
     @Transactional
-    fun suspend(id: Long, reason: String) {
+    fun suspend(id: Long, reason: String): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
         if (account.status != AccountStatus.OPENED) {
@@ -189,6 +189,8 @@ class AccountService(
                 user,
             ),
         )
+
+        return account.toResponse()
     }
 
     @Transactional
