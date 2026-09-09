@@ -1,13 +1,7 @@
 package com.kefir.services.account
 
 import com.kefir.entities.Account
-import com.kefir.entities.AccountType
-import com.kefir.entities.BankBranch
-import com.kefir.entities.Currency
-import com.kefir.entities.Customer
 import com.kefir.entities.User
-import com.kefir.entities.close
-import com.kefir.entities.open
 import com.kefir.enums.AccountStatus
 import com.kefir.enums.CustomerStatus
 import com.kefir.enums.EntityName
@@ -52,7 +46,7 @@ class AccountService(
     }
 
     @Transactional(readOnly = true)
-    fun getAllAccounts(pageable: Pageable): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc(pageable).map(Account::toResponse).toList()
+    fun getAll(pageable: Pageable): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc(pageable).map(Account::toResponse).toList()
 
     @Transactional(readOnly = true)
     fun getById(id: Long): Account = accountRepository.findById(id).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
@@ -74,12 +68,20 @@ class AccountService(
     fun addBalance(accountId: Long, amount: BigDecimal) {
         val account = accountRepository.findByIdForUpdate(accountId).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
+        if (account.status != AccountStatus.OPENED) {
+            throw ApiException(ErrorCode.ACCOUNT_NOT_VALID)
+        }
+
         account.balance += amount
     }
 
     @Transactional
     fun subtractBalance(accountId: Long, amount: BigDecimal) {
         val account = accountRepository.findByIdForUpdate(accountId).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+
+        if (account.status != AccountStatus.OPENED) {
+            throw ApiException(ErrorCode.ACCOUNT_NOT_VALID)
+        }
 
         if (account.balance < amount) {
             throw ApiException(ErrorCode.ACCOUNT_WITHOUT_FUNDS)
@@ -89,20 +91,20 @@ class AccountService(
     }
 
     @Transactional
-    fun createAccount(accountRequest: AccountRequest): AccountResponse {
-        val customer: Customer = customerService.getById(accountRequest.customerId)
+    fun create(accountRequest: AccountRequest): AccountResponse {
+        val customer = customerService.getById(accountRequest.customerId)
 
         if (customer.status != CustomerStatus.ACTIVE) {
             throw ApiException(ErrorCode.CUSTOMER_NOT_VALID)
         }
 
-        val user: User = userService.getById(authService.currentUserId)
+        val user = userService.getById(authService.currentUserId)
 
-        val accountType: AccountType = accountTypeService.getByName(accountRequest.type?.dbName)
+        val accountType = accountTypeService.getByName(accountRequest.type?.dbName)
 
-        val bankBranch: BankBranch = bankBranchService.getByBranchNumberAndBank(requireNotNull(accountRequest.bankBranchId), requireNotNull(accountRequest.bankId))
+        val bankBranch = bankBranchService.getByBranchNumberAndBank(requireNotNull(accountRequest.bankBranchId), requireNotNull(accountRequest.bankId))
 
-        val currency: Currency = currencyService.getByIsoCode(requireNotNull(accountRequest.currencyIsoCode))
+        val currency = currencyService.getByIsoCode(requireNotNull(accountRequest.currencyIsoCode))
 
         val sequence = accountRepository.findNextAccountNumberSequence()
 
@@ -110,52 +112,73 @@ class AccountService(
 
         val cbu = CBUGenerator.generate(bankBranch.bank.id, requireNotNull(accountRequest.bankBranchId), accountNumber)
 
-        val savedAccount =
-            accountRepository.save(
-                Account(
-                    type = accountType,
-                    customer = customer,
-                    currency = currency,
-                    bank = bankBranch.bank,
-                    balance = accountRequest.initialBalance,
-                    createdBy = user,
-                    updatedBy = user,
-                    accountNumber = accountNumber,
-                    cbu = cbu,
-                ),
-            )
+        val account = Account(
+            type = accountType,
+            customer = customer,
+            currency = currency,
+            bank = bankBranch.bank,
+            balance = accountRequest.initialBalance,
+            createdBy = user,
+            updatedBy = user,
+            accountNumber = accountNumber,
+            cbu = cbu,
+        )
+
+        accountRepository.save(account)
 
         operationLogService.log(
             OperationLogCommand(
                 operation = LogOperation.CREATION,
                 entity = EntityName.ACCOUNT,
-                entityId = savedAccount.id,
-                comments = "Account with id: ${savedAccount.id} created",
+                entityId = account.id,
+                comments = "Account with id: ${account.id} created",
                 user = user,
             ),
         )
 
-        return accountRepository.save(savedAccount).toResponse()
+        return account.toResponse()
     }
 
     @Transactional
     fun open(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
-        account.open()
-        account.updatedAt = OffsetDateTime.now()
+        if (account.status != AccountStatus.PENDING) {
+            throw ApiException(ErrorCode.ACCOUNT_NOT_VALID)
+        }
 
-        return accountRepository.save(account).toResponse()
+        val user = userService.getById(authService.currentUserId)
+
+        account.status = AccountStatus.OPENED
+        account.updatedAt = OffsetDateTime.now()
+        account.updatedBy = user
+
+        operationLogService.log(
+            OperationLogCommand(
+                operation = LogOperation.OPENING,
+                entity = EntityName.ACCOUNT,
+                entityId = account.id,
+                comments = "Account with id: ${account.id} opened",
+                user = user,
+            ),
+        )
+
+        return account.toResponse()
     }
 
     @Transactional
     fun suspend(id: Long, reason: String) {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
-        account.status = AccountStatus.SUSPENDED
-        account.updatedAt = OffsetDateTime.now()
+        if (account.status != AccountStatus.OPENED) {
+            throw ApiException(ErrorCode.ACCOUNT_NOT_VALID)
+        }
 
         val user: User = userService.getById(SYSTEM_USER)
+
+        account.status = AccountStatus.SUSPENDED
+        account.updatedAt = OffsetDateTime.now()
+        account.updatedBy = user
 
         operationLogService.log(
             OperationLogCommand(
@@ -172,6 +195,10 @@ class AccountService(
     fun close(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
+        if ((account.status != AccountStatus.OPENED) && (account.status != AccountStatus.PENDING)) {
+            throw ApiException(ErrorCode.ACCOUNT_NOT_VALID)
+        }
+
         val loans = loanRepository.findAllByAccountId(account.id)
 
         val loanPending = loans.any { it.status == LoanStatus.ACTIVE }
@@ -180,9 +207,22 @@ class AccountService(
             throw ApiException(ErrorCode.ACCOUNT_NOT_VALID_FOR_CLOSURE)
         }
 
-        account.close()
-        account.updatedAt = OffsetDateTime.now()
+        val user = userService.getById(authService.currentUserId)
 
-        return accountRepository.save(account).toResponse()
+        account.status = AccountStatus.CLOSED
+        account.updatedAt = OffsetDateTime.now()
+        account.updatedBy = user
+
+        operationLogService.log(
+            OperationLogCommand(
+                LogOperation.CLOSING,
+                EntityName.ACCOUNT,
+                id,
+                "Account with id: ${account.id} closed",
+                user,
+            ),
+        )
+
+        return account.toResponse()
     }
 }

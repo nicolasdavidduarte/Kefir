@@ -1,10 +1,16 @@
 package com.kefir.integration
 
+import com.jayway.jsonpath.JsonPath
 import com.kefir.entities.Account
 import com.kefir.entities.Customer
 import com.kefir.enums.AccountType
 import com.kefir.enums.CurrencyIsoCodes
 import com.kefir.enums.CustomerStatus
+import com.kefir.enums.CustomerType
+import com.kefir.enums.DocumentType
+import com.kefir.enums.EntityName
+import com.kefir.enums.LogOperation
+import com.kefir.enums.PersonType
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthenticatedUser
@@ -16,8 +22,11 @@ import com.kefir.repositories.CurrencyRepository
 import com.kefir.repositories.CustomerRepository
 import com.kefir.repositories.CustomerTypeRepository
 import com.kefir.repositories.DocumentTypeRepository
+import com.kefir.repositories.OperationLogRepository
 import com.kefir.repositories.PersonTypeRepository
 import com.kefir.repositories.UserRepository
+import jakarta.transaction.Transactional
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -29,15 +38,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.patch
+import org.springframework.test.web.servlet.post
 import java.math.BigDecimal
 import java.time.OffsetDateTime
 
+@Transactional
 class AccountControllerIT : IntegrationTestBase() {
 
     @Autowired
@@ -45,6 +52,9 @@ class AccountControllerIT : IntegrationTestBase() {
 
     @Autowired
     lateinit var accountRepository: AccountRepository
+
+    @Autowired
+    lateinit var accountTypeRepository: AccountTypeRepository
 
     @Autowired
     lateinit var bankRepository: BankRepository
@@ -59,16 +69,16 @@ class AccountControllerIT : IntegrationTestBase() {
     lateinit var customerRepository: CustomerRepository
 
     @Autowired
-    lateinit var personTypeRepository: PersonTypeRepository
+    lateinit var customerTypeRepository: CustomerTypeRepository
 
     @Autowired
     lateinit var documentTypeRepository: DocumentTypeRepository
 
     @Autowired
-    lateinit var customerTypeRepository: CustomerTypeRepository
+    lateinit var operationLogRepository: OperationLogRepository
 
     @Autowired
-    lateinit var accountTypeRepository: AccountTypeRepository
+    lateinit var personTypeRepository: PersonTypeRepository
 
     @Autowired
     lateinit var userRepository: UserRepository
@@ -77,10 +87,10 @@ class AccountControllerIT : IntegrationTestBase() {
 
     @BeforeEach
     fun setup() {
-        val personType = personTypeRepository.findById(1).orElseThrow { ApiException(ErrorCode.PERSON_TYPE_NOT_FOUND) }
-        val documentType = documentTypeRepository.findById(1).orElseThrow { ApiException(ErrorCode.DOCUMENT_TYPE_NOT_FOUND) }
-        val customerType = customerTypeRepository.findById(1).orElseThrow { ApiException(ErrorCode.CUSTOMER_NOT_FOUND) }
-        val user = userRepository.findById(1).orElseThrow { ApiException(ErrorCode.USER_NOT_FOUND) }
+        val personType = personTypeRepository.findByNameIgnoreCase(PersonType.NATURAL.name).orElseThrow { ApiException(ErrorCode.PERSON_TYPE_NOT_FOUND) }
+        val documentType = documentTypeRepository.findByNameIgnoreCase(DocumentType.DNI.name).orElseThrow { ApiException(ErrorCode.DOCUMENT_TYPE_NOT_FOUND) }
+        val customerType = customerTypeRepository.findByNameIgnoreCase(CustomerType.RETAIL.name).orElseThrow { ApiException(ErrorCode.CUSTOMER_NOT_FOUND) }
+        val user = userRepository.findByUsername("admin").orElseThrow { ApiException(ErrorCode.USER_NOT_FOUND) }
 
         customerRepository.save(
 
@@ -128,12 +138,24 @@ class AccountControllerIT : IntegrationTestBase() {
                 ?.readText()
                 ?: throw IllegalStateException("File not found")
 
-        mockMvc.perform(
-            post("/api/accounts")
-                .contentType(MediaType.APPLICATION_JSON).content(requestBody),
-        ).andDo(print())
-            .andExpect(status().isCreated())
-            .andExpect(jsonPath("$.id").exists())
+        val result = mockMvc.post("/api/accounts") {
+            contentType = MediaType.APPLICATION_JSON
+            content = requestBody
+        }.andExpect {
+            status { isCreated() }
+            jsonPath("id") { exists() }
+            jsonPath("status") { value("PENDING") }
+        }.andReturn()
+
+        val responseString = result.response.contentAsString
+        val createdId = JsonPath.read<Number>(responseString, "$.id").toLong()
+
+        // DB validation
+        val account = accountRepository.findById(createdId).orElseThrow()
+        assertThat(account).isNotNull
+
+        val operationLog = operationLogRepository.findByEntityAndEntityIdAndOperation(EntityName.ACCOUNT.name, account.id, LogOperation.CREATION.name).orElseThrow()
+        assertThat(operationLog.comments).isEqualTo("Account with id: ${account.id} created")
     }
 
     @Test
@@ -150,22 +172,24 @@ class AccountControllerIT : IntegrationTestBase() {
             .getResource("requests/account/create-account-success.json")
             ?.readText() ?: throw IllegalStateException("File not found")
 
-        mockMvc.perform(
-            post("/api/accounts")
-                .contentType(MediaType.APPLICATION_JSON).content(requestBody),
-        ).andDo(print())
-            .andExpect(status().isForbidden())
+        mockMvc.post("/api/accounts") {
+            contentType = MediaType.APPLICATION_JSON
+            content = requestBody
+        }.andExpect {
+            status { isForbidden() }
+        }
     }
 
     @Test
     fun createAccountFailWhenPayloadIsInvalid() {
         val invalidRequestBody = "{}"
 
-        mockMvc.perform(
-            post("/api/accounts")
-                .contentType(MediaType.APPLICATION_JSON).content(invalidRequestBody),
-        ).andDo(print())
-            .andExpect(status().isBadRequest())
+        mockMvc.post("/api/accounts") {
+            contentType = MediaType.APPLICATION_JSON
+            content = invalidRequestBody
+        }.andExpect {
+            status { isBadRequest() }
+        }
     }
 
     @Test
@@ -173,87 +197,91 @@ class AccountControllerIT : IntegrationTestBase() {
         createTestAccount(AccountType.SAVINGS_ACCOUNT)
         createTestAccount(AccountType.CHECKING_ACCOUNT)
 
-        mockMvc.perform(
-            get("/api/accounts"),
-        ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$").isArray)
-            .andExpect(jsonPath("$.length()").value(2))
+        mockMvc.get("/api/accounts") {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isOk() }
+            jsonPath("$") { isArray() }
+            jsonPath("length()") { value(2) }
             // First account data
-            .andExpect(jsonPath("$[0].id").exists())
-            .andExpect(jsonPath("$[0].customer").value("John Doe"))
-            .andExpect(jsonPath("$[0].type").value("SAVINGS ACCOUNT"))
-            .andExpect(jsonPath("$[0].currencyIsoCode").value("USD"))
-            .andExpect(jsonPath("$[0].bank").value("KEFIR BANK"))
-            .andExpect(jsonPath("$[0].cbu").exists())
-            .andExpect(jsonPath("$[0].balance").value(BigDecimal("10000.0")))
-            .andExpect(jsonPath("$[0].status").value("PENDING"))
+            jsonPath("[0]id") { exists() }
+            jsonPath("[0]customer") { value("John Doe") }
+            jsonPath("[0]type") { value("SAVINGS ACCOUNT") }
+            jsonPath("[0]currencyIsoCode") { value("USD") }
+            jsonPath("[0]bank") { value("KEFIR BANK") }
+            jsonPath("[0]cbu") { exists() }
+            jsonPath("[0]balance") { value(BigDecimal("10000.0")) }
+            jsonPath("[0]status") { value("PENDING") }
             // Second account data
-            .andExpect(jsonPath("$[1].id").exists())
-            .andExpect(jsonPath("$[1].customer").value("John Doe"))
-            .andExpect(jsonPath("$[1].type").value("CHECKING ACCOUNT"))
-            .andExpect(jsonPath("$[1].currencyIsoCode").value("USD"))
-            .andExpect(jsonPath("$[1].bank").value("KEFIR BANK"))
-            .andExpect(jsonPath("$[1].cbu").exists())
-            .andExpect(jsonPath("$[1].balance").value(BigDecimal("10000.0")))
-            .andExpect(jsonPath("$[1].status").value("PENDING"))
+            jsonPath("[1]id") { exists() }
+            jsonPath("[1]customer") { value("John Doe") }
+            jsonPath("[1]type") { value("CHECKING ACCOUNT") }
+            jsonPath("[1]currencyIsoCode") { value("USD") }
+            jsonPath("[1]bank") { value("KEFIR BANK") }
+            jsonPath("[1]cbu") { exists() }
+            jsonPath("[1]balance") { value(BigDecimal("10000.0")) }
+            jsonPath("[1]status") { value("PENDING") }
+        }
     }
 
     @Test
     fun getAllAccountsFailWhenDatabaseIsEmpty() {
-        mockMvc.perform(
-            get("/api/accounts"),
-        ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("length()").value(0))
+        mockMvc
+            .get("/api/accounts") {
+                contentType = MediaType.APPLICATION_JSON
+            }.andExpect {
+                status { isOk() }
+                jsonPath("length()") { value(0) }
+            }
     }
 
     @Test
     fun getAccountByIdSuccessfully() {
         createTestAccount(AccountType.SAVINGS_ACCOUNT)
 
-        mockMvc.perform(
-            get("/api/accounts/1"),
-        ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("id").exists())
-            .andExpect(jsonPath("customer").value("John Doe"))
-            .andExpect(jsonPath("type").value("SAVINGS ACCOUNT"))
-            .andExpect(jsonPath("currencyIsoCode").value("USD"))
-            .andExpect(jsonPath("bank").value("KEFIR BANK"))
-            .andExpect(jsonPath("cbu").exists())
-            .andExpect(jsonPath("balance").value(BigDecimal("10000.0")))
-            .andExpect(jsonPath("status").value("PENDING"))
+        mockMvc.get("/api/accounts/1") {
+            contentType = MediaType.APPLICATION_JSON
+        }.andExpect {
+            status { isOk() }
+            jsonPath("id") { exists() }
+            jsonPath("customer") { value("John Doe") }
+            jsonPath("type") { value("SAVINGS ACCOUNT") }
+            jsonPath("currencyIsoCode") { value("USD") }
+            jsonPath("bank") { value("KEFIR BANK") }
+            jsonPath("cbu") { exists() }
+            jsonPath("balance") { value(BigDecimal("10000.0")) }
+            jsonPath("status") { value("PENDING") }
+        }
     }
 
     @Test
     fun getAccountByIdFailWhenIdNotFound() {
-        mockMvc.perform(
-            get("/api/accounts/1"),
-        ).andDo(print())
-            .andExpect(status().isNotFound())
+        mockMvc
+            .get("/api/accounts/1") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+                status { isNotFound() }
+            }
     }
 
     @Test
     fun openAccountSuccessfully() {
         createTestAccount(AccountType.SAVINGS_ACCOUNT)
 
-        mockMvc.perform(
-            patch("/api/accounts/1/open"),
-        ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("status").value("OPENED"))
+        mockMvc
+            .patch("/api/accounts/1/open") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+                status { isOk() }
+                jsonPath("status") { value("OPENED") }
+            }
     }
 
     @Test
     fun closeAccountSuccessfully() {
         createTestAccount(AccountType.SAVINGS_ACCOUNT)
 
-        mockMvc.perform(
-            patch("/api/accounts/1/close"),
-        ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("status").value("CLOSED"))
+        mockMvc
+            .patch("/api/accounts/1/close") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+                status { isOk() }
+                jsonPath("status") { value("CLOSED") }
+            }
     }
 
     @Test
@@ -265,12 +293,12 @@ class AccountControllerIT : IntegrationTestBase() {
         createTestAccount(AccountType.CHECKING_ACCOUNT)
 
         mockMvc
-            .perform(get("/api/accounts?page=2&size=2").contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(2)) // First customer data
-            .andExpect(jsonPath("$[0].id").value(3)) // Second customer data
-            .andExpect(jsonPath("$[1].id").value(4))
+            .get("/api/accounts?page=2&size=2") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+                status { isOk() }
+                jsonPath("length()") { value(2) }
+                jsonPath("[0]id") { value(3) } // First customer data
+                jsonPath("[1]id") { value(4) } // Second customer data
+            }
     }
 
     @ParameterizedTest
@@ -287,9 +315,10 @@ class AccountControllerIT : IntegrationTestBase() {
         expectedMessage: String?,
     ) {
         mockMvc
-            .perform(get("/api/accounts?" + queryParams))
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").value(expectedMessage))
+            .get("/api/accounts?$queryParams") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+                status { isBadRequest() }
+                jsonPath("message") { value(expectedMessage) }
+            }
     }
 
     private fun createTestAccount(accountType: AccountType): Account {
@@ -301,7 +330,7 @@ class AccountControllerIT : IntegrationTestBase() {
 
         val customer = customerRepository.findById(1).orElseThrow { ApiException(ErrorCode.CUSTOMER_NOT_FOUND) }
 
-        val user = userRepository.findById(2).orElseThrow { ApiException(ErrorCode.USER_NOT_FOUND) }
+        val user = userRepository.findByUsername("operator").orElseThrow { ApiException(ErrorCode.USER_NOT_FOUND) }
 
         val randomCbu = "001000" + (1000000000000000..9999999999999999).random().toString()
 
@@ -314,7 +343,7 @@ class AccountControllerIT : IntegrationTestBase() {
                 balance = BigDecimal("10000.00"),
                 createdBy = user,
                 updatedBy = user,
-                accountNumber = "fdfdfd",
+                accountNumber = "11111",
                 cbu = randomCbu,
             ),
         )
