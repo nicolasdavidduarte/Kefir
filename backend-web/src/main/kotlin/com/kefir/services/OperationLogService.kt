@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class OperationLogService(
     private val operationLogRepository: OperationLogRepository,
-    private val userService: UserService,
-    private val authService: AuthService,
 ) {
 
     @Transactional

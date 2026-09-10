@@ -21,7 +21,7 @@ class LoanInstallmentController(
 ) {
 
     @GetMapping
-    fun getAllInstallments(@PathVariable loanId: Long): List<LoanInstallmentResponse> = loanInstallmentService.getAllInstallments(loanId)
+    fun getAll(@PathVariable loanId: Long): List<LoanInstallmentResponse> = loanInstallmentService.getAllInstallments(loanId)
 
     @PostMapping("/{installmentNumber}/payment")
     @ResponseStatus(HttpStatus.OK)

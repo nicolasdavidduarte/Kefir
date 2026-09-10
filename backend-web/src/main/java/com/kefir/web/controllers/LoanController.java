@@ -85,21 +85,21 @@ public class LoanController {
       description = "Time taken to create loan",
       percentiles = {0.5, 0.9, 0.95, 0.99},
       histogram = true)
-  public LoanResponse createLoan(@RequestBody @Valid LoanRequest loanRequest) {
+  public LoanResponse create(@RequestBody @Valid LoanRequest loanRequest) {
     return loanService.create(loanRequest);
   }
 
   @PatchMapping("/{loanId}/approve")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public LoanResponse approveLoan(@PathVariable Long loanId) {
+  public LoanResponse approve(@PathVariable Long loanId) {
     return loanService.approve(loanId);
   }
 
   @PostMapping("/{loanId}/chargeoff")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public LoanResponse chargeOffLoan(
+  public LoanResponse chargeOff(
       @PathVariable Long loanId, @RequestBody @Valid LoanChargeOffRequest chargeOffRequest) {
     return loanService.chargeOff(loanId, chargeOffRequest);
   }

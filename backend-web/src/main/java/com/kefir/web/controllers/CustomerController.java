@@ -45,7 +45,7 @@ public class CustomerController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public CustomerResponse createCustomer(@RequestBody @Valid CustomerCreationRequest customer) {
+  public CustomerResponse create(@RequestBody @Valid CustomerCreationRequest customer) {
 
     return customerService.create(customer);
   }
@@ -53,7 +53,7 @@ public class CustomerController {
   @PatchMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public CustomerResponse updateCustomer(
+  public CustomerResponse update(
       @RequestBody @Valid CustomerUpdateRequest request, @PathVariable Long id) {
     return customerService.update(request, id);
   }
@@ -61,7 +61,7 @@ public class CustomerController {
   @PostMapping("/{id}/status/activate")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public CustomerResponse activateCustomer(@PathVariable Long id) {
+  public CustomerResponse activate(@PathVariable Long id) {
 
     return customerService.activate(id);
   }
@@ -69,7 +69,7 @@ public class CustomerController {
   @PostMapping("/{id}/status/deactivate")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-  public CustomerResponse deactivateCustomer(@PathVariable Long id) {
+  public CustomerResponse deactivate(@PathVariable Long id) {
 
     return customerService.deactivate(id);
   }
