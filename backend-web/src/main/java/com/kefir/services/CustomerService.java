@@ -2,6 +2,8 @@ package com.kefir.services;
 
 import com.kefir.entities.*;
 import com.kefir.enums.CustomerStatus;
+import com.kefir.enums.EntityName;
+import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
@@ -9,6 +11,7 @@ import com.kefir.repositories.CustomerRepository;
 import com.kefir.web.dtos.customer.CustomerCreationRequest;
 import com.kefir.web.dtos.customer.CustomerResponse;
 import com.kefir.web.dtos.customer.CustomerUpdateRequest;
+import com.kefir.web.dtos.operationLog.OperationLogCommand;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.function.Consumer;
@@ -25,6 +28,7 @@ public class CustomerService {
   private final CustomerTypeService customerTypeService;
   private final AuthService authService;
   private final UserService userService;
+  private final OperationLogService operationLogService;
 
   public CustomerService(
       CustomerRepository customerRepository,
@@ -32,13 +36,15 @@ public class CustomerService {
       CustomerTypeService customerTypeService,
       AuthService authService,
       UserService userService,
-      PersonTypeService personTypeService) {
+      PersonTypeService personTypeService,
+      OperationLogService operationLogService) {
     this.customerRepository = customerRepository;
     this.documentTypeService = documentTypeService;
     this.personTypeService = personTypeService;
     this.customerTypeService = customerTypeService;
     this.authService = authService;
     this.userService = userService;
+    this.operationLogService = operationLogService;
   }
 
   @Transactional(readOnly = true)
@@ -73,13 +79,13 @@ public class CustomerService {
   @Transactional
   public CustomerResponse create(CustomerCreationRequest request) {
 
+    User user = userService.getById(authService.getCurrentUserId());
+
     DocumentType documentType = documentTypeService.getByName(request.documentType());
 
     PersonType personType = personTypeService.getByName(request.personType());
 
     CustomerType customerType = getCustomerType(request.customerType());
-
-    User user = userService.getById(authService.getCurrentUserId());
 
     Customer newCustomer =
         Customer.builder()
@@ -103,9 +109,17 @@ public class CustomerService {
     String fullname = generateFullname(newCustomer);
     newCustomer.setFullname(fullname);
 
-    Customer customerSaved = customerRepository.saveAndFlush(newCustomer);
+    customerRepository.save(newCustomer);
 
-    return CustomerResponse.fromEntity(customerSaved);
+    operationLogService.log(
+        new OperationLogCommand(
+            LogOperation.CREATION,
+            EntityName.CUSTOMER,
+            newCustomer.getId(),
+            "Customer successfully created",
+            user));
+
+    return CustomerResponse.fromEntity(newCustomer);
   }
 
   @Transactional
@@ -114,6 +128,9 @@ public class CustomerService {
         customerRepository
             .findById(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
+
+    if (!customer.getStatus().equals(CustomerStatus.ACTIVE))
+      throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
 
     updateIfChanged(request.name1(), customer.getName1(), customer::setName1);
     updateIfChanged(request.name2(), customer.getName2(), customer::setName2);
@@ -137,13 +154,22 @@ public class CustomerService {
 
     if (request.documentNumber() != null) customer.setDocumentNumber(request.documentNumber());
 
-    customer.setUpdatedBy(userService.getById(authService.getCurrentUserId()));
+    User user = userService.getById(authService.getCurrentUserId());
 
     customer.setUpdatedAt(OffsetDateTime.now());
+    customer.setUpdatedBy(user);
 
-    Customer customerUpdated = customerRepository.save(customer);
+    customerRepository.save(customer);
 
-    return CustomerResponse.fromEntity(customerUpdated);
+    operationLogService.log(
+        new OperationLogCommand(
+            LogOperation.UPDATE,
+            EntityName.CUSTOMER,
+            customer.getId(),
+            "Customer successfully updated",
+            user));
+
+    return CustomerResponse.fromEntity(customer);
   }
 
   @Transactional
@@ -152,11 +178,27 @@ public class CustomerService {
         customerRepository
             .findById(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
+
+    if (!customer.getStatus().equals(CustomerStatus.PENDING))
+      throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
+
+    User user = userService.getById(authService.getCurrentUserId());
+
     customer.setStatus(CustomerStatus.ACTIVE);
+    customer.setUpdatedAt(OffsetDateTime.now());
+    customer.setUpdatedBy(user);
 
-    Customer updatedCustomer = customerRepository.save(customer);
+    operationLogService.log(
+        new OperationLogCommand(
+            LogOperation.ACTIVATE,
+            EntityName.CUSTOMER,
+            customer.getId(),
+            "Customer successfully activated",
+            user));
 
-    return CustomerResponse.fromEntity(updatedCustomer);
+    customerRepository.save(customer);
+
+    return CustomerResponse.fromEntity(customer);
   }
 
   @Transactional
@@ -165,11 +207,27 @@ public class CustomerService {
         customerRepository
             .findById(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
+
+    if (!customer.getStatus().equals(CustomerStatus.ACTIVE))
+      throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
+
+    User user = userService.getById(authService.getCurrentUserId());
+
     customer.setStatus(CustomerStatus.DEACTIVATED);
+    customer.setUpdatedAt(OffsetDateTime.now());
+    customer.setUpdatedBy(user);
 
-    Customer updatedCustomer = customerRepository.save(customer);
+    customerRepository.save(customer);
 
-    return CustomerResponse.fromEntity(updatedCustomer);
+    operationLogService.log(
+        new OperationLogCommand(
+            LogOperation.DEACTIVATION,
+            EntityName.CUSTOMER,
+            customer.getId(),
+            "Customer successfully deactivated",
+            user));
+
+    return CustomerResponse.fromEntity(customer);
   }
 
   private String generateFullname(Customer customer) {
