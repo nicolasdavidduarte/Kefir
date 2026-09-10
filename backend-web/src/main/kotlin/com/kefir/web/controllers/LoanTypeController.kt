@@ -24,7 +24,7 @@ class LoanTypeController(
     @PostMapping("/types")
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     @ResponseStatus(HttpStatus.CREATED)
-    fun createLoanType(
+    fun create(
         @RequestBody @Valid loanTypeRequest: LoanTypeRequest,
     ): LoanTypeResponse = loanTypeService.create(loanTypeRequest)
 }

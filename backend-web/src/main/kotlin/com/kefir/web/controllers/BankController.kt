@@ -20,17 +20,17 @@ class BankController(
     val bankService: BankService,
 ) {
     @GetMapping
-    fun getAllBanks(): List<BankResponse> = bankService.getAll()
+    fun getAll(): List<BankResponse> = bankService.getAll()
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-    fun createBank(
+    fun create(
         @RequestBody @Valid bankRequest: BankRequest,
     ) = bankService.create(bankRequest)
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
-    fun activateBank(
+    fun activate(
         @PathVariable id: Int,
     ): EntityOperationResponse = bankService.enable(id)
 }
