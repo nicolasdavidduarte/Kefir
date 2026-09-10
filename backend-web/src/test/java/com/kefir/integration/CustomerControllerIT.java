@@ -385,7 +385,7 @@ class CustomerControllerIT extends IntegrationTestBase {
   @Test
   void deactivateCustomerFailWhenIdNotFound() throws Exception {
     mockMvc
-        .perform(post("/api/customers/99/status/activate"))
+        .perform(post("/api/customers/99/status/deactivate"))
         .andDo(print())
         .andExpect(status().isNotFound());
   }
