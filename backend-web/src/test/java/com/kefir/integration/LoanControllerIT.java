@@ -38,6 +38,8 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.List;
+
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,6 +55,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+@Transactional
 class LoanControllerIT extends IntegrationTestBase {
   @Autowired private MockMvc mockMvc;
 
@@ -126,6 +129,7 @@ class LoanControllerIT extends IntegrationTestBase {
     Long loanId = ((Number) JsonPath.read(response, "$.id")).longValue();
 
     Loan loan = loanRepository.findById(loanId).orElseThrow();
+    assertThat(loan.getId()).isNotNull();
 
     OperationLog operationLog = operationLogRepository.findByEntityAndEntityIdAndOperation(EntityName.LOAN.name(), loan.getId(), LogOperation.CREATION.name()).orElseThrow();
     assertThat(operationLog.getComments()).isEqualTo("Loan successfully created");
