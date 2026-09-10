@@ -55,8 +55,10 @@ public class SecurityConfig {
             auth ->
                 auth.requestMatchers("/", "/api/auth/login", "/api/auth/refresh")
                     .permitAll()
-                    .requestMatchers("/actuator/**")
+                    .requestMatchers("/actuator/health", "/actuator/info")
                     .permitAll()
+                    .requestMatchers("/actuator/**")
+                    .hasRole("ADMIN")
                     .requestMatchers("/error", "/api/version")
                     .permitAll()
                     .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
