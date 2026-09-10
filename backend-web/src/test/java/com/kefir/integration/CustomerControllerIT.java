@@ -1,11 +1,15 @@
 package com.kefir.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.jayway.jsonpath.JsonPath;
 import com.kefir.entities.*;
+import com.kefir.enums.EntityName;
+import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthenticatedUser;
@@ -14,6 +18,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.List;
+
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +32,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
+@Transactional
 class CustomerControllerIT extends IntegrationTestBase {
 
   @Autowired private MockMvc mockMvc;
@@ -40,6 +48,8 @@ class CustomerControllerIT extends IntegrationTestBase {
   @Autowired private CustomerTypeRepository customerTypeRepository;
 
   @Autowired private UserRepository userRepository;
+
+  @Autowired private OperationLogRepository operationLogRepository;
 
   @BeforeEach
   public void setup() {
@@ -70,12 +80,19 @@ class CustomerControllerIT extends IntegrationTestBase {
       throw new IllegalStateException("File not found or unreadable", e);
     }
 
-    mockMvc
+    MvcResult result = mockMvc
         .perform(
             post("/api/customers").contentType(MediaType.APPLICATION_JSON).content(requestBody))
         .andDo(print())
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").exists());
+        .andExpect(jsonPath("$.id").exists()).andReturn();
+
+
+    String response = result.getResponse().getContentAsString();
+    Long customerId = ((Number) JsonPath.read(response, "$.id")).longValue();
+
+    Customer customer = customerRepository.findById(customerId).orElseThrow();
+    assertThat(customer.getId()).isNotNull();
   }
 
   @Test
