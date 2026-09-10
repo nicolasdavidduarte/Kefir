@@ -8,18 +8,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.jayway.jsonpath.JsonPath;
 import com.kefir.entities.*;
-import com.kefir.enums.EntityName;
-import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthenticatedUser;
 import com.kefir.repositories.*;
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.List;
-
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -80,13 +77,14 @@ class CustomerControllerIT extends IntegrationTestBase {
       throw new IllegalStateException("File not found or unreadable", e);
     }
 
-    MvcResult result = mockMvc
-        .perform(
-            post("/api/customers").contentType(MediaType.APPLICATION_JSON).content(requestBody))
-        .andDo(print())
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").exists()).andReturn();
-
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/customers").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").exists())
+            .andReturn();
 
     String response = result.getResponse().getContentAsString();
     Long customerId = ((Number) JsonPath.read(response, "$.id")).longValue();

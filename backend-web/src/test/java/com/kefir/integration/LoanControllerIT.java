@@ -38,8 +38,6 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.List;
-
-import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +53,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-@Transactional
 class LoanControllerIT extends IntegrationTestBase {
   @Autowired private MockMvc mockMvc;
 
@@ -118,11 +115,13 @@ class LoanControllerIT extends IntegrationTestBase {
       throw new IllegalStateException("File not found or unreadable", e);
     }
 
-    MvcResult result = mockMvc
-        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
-        .andDo(print())
-        .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id").exists())
+    MvcResult result =
+        mockMvc
+            .perform(
+                post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+            .andDo(print())
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").exists())
             .andReturn();
 
     String response = result.getResponse().getContentAsString();
@@ -131,7 +130,11 @@ class LoanControllerIT extends IntegrationTestBase {
     Loan loan = loanRepository.findById(loanId).orElseThrow();
     assertThat(loan.getId()).isNotNull();
 
-    OperationLog operationLog = operationLogRepository.findByEntityAndEntityIdAndOperation(EntityName.LOAN.name(), loan.getId(), LogOperation.CREATION.name()).orElseThrow();
+    OperationLog operationLog =
+        operationLogRepository
+            .findByEntityAndEntityIdAndOperation(
+                EntityName.LOAN.name(), loan.getId(), LogOperation.CREATION.name())
+            .orElseThrow();
     assertThat(operationLog.getComments()).isEqualTo("Loan successfully created");
   }
 
@@ -422,17 +425,26 @@ class LoanControllerIT extends IntegrationTestBase {
     Loan loan = createTestLoan(customer, account, 996L, LoanStatus.PENDING);
 
     mockMvc
-            .perform(patch("/api/loans/" + loan.getId() + "/approve").contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.status").value("ACTIVE"));
+        .perform(
+            patch("/api/loans/" + loan.getId() + "/approve")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("ACTIVE"));
 
-    OperationLog operationLog = operationLogRepository.findByEntityAndEntityIdAndOperation(EntityName.LOAN.name(), loan.getId(), LogOperation.APPROVAL.name()).orElseThrow();
+    OperationLog operationLog =
+        operationLogRepository
+            .findByEntityAndEntityIdAndOperation(
+                EntityName.LOAN.name(), loan.getId(), LogOperation.APPROVAL.name())
+            .orElseThrow();
     assertThat(operationLog.getComments()).isEqualTo("Loan successfully approved");
   }
 
   @ParameterizedTest
-  @EnumSource(value = LoanStatus.class, names = {"PENDING"}, mode = EnumSource.Mode.EXCLUDE)
+  @EnumSource(
+      value = LoanStatus.class,
+      names = {"PENDING"},
+      mode = EnumSource.Mode.EXCLUDE)
   void approveLoanFailWhenStateIsNotPending(LoanStatus status) throws Exception {
 
     Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
@@ -441,10 +453,12 @@ class LoanControllerIT extends IntegrationTestBase {
     Loan loan = createTestLoan(customer, account, 996L, status);
 
     mockMvc
-            .perform(patch("/api/loans/" + loan.getId() + "/approve").contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isUnprocessableEntity())
-            .andExpect(jsonPath("$.message").value("Loan is not in a valid state"));
+        .perform(
+            patch("/api/loans/" + loan.getId() + "/approve")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isUnprocessableEntity())
+        .andExpect(jsonPath("$.message").value("Loan is not in a valid state"));
   }
 
   @Test
@@ -458,24 +472,37 @@ class LoanControllerIT extends IntegrationTestBase {
     String requestBody;
     try {
       requestBody =
-              new ClassPathResource("requests/loan/charge-off-loan-success.json")
-                      .getContentAsString(StandardCharsets.UTF_8);
+          new ClassPathResource("requests/loan/charge-off-loan-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
     } catch (IOException e) {
       throw new IllegalStateException("File not found or unreadable", e);
     }
 
     mockMvc
-            .perform(post("/api/loans/" + loan.getId() + "/chargeoff").contentType(MediaType.APPLICATION_JSON).content(requestBody))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.status").value("CHARGE_OFF"));
+        .perform(
+            post("/api/loans/" + loan.getId() + "/chargeoff")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("CHARGE_OFF"));
 
-    OperationLog operationLog = operationLogRepository.findByEntityAndEntityIdAndOperation(EntityName.LOAN.name(), loan.getId(), LogOperation.CHARGE_OFF.name()).orElseThrow();
-    assertThat(operationLog.getComments()).isEqualTo("Exhausted all internal and external collection efforts; balance deemed uncollectible.");
+    OperationLog operationLog =
+        operationLogRepository
+            .findByEntityAndEntityIdAndOperation(
+                EntityName.LOAN.name(), loan.getId(), LogOperation.CHARGE_OFF.name())
+            .orElseThrow();
+    assertThat(operationLog.getComments())
+        .isEqualTo(
+            "Exhausted all internal and external collection efforts; balance deemed"
+                + " uncollectible.");
   }
 
   @ParameterizedTest
-  @EnumSource(value = LoanStatus.class, names = {"ACTIVE"}, mode = EnumSource.Mode.EXCLUDE)
+  @EnumSource(
+      value = LoanStatus.class,
+      names = {"ACTIVE"},
+      mode = EnumSource.Mode.EXCLUDE)
   void chargeOffLoanFailWhenStatusIsNotActive(LoanStatus status) throws Exception {
 
     Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
@@ -486,17 +513,20 @@ class LoanControllerIT extends IntegrationTestBase {
     String requestBody;
     try {
       requestBody =
-              new ClassPathResource("requests/loan/charge-off-loan-success.json")
-                      .getContentAsString(StandardCharsets.UTF_8);
+          new ClassPathResource("requests/loan/charge-off-loan-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
     } catch (IOException e) {
       throw new IllegalStateException("File not found or unreadable", e);
     }
 
     mockMvc
-            .perform(post("/api/loans/" + loan.getId() + "/chargeoff").contentType(MediaType.APPLICATION_JSON).content(requestBody))
-            .andDo(print())
-            .andExpect(status().isUnprocessableEntity())
-            .andExpect(jsonPath("$.message").value("Loan is not in a valid state"));
+        .perform(
+            post("/api/loans/" + loan.getId() + "/chargeoff")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andDo(print())
+        .andExpect(status().isUnprocessableEntity())
+        .andExpect(jsonPath("$.message").value("Loan is not in a valid state"));
   }
 
   private Customer createTestCustomer(Integer id, String documentNumber, CustomerStatus status) {
@@ -583,7 +613,8 @@ class LoanControllerIT extends IntegrationTestBase {
     return accountRepository.save(account);
   }
 
-  private Loan createTestLoan(Customer customer, Account account, Long externalId, LoanStatus status) {
+  private Loan createTestLoan(
+      Customer customer, Account account, Long externalId, LoanStatus status) {
 
     LoanType loanType =
         loanTypeRepository
