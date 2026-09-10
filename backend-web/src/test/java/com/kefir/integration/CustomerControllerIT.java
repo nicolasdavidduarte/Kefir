@@ -8,11 +8,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.jayway.jsonpath.JsonPath;
 import com.kefir.entities.*;
+import com.kefir.enums.CustomerStatus;
+import com.kefir.enums.EntityName;
+import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthenticatedUser;
 import com.kefir.repositories.*;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
@@ -22,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
@@ -31,7 +34,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-@Transactional
 class CustomerControllerIT extends IntegrationTestBase {
 
   @Autowired private MockMvc mockMvc;
@@ -87,10 +89,17 @@ class CustomerControllerIT extends IntegrationTestBase {
             .andReturn();
 
     String response = result.getResponse().getContentAsString();
-    Long customerId = ((Number) JsonPath.read(response, "$.id")).longValue();
+    long customerId = ((Number) JsonPath.read(response, "$.id")).longValue();
 
     Customer customer = customerRepository.findById(customerId).orElseThrow();
     assertThat(customer.getId()).isNotNull();
+
+    OperationLog operationLog =
+        operationLogRepository
+            .findByEntityAndEntityIdAndOperation(
+                EntityName.CUSTOMER.name(), customerId, LogOperation.CREATION.name())
+            .orElseThrow();
+    assertThat(operationLog.getComments()).isEqualTo("Customer successfully created");
   }
 
   @Test
@@ -158,8 +167,8 @@ class CustomerControllerIT extends IntegrationTestBase {
 
   @Test
   void getAllCustomersSuccessfully() throws Exception {
-    createTestCustomer(1, "123456788");
-    createTestCustomer(2, "123456789");
+    createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
+    createTestCustomer(2, "123456789", CustomerStatus.ACTIVE);
 
     mockMvc
         .perform(get("/api/customers").contentType(MediaType.APPLICATION_JSON))
@@ -175,7 +184,7 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$[0].documentType").value("DNI"))
         .andExpect(jsonPath("$[0].documentNumber").value("123456788"))
         .andExpect(jsonPath("$[0].customerType").value("RETAIL"))
-        .andExpect(jsonPath("$[0].status").value("PENDING"))
+        .andExpect(jsonPath("$[0].status").value("ACTIVE"))
         .andExpect(jsonPath("$[0].createdBy").value("admin"))
         .andExpect(jsonPath("$[0].createdAt").exists())
         .andExpect(jsonPath("$[0].updatedBy").value("admin"))
@@ -189,7 +198,7 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$[1].documentType").value("PASSPORT"))
         .andExpect(jsonPath("$[1].documentNumber").value("123456789"))
         .andExpect(jsonPath("$[1].customerType").value("RETAIL"))
-        .andExpect(jsonPath("$[1].status").value("PENDING"))
+        .andExpect(jsonPath("$[1].status").value("ACTIVE"))
         .andExpect(jsonPath("$[1].createdBy").value("admin"))
         .andExpect(jsonPath("$[1].createdAt").exists())
         .andExpect(jsonPath("$[1].updatedBy").value("admin"))
@@ -207,10 +216,10 @@ class CustomerControllerIT extends IntegrationTestBase {
 
   @Test
   void getCustomerByIdSuccessfully() throws Exception {
-    createTestCustomer(1, "123456788");
+    Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
 
     mockMvc
-        .perform(get("/api/customers/1").contentType(MediaType.APPLICATION_JSON))
+        .perform(get("/api/customers/" + customer.getId()).contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
         // First customer data
@@ -222,7 +231,7 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("documentType").value("DNI"))
         .andExpect(jsonPath("documentNumber").value("123456788"))
         .andExpect(jsonPath("customerType").value("RETAIL"))
-        .andExpect(jsonPath("status").value("PENDING"))
+        .andExpect(jsonPath("status").value("ACTIVE"))
         .andExpect(jsonPath("createdBy").value("admin"))
         .andExpect(jsonPath("createdAt").exists())
         .andExpect(jsonPath("updatedBy").value("admin"))
@@ -232,14 +241,14 @@ class CustomerControllerIT extends IntegrationTestBase {
   @Test
   void getCustomerByIdFailWhenNotFound() throws Exception {
     mockMvc
-        .perform(get("/api/customers/1").contentType(MediaType.APPLICATION_JSON))
+        .perform(get("/api/customers/99").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isNotFound());
   }
 
   @Test
   void updateCustomerSuccessfully() throws Exception {
-    createTestCustomer(1, "123456788");
+    Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
 
     String requestBody;
     try {
@@ -252,7 +261,9 @@ class CustomerControllerIT extends IntegrationTestBase {
 
     mockMvc
         .perform(
-            patch("/api/customers/1").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+            patch("/api/customers/" + customer.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
         .andDo(print())
         .andExpect(status().isOk())
         // Updated record
@@ -265,11 +276,18 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("documentType").value("PASSPORT"))
         .andExpect(jsonPath("documentNumber").value("34555654"))
         .andExpect(jsonPath("customerType").value("CORPORATE"))
-        .andExpect(jsonPath("status").value("PENDING"))
+        .andExpect(jsonPath("status").value("ACTIVE"))
         .andExpect(jsonPath("createdBy").value("admin"))
         .andExpect(jsonPath("createdAt").exists())
         .andExpect(jsonPath("updatedBy").exists())
         .andExpect(jsonPath("updatedAt").exists());
+
+    OperationLog operationLog =
+        operationLogRepository
+            .findByEntityAndEntityIdAndOperation(
+                EntityName.CUSTOMER.name(), customer.getId(), LogOperation.UPDATE.name())
+            .orElseThrow();
+    assertThat(operationLog.getComments()).isEqualTo("Customer successfully updated");
   }
 
   @Test
@@ -292,48 +310,92 @@ class CustomerControllerIT extends IntegrationTestBase {
 
   @Test
   void activateCustomerStatusSuccessfully() throws Exception {
-    createTestCustomer(1, "123456789");
+    Customer customer = createTestCustomer(1, "123456789", CustomerStatus.PENDING);
 
     mockMvc
-        .perform(post("/api/customers/1/status/activate"))
+        .perform(post("/api/customers/" + customer.getId() + "/status/activate"))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("status").value("ACTIVE"));
+
+    OperationLog operationLog =
+        operationLogRepository
+            .findByEntityAndEntityIdAndOperation(
+                EntityName.CUSTOMER.name(), customer.getId(), LogOperation.ACTIVATE.name())
+            .orElseThrow();
+    assertThat(operationLog.getComments()).isEqualTo("Customer successfully activated");
   }
 
   @Test
   void activateCustomerFailWhenIdNotFound() throws Exception {
     mockMvc
-        .perform(post("/api/customers/1/status/activate"))
+        .perform(post("/api/customers/99/status/activate"))
         .andDo(print())
         .andExpect(status().isNotFound());
   }
 
-  @Test
-  void deactivateCustomerSuccessfully() throws Exception {
-    createTestCustomer(1, "123456789");
+  @ParameterizedTest
+  @EnumSource(
+      value = CustomerStatus.class,
+      names = {"PENDING"},
+      mode = EnumSource.Mode.EXCLUDE)
+  void activateCustomerFailsWhenStatusIsNotValid(CustomerStatus status) throws Exception {
+    Customer customer = createTestCustomer(1, "123456789", status);
 
     mockMvc
-        .perform(post("/api/customers/1/status/deactivate"))
+        .perform(post("/api/customers/" + customer.getId() + "/status/activate"))
+        .andDo(print())
+        .andExpect(status().isUnprocessableEntity())
+        .andExpect(jsonPath("message").value("Customer is not valid"));
+  }
+
+  @Test
+  void deactivateCustomerSuccessfully() throws Exception {
+    Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+
+    mockMvc
+        .perform(post("/api/customers/" + customer.getId() + "/status/deactivate"))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("status").value("DEACTIVATED"));
+
+    OperationLog operationLog =
+        operationLogRepository
+            .findByEntityAndEntityIdAndOperation(
+                EntityName.CUSTOMER.name(), customer.getId(), LogOperation.DEACTIVATION.name())
+            .orElseThrow();
+    assertThat(operationLog.getComments()).isEqualTo("Customer successfully deactivated");
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = CustomerStatus.class,
+      names = {"ACTIVE"},
+      mode = EnumSource.Mode.EXCLUDE)
+  void deactivateCustomerFailsWhenStatusIsNotValid(CustomerStatus status) throws Exception {
+    Customer customer = createTestCustomer(1, "123456789", status);
+
+    mockMvc
+        .perform(post("/api/customers/" + customer.getId() + "/status/deactivate"))
+        .andDo(print())
+        .andExpect(status().isUnprocessableEntity())
+        .andExpect(jsonPath("message").value("Customer is not valid"));
   }
 
   @Test
   void deactivateCustomerFailWhenIdNotFound() throws Exception {
     mockMvc
-        .perform(post("/api/customers/1/status/activate"))
+        .perform(post("/api/customers/99/status/activate"))
         .andDo(print())
         .andExpect(status().isNotFound());
   }
 
   @Test
   void getAllCustomersWithPagination() throws Exception {
-    createTestCustomer(1, "123456786");
-    createTestCustomer(2, "123456787");
-    createTestCustomer(1, "123456788");
-    createTestCustomer(2, "123456789");
+    createTestCustomer(1, "123456786", CustomerStatus.ACTIVE);
+    createTestCustomer(2, "123456787", CustomerStatus.ACTIVE);
+    createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
+    createTestCustomer(2, "123456789", CustomerStatus.ACTIVE);
 
     mockMvc
         .perform(get("/api/customers?page=2&size=2").contentType(MediaType.APPLICATION_JSON))
@@ -362,7 +424,8 @@ class CustomerControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$.message").value(expectedMessage));
   }
 
-  void createTestCustomer(Integer documentTypeId, String documentNumber) {
+  Customer createTestCustomer(
+      Integer documentTypeId, String documentNumber, CustomerStatus status) {
     PersonType personType =
         personTypeRepository
             .findById(1)
@@ -380,7 +443,7 @@ class CustomerControllerIT extends IntegrationTestBase {
 
     OffsetDateTime now = OffsetDateTime.now();
 
-    customerRepository.save(
+    return customerRepository.save(
         Customer.builder()
             .name1("John")
             .lastname1("Doe")
@@ -389,6 +452,7 @@ class CustomerControllerIT extends IntegrationTestBase {
             .documentType(documentType)
             .documentNumber(documentNumber)
             .customerType(customerType)
+            .status(status)
             .createdBy(user)
             .createdAt(now)
             .updatedBy(user)
