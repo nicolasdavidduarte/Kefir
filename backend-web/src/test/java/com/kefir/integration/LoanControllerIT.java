@@ -26,6 +26,7 @@ import com.kefir.repositories.CurrencyRepository;
 import com.kefir.repositories.CustomerRepository;
 import com.kefir.repositories.CustomerTypeRepository;
 import com.kefir.repositories.DocumentTypeRepository;
+import com.kefir.repositories.LoanInstallmentRepository;
 import com.kefir.repositories.LoanRepository;
 import com.kefir.repositories.LoanTypeRepository;
 import com.kefir.repositories.OperationLogRepository;
@@ -74,6 +75,8 @@ class LoanControllerIT extends IntegrationTestBase {
 
   @Autowired private LoanRepository loanRepository;
 
+  @Autowired private LoanInstallmentRepository loanInstallmentRepository;
+
   @Autowired private AccountRepository accountRepository;
 
   @Autowired private AccountTypeRepository accountTypeRepository;
@@ -104,7 +107,7 @@ class LoanControllerIT extends IntegrationTestBase {
 
     Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
 
-    createTestAccount(customer, AccountStatus.OPENED, 100000001L);
+    createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
 
     String requestBody;
     try {
@@ -130,6 +133,10 @@ class LoanControllerIT extends IntegrationTestBase {
     Loan loan = loanRepository.findById(loanId).orElseThrow();
     assertThat(loan.getId()).isNotNull();
 
+    List<LoanInstallment> loanInstallments =
+        loanInstallmentRepository.findAllByLoanIdOrderByNumberAsc(loan.getId());
+    assertThat(loanInstallments.size()).isEqualTo(4);
+
     OperationLog operationLog =
         operationLogRepository
             .findByEntityAndEntityIdAndOperation(
@@ -143,7 +150,7 @@ class LoanControllerIT extends IntegrationTestBase {
 
     Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
 
-    createTestAccount(customer, AccountStatus.PENDING, 100000001L);
+    createTestAccount(customer, AccountStatus.PENDING, 100000001L, new BigDecimal("10000.00"));
 
     String requestBody;
     try {
@@ -167,7 +174,7 @@ class LoanControllerIT extends IntegrationTestBase {
 
     createTestCustomer(2, "123456790", CustomerStatus.ACTIVE);
 
-    createTestAccount(customer1, AccountStatus.PENDING, 100000001L);
+    createTestAccount(customer1, AccountStatus.PENDING, 100000001L, new BigDecimal("10000.00"));
 
     String requestBody;
     try {
@@ -230,7 +237,7 @@ class LoanControllerIT extends IntegrationTestBase {
     SecurityContextHolder.getContext().setAuthentication(lowPrivilegeToken);
 
     Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
-    createTestAccount(customer, AccountStatus.OPENED, 100000001L);
+    createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
 
     String requestBody;
     try {
@@ -251,7 +258,7 @@ class LoanControllerIT extends IntegrationTestBase {
   void createLoanFailWhenDuplicated() throws Exception {
 
     Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
-    createTestAccount(customer, AccountStatus.OPENED, 100000001L);
+    createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
 
     String requestBody;
     try {
@@ -276,11 +283,13 @@ class LoanControllerIT extends IntegrationTestBase {
   @Test
   void getAllLoansSuccessfully() throws Exception {
     Customer customer1 = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
-    Account account1 = createTestAccount(customer1, AccountStatus.OPENED, 100000001L);
+    Account account1 =
+        createTestAccount(customer1, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
     createTestLoan(customer1, account1, 998L, LoanStatus.ACTIVE);
 
     Customer customer2 = createTestCustomer(2, "123456789", CustomerStatus.ACTIVE);
-    Account account2 = createTestAccount(customer2, AccountStatus.OPENED, 100000002L);
+    Account account2 =
+        createTestAccount(customer2, AccountStatus.OPENED, 100000002L, new BigDecimal("10000.00"));
     createTestLoan(customer2, account2, 999L, LoanStatus.ACTIVE);
 
     mockMvc
@@ -299,7 +308,7 @@ class LoanControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$[0].annualInterestRate").value("75.0"))
         .andExpect(jsonPath("$[0].monthlyInterestRate").value("6.25"))
         .andExpect(jsonPath("$[0].totalPrincipal").value("10000.0"))
-        .andExpect(jsonPath("$[0].totalInterest").value("2500.0"))
+        .andExpect(jsonPath("$[0].totalInterest").value("1609.81"))
         .andExpect(jsonPath("$[0].openingDate").exists())
         .andExpect(jsonPath("$[0].expirationDate").exists())
         .andExpect(jsonPath("$[0].status").value("ACTIVE"))
@@ -308,7 +317,7 @@ class LoanControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$[0].updatedBy").exists())
         .andExpect(jsonPath("$[0].updatedAt").exists())
 
-        //                // Second customer data
+        // Second customer data
         .andExpect(jsonPath("$[1].id").exists())
         .andExpect(jsonPath("$[1].externalId").exists())
         .andExpect(jsonPath("$[1].customer").value("John Doe"))
@@ -319,7 +328,7 @@ class LoanControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("$[1].annualInterestRate").value("75.0"))
         .andExpect(jsonPath("$[1].monthlyInterestRate").value("6.25"))
         .andExpect(jsonPath("$[1].totalPrincipal").value("10000.0"))
-        .andExpect(jsonPath("$[1].totalInterest").value("2500.0"))
+        .andExpect(jsonPath("$[1].totalInterest").value("1609.81"))
         .andExpect(jsonPath("$[1].openingDate").exists())
         .andExpect(jsonPath("$[1].expirationDate").exists())
         .andExpect(jsonPath("$[1].status").value("ACTIVE"))
@@ -344,7 +353,8 @@ class LoanControllerIT extends IntegrationTestBase {
   @Test
   void getLoanByIdSuccessfully() throws Exception {
     Customer customer1 = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
-    Account account = createTestAccount(customer1, AccountStatus.OPENED, 100000001L);
+    Account account =
+        createTestAccount(customer1, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
     Loan loan = createTestLoan(customer1, account, 999L, LoanStatus.ACTIVE);
 
     mockMvc
@@ -361,7 +371,7 @@ class LoanControllerIT extends IntegrationTestBase {
         .andExpect(jsonPath("annualInterestRate").value("75.0"))
         .andExpect(jsonPath("monthlyInterestRate").value("6.25"))
         .andExpect(jsonPath("totalPrincipal").value("10000.0"))
-        .andExpect(jsonPath("totalInterest").value("2500.0"))
+        .andExpect(jsonPath("totalInterest").value("1609.81"))
         .andExpect(jsonPath("openingDate").exists())
         .andExpect(jsonPath("expirationDate").exists())
         .andExpect(jsonPath("status").value("ACTIVE"))
@@ -382,7 +392,8 @@ class LoanControllerIT extends IntegrationTestBase {
   @Test
   void getAllLoansWithPagination() throws Exception {
     Customer customer1 = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
-    Account account1 = createTestAccount(customer1, AccountStatus.OPENED, 100000001L);
+    Account account1 =
+        createTestAccount(customer1, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
 
     createTestLoan(customer1, account1, 996L, LoanStatus.ACTIVE);
     createTestLoan(customer1, account1, 997L, LoanStatus.ACTIVE);
@@ -420,7 +431,8 @@ class LoanControllerIT extends IntegrationTestBase {
   void approveLoanSuccessfully() throws Exception {
 
     Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
-    Account account = createTestAccount(customer, AccountStatus.OPENED, 100000001L);
+    Account account =
+        createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
 
     Loan loan = createTestLoan(customer, account, 996L, LoanStatus.PENDING);
 
@@ -448,7 +460,8 @@ class LoanControllerIT extends IntegrationTestBase {
   void approveLoanFailWhenStateIsNotPending(LoanStatus status) throws Exception {
 
     Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
-    Account account = createTestAccount(customer, AccountStatus.OPENED, 100000001L);
+    Account account =
+        createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
 
     Loan loan = createTestLoan(customer, account, 996L, status);
 
@@ -465,7 +478,8 @@ class LoanControllerIT extends IntegrationTestBase {
   void chargeOffLoanSuccessfully() throws Exception {
 
     Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
-    Account account = createTestAccount(customer, AccountStatus.OPENED, 100000001L);
+    Account account =
+        createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
 
     Loan loan = createTestLoan(customer, account, 996L, LoanStatus.ACTIVE);
 
@@ -506,7 +520,8 @@ class LoanControllerIT extends IntegrationTestBase {
   void chargeOffLoanFailWhenStatusIsNotActive(LoanStatus status) throws Exception {
 
     Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
-    Account account = createTestAccount(customer, AccountStatus.OPENED, 100000001L);
+    Account account =
+        createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
 
     Loan loan = createTestLoan(customer, account, 996L, status);
 
@@ -527,6 +542,109 @@ class LoanControllerIT extends IntegrationTestBase {
         .andDo(print())
         .andExpect(status().isUnprocessableEntity())
         .andExpect(jsonPath("$.message").value("Loan is not in a valid state"));
+  }
+
+  @Test
+  void createPaymentSuccessfully() throws Exception {
+    Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
+    Account account =
+        createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
+
+    Loan loan = createTestLoan(customer, account, 996L, LoanStatus.ACTIVE);
+
+    String requestBody;
+    try {
+      requestBody =
+          new ClassPathResource("requests/loan/loan-payment-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("File not found or unreadable", e);
+    }
+
+    int installment = 1;
+
+    mockMvc
+        .perform(
+            post("/api/loans/" + loan.getId() + "/installments/" + installment + "/payment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andDo(print())
+        .andExpect(status().isOk());
+
+    LoanInstallment loanInstallment =
+        loanInstallmentRepository.findByLoanIdAndNumber(loan.getId(), installment).orElseThrow();
+    assertThat(loanInstallment.getStatus()).isEqualTo(LoanInstallmentStatus.PAID);
+  }
+
+  @Test
+  void paymentFailWhenAccountHasNoFunds() throws Exception {
+    Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
+    Account account =
+        createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
+
+    Loan loan = createTestLoan(customer, account, 996L, LoanStatus.ACTIVE);
+
+    account.setBalance(new BigDecimal("1000.00"));
+    accountRepository.save(account);
+
+    String requestBody;
+    try {
+      requestBody =
+          new ClassPathResource("requests/loan/loan-payment-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("File not found or unreadable", e);
+    }
+
+    int installment = 1;
+
+    mockMvc
+        .perform(
+            post("/api/loans/" + loan.getId() + "/installments/" + installment + "/payment")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+        .andDo(print())
+        .andExpect(status().isUnprocessableEntity())
+        .andExpect(
+            jsonPath("message")
+                .value("Account does not have the necessary funds to complete the operation"));
+  }
+
+  @Test
+  void payOffSuccessfully() throws Exception {
+    Customer customer = createTestCustomer(1, "123456788", CustomerStatus.ACTIVE);
+    Account account =
+        createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("20000.00"));
+
+    Loan loan = createTestLoan(customer, account, 996L, LoanStatus.ACTIVE);
+
+    String requestBody;
+    try {
+      requestBody =
+          new ClassPathResource("requests/loan/loan-payment-success.json")
+              .getContentAsString(StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      throw new IllegalStateException("File not found or unreadable", e);
+    }
+
+    for (int i = 1; i <= 4; i++) {
+      mockMvc
+          .perform(
+              post("/api/loans/" + loan.getId() + "/installments/" + i + "/payment")
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(requestBody))
+          .andDo(print())
+          .andExpect(status().isOk());
+    }
+
+    List<LoanInstallment> loanInstallments =
+        loanInstallmentRepository.findAllByLoanIdOrderByNumberAsc(loan.getId());
+    for (LoanInstallment li : loanInstallments) {
+      assertThat(li.getStatus()).isEqualTo(LoanInstallmentStatus.PAID);
+    }
+
+    Loan loanPayOff = loanRepository.findById(loan.getId()).orElseThrow();
+    assertThat(loanPayOff.getStatus()).isEqualTo(LoanStatus.CLOSED);
   }
 
   private Customer createTestCustomer(Integer id, String documentNumber, CustomerStatus status) {
@@ -564,7 +682,8 @@ class LoanControllerIT extends IntegrationTestBase {
             .build());
   }
 
-  private Account createTestAccount(Customer customer, AccountStatus status, long sequence) {
+  private Account createTestAccount(
+      Customer customer, AccountStatus status, long sequence, BigDecimal initialBalance) {
 
     String name = com.kefir.enums.AccountType.SAVINGS_ACCOUNT.getDbName();
     AccountType accountType =
@@ -581,8 +700,6 @@ class LoanControllerIT extends IntegrationTestBase {
         bankBranchRepository
             .findById(1)
             .orElseThrow(() -> new ApiException(ErrorCode.BANK_BRANCH_NOT_FOUND));
-
-    BigDecimal initialBalance = new BigDecimal("10000.00");
 
     User user =
         userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
@@ -636,27 +753,73 @@ class LoanControllerIT extends IntegrationTestBase {
     User user =
         userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
-    return loanRepository.save(
-        Loan.builder()
-            .customer(customer)
-            .account(account)
-            .loanType(loanType)
-            .numberOfInstallments(4)
-            .currency(currency)
-            .amortizationType(amortizationType)
-            .annualInterestRate(new BigDecimal("75.00"))
-            .monthlyInterestRate(new BigDecimal("6.25"))
-            .principalAmount(new BigDecimal("10000.00"))
-            .interestAmount(new BigDecimal("2500.00"))
-            .totalOperationAmount(new BigDecimal("12500.00"))
-            .openingDate(now)
-            .expirationDate(now.plusMonths(4))
-            .externalId(externalId)
-            .status(status)
-            .createdBy(user)
-            .createdAt(now)
-            .updatedBy(user)
-            .updatedAt(now)
-            .build());
+    Loan loan =
+        loanRepository.save(
+            Loan.builder()
+                .customer(customer)
+                .account(account)
+                .loanType(loanType)
+                .numberOfInstallments(4)
+                .currency(currency)
+                .amortizationType(amortizationType)
+                .annualInterestRate(new BigDecimal("75.00"))
+                .monthlyInterestRate(new BigDecimal("6.25"))
+                .principalAmount(new BigDecimal("10000.00"))
+                .interestAmount(new BigDecimal("1609.81"))
+                .totalOperationAmount(new BigDecimal("11609.80"))
+                .openingDate(now)
+                .expirationDate(now.plusMonths(4))
+                .externalId(externalId)
+                .status(status)
+                .createdBy(user)
+                .createdAt(now)
+                .updatedBy(user)
+                .updatedAt(now)
+                .build());
+
+    LoanInstallment inst1 =
+        LoanInstallment.createNew(
+            loan,
+            1,
+            new BigDecimal("2277.4500"),
+            new BigDecimal("625.0000"),
+            new BigDecimal("2902.4500"),
+            new BigDecimal("7722.5500"),
+            now.plusMonths(1),
+            user);
+    LoanInstallment inst2 =
+        LoanInstallment.createNew(
+            loan,
+            2,
+            new BigDecimal("2419.7900"),
+            new BigDecimal("482.6600"),
+            new BigDecimal("2902.4500"),
+            new BigDecimal("5302.7600"),
+            now.plusMonths(2),
+            user);
+    LoanInstallment inst3 =
+        LoanInstallment.createNew(
+            loan,
+            3,
+            new BigDecimal("2571.0300"),
+            new BigDecimal("331.4200"),
+            new BigDecimal("2902.4500"),
+            new BigDecimal("2731.7300"),
+            now.plusMonths(3),
+            user);
+    LoanInstallment inst4 =
+        LoanInstallment.createNew(
+            loan,
+            4,
+            new BigDecimal("2731.7300"),
+            new BigDecimal("170.7300"),
+            new BigDecimal("2902.4500"),
+            new BigDecimal("0.0000"),
+            now.plusMonths(4),
+            user);
+
+    loanInstallmentRepository.saveAll(List.of(inst1, inst2, inst3, inst4));
+
+    return loan;
   }
 }
