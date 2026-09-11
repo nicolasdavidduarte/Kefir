@@ -17,7 +17,7 @@ interface AmortizationCalculator {
     ): List<InstallmentData>
 
     fun validateAndNormalizeRate(monthlyInterestRate: BigDecimal): BigDecimal {
-        if (monthlyInterestRate == BigDecimal.ZERO) {
+        if (monthlyInterestRate.compareTo(BigDecimal.ZERO) == 0) {
             throw ApiException(ErrorCode.LOAN_TYPE_INTEREST_RATE_ZERO)
         }
         return monthlyInterestRate.divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP)
