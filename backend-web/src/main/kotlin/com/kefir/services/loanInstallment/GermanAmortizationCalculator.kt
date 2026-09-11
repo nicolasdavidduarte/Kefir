@@ -1,15 +1,13 @@
 package com.kefir.services.loanInstallment
 
 import com.kefir.enums.AmortizationTypeName
-import com.kefir.exceptions.ApiException
-import com.kefir.exceptions.ErrorCode
 import com.kefir.web.dtos.loanInstallment.InstallmentData
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.RoundingMode
 
 @Service
-class GermanAmortizationCalculator : BaseAmortizationCalculator() {
+class GermanAmortizationCalculator : AmortizationCalculator {
 
     override val type = AmortizationTypeName.GERMAN
 
@@ -18,16 +16,7 @@ class GermanAmortizationCalculator : BaseAmortizationCalculator() {
         principalAmount: BigDecimal,
         numberOfInstallments: Int,
     ): List<InstallmentData> {
-        if (monthlyInterestRate == BigDecimal.ZERO) {
-            throw ApiException(ErrorCode.LOAN_TYPE_INTEREST_RATE_ZERO)
-        }
-
-        val monthlyInterestRate =
-            monthlyInterestRate.divide(
-                BigDecimal.valueOf(100),
-                10,
-                RoundingMode.HALF_UP,
-            )
+        val monthlyInterestRate = validateAndNormalizeRate(monthlyInterestRate)
 
         var balance = principalAmount
 

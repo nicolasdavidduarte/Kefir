@@ -16,6 +16,7 @@ import com.kefir.services.UserService
 import com.kefir.services.account.AccountService
 import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
 import com.kefir.services.loanInstallment.payment.PaymentMethodService
+import com.kefir.web.dtos.loanInstallment.InstallmentData
 import com.kefir.web.dtos.loanInstallmentPayment.LoanInstallmentResponse
 import com.kefir.web.dtos.loanInstallmentPayment.toResponse
 import org.springframework.stereotype.Service
@@ -112,18 +113,7 @@ class LoanInstallmentService(
             loan.numberOfInstallments,
         )
 
-        val loanInstallments = schedule.map { i ->
-            LoanInstallment.createNew(
-                loan,
-                i.number,
-                i.principalAmount,
-                i.interestAmount,
-                i.totalAmount,
-                i.remainingBalance,
-                loan.openingDate.plusMonths(i.number.toLong()),
-                loan.createdBy,
-            )
-        }
+        val loanInstallments = schedule.map { it.toEntity(loan) }
 
         return loanInstallmentRepository.saveAll(loanInstallments)
     }
@@ -137,4 +127,15 @@ class LoanInstallmentService(
             it.updatedBy = user
         }
     }
+
+    private fun InstallmentData.toEntity(loan: Loan): LoanInstallment = LoanInstallment.createNew(
+        loan = loan,
+        number = this.number,
+        principalAmount = this.principalAmount,
+        interestAmount = this.interestAmount,
+        totalAmount = this.totalAmount,
+        remainingBalance = this.remainingBalance,
+        paymentDueDate = loan.openingDate.plusMonths(this.number.toLong()),
+        createdBy = loan.createdBy,
+    )
 }
