@@ -5,8 +5,11 @@ import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import java.util.Optional
 
 interface LoanInstallmentRepository : JpaRepository<LoanInstallment, Long> {
+
+    fun findByLoanIdAndNumber(loan: Long, number: Int): Optional<LoanInstallment>
 
     @EntityGraph(attributePaths = ["loan", "createdBy", "updatedBy"])
     fun findAllByLoanIdOrderByNumberAsc(loan: Long): List<LoanInstallment>
