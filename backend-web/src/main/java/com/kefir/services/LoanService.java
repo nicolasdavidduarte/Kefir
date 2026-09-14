@@ -231,9 +231,12 @@ public class LoanService {
 
     accountService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount());
 
-    loan.setStatus(LoanStatus.ACTIVE);
-
     User user = userService.getById(authService.getCurrentUserId());
+
+    loan.setStatus(LoanStatus.ACTIVE);
+    loan.setUpdatedBy(user);
+    loan.setUpdatedAt(OffsetDateTime.now());
+
 
     operationLogService.log(
         new OperationLogCommand(
