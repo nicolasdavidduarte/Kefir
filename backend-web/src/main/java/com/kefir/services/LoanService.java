@@ -237,7 +237,6 @@ public class LoanService {
     loan.setUpdatedBy(user);
     loan.setUpdatedAt(OffsetDateTime.now());
 
-
     operationLogService.log(
         new OperationLogCommand(
             LogOperation.APPROVAL,
