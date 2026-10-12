@@ -26,6 +26,14 @@ services:
     networks:
       - kefir-network
 
+  mongodb:
+    image: mongo:8
+    container_name: kefir-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
   backend:
     image: nduarte93/kefir-backend:latest
     pull_policy: always
@@ -64,6 +72,7 @@ services:
 
 volumes:
   postgres_data:
+  mongodb_data:
 
 networks:
   kefir-network:

@@ -2,6 +2,7 @@ package com.kefir.web.handlers;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.kefir.exceptions.*;
+import com.kefir.logging.ApplicationLogService;
 import com.kefir.web.dtos.common.ApiErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import java.time.OffsetDateTime;
@@ -22,6 +23,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+  private final ApplicationLogService applicationLogService;
+
+  public GlobalExceptionHandler(ApplicationLogService applicationLogService){
+    this.applicationLogService =  applicationLogService;
+  }
+
   private static final Map<String, String> CONSTRAINT_MESSAGES =
       Map.of(
           "uk_external_id", "External id already exists",
@@ -56,7 +64,21 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ApiErrorResponse> handleGeneric(Exception ex) {
     log.error("Unhandled exception", ex);
-    return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
+    //return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error");
+
+    try {
+      applicationLogService.recordError(ex);
+    } catch (Exception loggingException) {
+      log.warn(
+              "Could not persist application log to MongoDB",
+              loggingException
+      );
+    }
+
+    return buildResponse(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            "Unexpected error"
+    );
   }
 
   @ExceptionHandler(BadCredentialsException.class)
