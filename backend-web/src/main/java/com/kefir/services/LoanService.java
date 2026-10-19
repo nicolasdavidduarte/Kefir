@@ -44,7 +44,6 @@ public class LoanService {
   private final AmortizationTypeService amortizationTypeService;
   private final OperationLogService operationLogService;
 
-  @Autowired
   public LoanService(
       LoanRepository loanRepository,
       LoanInstallmentService loanInstallmentService,
