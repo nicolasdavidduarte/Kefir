@@ -8,7 +8,8 @@ infrastructure, batch processing, and modern development practices.
 * Java 21
 * Kotlin 2.3
 * Spring Boot 3.5
-* PostgreSQL 
+* PostgreSQL
+* MongoDB
 * Gradle 
 * Docker
 
@@ -61,6 +62,7 @@ The scans check for:
 * Java 21
 * Kotlin 2.3
 * PostgreSQL 
+* MongoDB
 * Gradle 
 * Docker (optional)
 
@@ -130,7 +132,7 @@ Business Logic (Services)
 Persistence Layer (Repositories)
   │
   ▼
-PostgreSQL
+DB
 ```
 
 

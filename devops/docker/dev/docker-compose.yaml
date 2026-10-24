@@ -26,12 +26,30 @@ services:
     networks:
       - kefir-network
 
+  mongodb:
+    image: mongo:8
+    container_name: kefir-mongodb
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - kefir-network
+
   backend:
-    image: nduarte93/kefir-backend:latest
+    image: nduarte93/kefir-backend:1.0.4
     pull_policy: always
     restart: unless-stopped
     depends_on:
       db:
+        condition: service_healthy
+      mongodb:
         condition: service_healthy
     ports:
       - "8080:8080"
@@ -43,6 +61,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/kefir_db
       SPRING_DATASOURCE_USERNAME: postgres
+      MONGODB_URI: mongodb://mongodb:27017/kefir
     healthcheck:
       test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1" ]
       interval: 10s
@@ -52,7 +71,7 @@ services:
       - kefir-network
 
   frontend:
-    image: nduarte93/kefir-frontend:latest
+    image: nduarte93/kefir-frontend:2.0.1
     restart: unless-stopped
     depends_on:
       backend:
@@ -64,6 +83,7 @@ services:
 
 volumes:
   postgres_data:
+  mongodb_data:
 
 networks:
   kefir-network:
