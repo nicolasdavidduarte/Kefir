@@ -34,10 +34,6 @@ dependencies {
 
         implementation("org.apache.logging.log4j:log4j-to-slf4j:2.25.5")
 
-        // Upgraded from 3.1.5 to fix SNYK-JAVA-TOOLSJACKSONCORE-21761838 (Critical Deserialization),
-        // SNYK-JAVA-TOOLSJACKSONCORE-19778371/20059682/20059180 (High), SNYK-JAVA-TOOLSJACKSONCORE-21193288 (High DoS)
-        implementation("tools.jackson.core:jackson-databind:3.1.8")
-
         // Fixes High Severity Uncontrolled Recursion in Commons Lang
         implementation("org.apache.commons:commons-lang3:3.18.0")
         // Fixes CVE-2024-25710 and CVE-2024-26308
@@ -51,8 +47,8 @@ dependencies {
 
     // Spring Boot Starters (Versions managed by Parent/BOM)
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-aop")
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-aspectj")
+    implementation("org.springframework.boot:spring-boot-starter-webmvc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
@@ -60,7 +56,7 @@ dependencies {
     // Database & Infrastructure
     // Upgraded from 42.7.12 to fix SNYK-JAVA-ORGPOSTGRESQL-20571163 (High - Not Failing Securely)
     runtimeOnly("org.postgresql:postgresql:42.7.14")
-    implementation("org.liquibase:liquibase-core:5.0.2")
+    implementation("org.springframework.boot:spring-boot-starter-liquibase")
 
     // Monitoring
     implementation("io.micrometer:micrometer-registry-prometheus")
@@ -68,7 +64,10 @@ dependencies {
     implementation("net.logstash.logback:logstash-logback-encoder:9.0")
 
     // API Documentation (OpenAPI 3)
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
+
+    //Jackson
+    implementation("tools.jackson.module:jackson-module-kotlin")
 
     // Security & JWT
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
@@ -86,18 +85,18 @@ dependencies {
 
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("io.mockk:mockk:1.14.9")
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     testImplementation(kotlin("test"))
 
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:postgresql")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers-postgresql")
 }
 
 tasks.test {

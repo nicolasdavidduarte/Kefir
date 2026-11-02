@@ -19,34 +19,28 @@ repositories {
 dependencies {
     implementation(project(":domain"))
 
-    // Core Spring Batch + JPA
-    implementation("org.springframework.boot:spring-boot-starter-batch")
+    // Spring Batch 6
+    implementation("org.springframework.boot:spring-boot-starter-batch-jdbc")
+
+    // JPA
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter")
+
+    // PostgreSQL
+    runtimeOnly("org.postgresql:postgresql:42.7.14")
 
     // Kotlin
     implementation(kotlin("stdlib"))
 
-    // Hibernate
-    implementation("org.hibernate.orm:hibernate-core:6.2.11.Final")
-    implementation("org.hibernate:hibernate-validator:6.2.0.Final")
-
-    // Data Base
-    // Upgraded from 42.7.12 to fix SNYK-JAVA-ORGPOSTGRESQL-20571163 (High - Not Failing Securely)
-    runtimeOnly("org.postgresql:postgresql:42.7.14")
-
     // JAXB
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
-    implementation("org.glassfish.jaxb:jaxb-runtime:3.0.2")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
 
     // Lombok
-    implementation("org.projectlombok:lombok")
-    compileOnly("org.projectlombok:lombok:1.18.34")
-    annotationProcessor("org.projectlombok:lombok:1.18.34")
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
 
-    // Test
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    // Tests
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
 tasks.test {
