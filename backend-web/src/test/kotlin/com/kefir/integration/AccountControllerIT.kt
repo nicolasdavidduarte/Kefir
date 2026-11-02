@@ -285,7 +285,9 @@ class AccountControllerIT : IntegrationTestBase() {
 
         mockMvc
             .patch("/api/accounts/${account.id}/open") { contentType = MediaType.APPLICATION_JSON }.andExpect {
-                status { isUnprocessableEntity() }
+                status {
+                    isUnprocessableContent()
+                }
                 jsonPath("message") { value("Account is not in a valid state") }
             }
     }
@@ -312,7 +314,9 @@ class AccountControllerIT : IntegrationTestBase() {
 
         mockMvc
             .patch("/api/accounts/${account.id}/open") { contentType = MediaType.APPLICATION_JSON }.andExpect {
-                status { isUnprocessableEntity() }
+                status {
+                    isUnprocessableContent()
+                }
                 jsonPath("message") { value("Account is not in a valid state") }
             }
     }
@@ -352,7 +356,9 @@ class AccountControllerIT : IntegrationTestBase() {
                 contentType = MediaType.APPLICATION_JSON
                 content = requestBody
             }.andExpect {
-                status { isUnprocessableEntity() }
+                status {
+                    isUnprocessableContent()
+                }
                 jsonPath("message") { value("Account is not in a valid state") }
             }
     }

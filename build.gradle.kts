@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.spring") version "2.3.0" apply false
     kotlin("plugin.jpa") version "2.3.0" apply false
 
-    id("org.springframework.boot") version "3.5.15" apply false
+    id("org.springframework.boot") version "4.1.2" apply false
     id("io.spring.dependency-management") version "1.1.7" apply false
     id("com.diffplug.spotless") version "8.4.0" apply false
     id("com.github.ben-manes.versions") version "0.54.0" apply false
@@ -16,10 +16,11 @@ allprojects {
 }
 
 subprojects {
+    extra["jackson-bom.version"] = "3.1.8"
+    extra["jackson-2-bom.version"] = "2.21.8"
     extra["logback.version"] = "1.5.36"
     // Upgraded from 2.21.5 to fix SNYK-JAVA-COMFASTERXMLJACKSONCORE-21761837 (Critical Deserialization),
     // SNYK-JAVA-COMFASTERXMLJACKSONCORE-20059683/19778370 (High), SNYK-JAVA-COMFASTERXMLJACKSONCORE-21193287 (High DoS)
-    extra["jackson.version"] = "2.21.8"
     extra["log4j2.version"] = "2.25.5"
     // Upgraded from 10.1.56 to fix SNYK-JAVA-ORGAPACHETOMCATEMBED-21707475/21707477 (Critical),
     // SNYK-JAVA-ORGAPACHETOMCATEMBED-21716509 (Critical HTTP Request Smuggling),
