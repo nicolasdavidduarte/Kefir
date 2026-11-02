@@ -32,7 +32,8 @@ dependencies {
     implementation("org.hibernate:hibernate-validator:6.2.0.Final")
 
     // Data Base
-    runtimeOnly("org.postgresql:postgresql:42.7.12")
+    // Upgraded from 42.7.12 to fix SNYK-JAVA-ORGPOSTGRESQL-20571163 (High - Not Failing Securely)
+    runtimeOnly("org.postgresql:postgresql:42.7.14")
 
     // JAXB
     implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")

@@ -34,7 +34,9 @@ dependencies {
 
         implementation("org.apache.logging.log4j:log4j-to-slf4j:2.25.5")
 
-        implementation("tools.jackson.core:jackson-databind:3.1.5")
+        // Upgraded from 3.1.5 to fix SNYK-JAVA-TOOLSJACKSONCORE-21761838 (Critical Deserialization),
+        // SNYK-JAVA-TOOLSJACKSONCORE-19778371/20059682/20059180 (High), SNYK-JAVA-TOOLSJACKSONCORE-21193288 (High DoS)
+        implementation("tools.jackson.core:jackson-databind:3.1.8")
 
         // Fixes High Severity Uncontrolled Recursion in Commons Lang
         implementation("org.apache.commons:commons-lang3:3.18.0")
@@ -56,7 +58,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
 
     // Database & Infrastructure
-    runtimeOnly("org.postgresql:postgresql:42.7.12")
+    // Upgraded from 42.7.12 to fix SNYK-JAVA-ORGPOSTGRESQL-20571163 (High - Not Failing Securely)
+    runtimeOnly("org.postgresql:postgresql:42.7.14")
     implementation("org.liquibase:liquibase-core:5.0.2")
 
     // Monitoring
