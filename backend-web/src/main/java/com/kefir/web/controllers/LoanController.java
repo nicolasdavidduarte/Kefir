@@ -1,7 +1,7 @@
 package com.kefir.web.controllers;
 
+import com.kefir.services.loan.LoanCommandService;
 import com.kefir.services.loan.LoanQueryService;
-import com.kefir.services.loan.LoanService;
 import com.kefir.web.dtos.loan.LoanChargeOffRequest;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Loan services", description = "APIs for loans")
 public class LoanController {
 
-  private final LoanService loanService;
+  private final LoanCommandService loanCommandService;
   private final LoanQueryService loanQueryService;
 
-  public LoanController(LoanService loanService, LoanQueryService loanQueryService) {
-    this.loanService = loanService;
+  public LoanController(LoanCommandService loanCommandService, LoanQueryService loanQueryService) {
+    this.loanCommandService = loanCommandService;
     this.loanQueryService = loanQueryService;
   }
 
@@ -89,14 +89,14 @@ public class LoanController {
       percentiles = {0.5, 0.9, 0.95, 0.99},
       histogram = true)
   public LoanResponse create(@RequestBody @Valid LoanRequest loanRequest) {
-    return loanService.create(loanRequest);
+    return loanCommandService.create(loanRequest);
   }
 
   @PatchMapping("/{loanId}/approve")
   @ResponseStatus(HttpStatus.OK)
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
   public LoanResponse approve(@PathVariable Long loanId) {
-    return loanService.approve(loanId);
+    return loanCommandService.approve(loanId);
   }
 
   @PostMapping("/{loanId}/chargeoff")
@@ -104,6 +104,6 @@ public class LoanController {
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
   public LoanResponse chargeOff(
       @PathVariable Long loanId, @RequestBody @Valid LoanChargeOffRequest chargeOffRequest) {
-    return loanService.chargeOff(loanId, chargeOffRequest);
+    return loanCommandService.chargeOff(loanId, chargeOffRequest);
   }
 }

@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-public class LoanService {
+public class LoanCommandService {
 
   private final LoanRepository loanRepository;
   private final LoanInstallmentService loanInstallmentService;
@@ -42,7 +42,7 @@ public class LoanService {
   private final AmortizationTypeService amortizationTypeService;
   private final OperationLogService operationLogService;
 
-  public LoanService(
+  public LoanCommandService(
       LoanRepository loanRepository,
       LoanInstallmentService loanInstallmentService,
       AccountService accountService,
