@@ -337,7 +337,7 @@ class CustomerControllerIT extends IntegrationTestBase {
   @ParameterizedTest
   @EnumSource(
       value = CustomerStatus.class,
-      names = {"PENDING"},
+      names = {"PENDING", "DEACTIVATED"},
       mode = EnumSource.Mode.EXCLUDE)
   void activateCustomerFailsWhenStatusIsNotValid(CustomerStatus status) throws Exception {
     Customer customer = createTestCustomer(1, "123456789", status);
@@ -345,7 +345,7 @@ class CustomerControllerIT extends IntegrationTestBase {
     mockMvc
         .perform(post("/api/customers/" + customer.getId() + "/status/activate"))
         .andDo(print())
-        .andExpect(status().isUnprocessableEntity())
+        .andExpect(status().isUnprocessableContent())
         .andExpect(jsonPath("message").value("Customer is not valid"));
   }
 
@@ -409,7 +409,7 @@ class CustomerControllerIT extends IntegrationTestBase {
     mockMvc
         .perform(post("/api/customers/" + customer.getId() + "/status/deactivate"))
         .andDo(print())
-        .andExpect(status().isUnprocessableEntity())
+        .andExpect(status().isUnprocessableContent())
         .andExpect(jsonPath("message").value("Customer is not valid"));
   }
 
