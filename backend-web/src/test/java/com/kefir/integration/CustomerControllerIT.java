@@ -367,6 +367,37 @@ class CustomerControllerIT extends IntegrationTestBase {
     assertThat(operationLog.getComments()).isEqualTo("Customer successfully deactivated");
   }
 
+  @Test
+  void activateCustomerAfterDeactivation() throws Exception {
+    Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+
+    mockMvc
+        .perform(post("/api/customers/" + customer.getId() + "/status/deactivate"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("status").value("DEACTIVATED"));
+
+    OperationLog operationLog =
+        operationLogRepository
+            .findByEntityAndEntityIdAndOperation(
+                EntityName.CUSTOMER.name(), customer.getId(), LogOperation.DEACTIVATION.name())
+            .orElseThrow();
+    assertThat(operationLog.getComments()).isEqualTo("Customer successfully deactivated");
+
+    mockMvc
+        .perform(post("/api/customers/" + customer.getId() + "/status/activate"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("status").value("ACTIVE"));
+
+    OperationLog operationLog2 =
+        operationLogRepository
+            .findByEntityAndEntityIdAndOperation(
+                EntityName.CUSTOMER.name(), customer.getId(), LogOperation.ACTIVATE.name())
+            .orElseThrow();
+    assertThat(operationLog2.getComments()).isEqualTo("Customer successfully activated");
+  }
+
   @ParameterizedTest
   @EnumSource(
       value = CustomerStatus.class,
