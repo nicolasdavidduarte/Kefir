@@ -1,4 +1,4 @@
-package com.kefir.services
+package com.kefir.services.documenttype
 
 import com.kefir.enums.DocumentType
 import com.kefir.exceptions.ApiException

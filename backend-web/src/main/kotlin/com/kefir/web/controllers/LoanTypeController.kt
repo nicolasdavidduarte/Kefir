@@ -1,6 +1,6 @@
 package com.kefir.web.controllers
 
-import com.kefir.services.LoanTypeService
+import com.kefir.services.loantype.LoanTypeService
 import com.kefir.web.dtos.loanType.LoanTypeRequest
 import com.kefir.web.dtos.loanType.LoanTypeResponse
 import jakarta.validation.Valid

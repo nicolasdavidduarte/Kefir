@@ -1,4 +1,4 @@
-package com.kefir.services;
+package com.kefir.services.currency;
 
 import com.kefir.entities.Currency;
 import com.kefir.enums.CurrencyIsoCodes;

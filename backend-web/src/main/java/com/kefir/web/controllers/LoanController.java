@@ -1,6 +1,6 @@
 package com.kefir.web.controllers;
 
-import com.kefir.services.LoanService;
+import com.kefir.services.loan.LoanService;
 import com.kefir.web.dtos.loan.LoanChargeOffRequest;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;

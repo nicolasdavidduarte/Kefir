@@ -1,4 +1,4 @@
-package com.kefir.services;
+package com.kefir.services.role;
 
 import com.kefir.entities.Role;
 import com.kefir.enums.UserRoles;

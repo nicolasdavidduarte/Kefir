@@ -1,4 +1,4 @@
-package com.kefir.services;
+package com.kefir.services.loan;
 
 import com.kefir.entities.*;
 import com.kefir.enums.EntityName;
@@ -8,7 +8,13 @@ import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
 import com.kefir.services.account.AccountService;
+import com.kefir.services.amortizationtype.AmortizationTypeService;
+import com.kefir.services.currency.CurrencyService;
+import com.kefir.services.customer.CustomerService;
 import com.kefir.services.loanInstallment.LoanInstallmentService;
+import com.kefir.services.loantype.LoanTypeService;
+import com.kefir.services.operationlog.OperationLogService;
+import com.kefir.services.user.UserService;
 import com.kefir.web.dtos.loan.LoanChargeOffRequest;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;

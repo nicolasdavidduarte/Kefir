@@ -1,4 +1,4 @@
-package com.kefir.services;
+package com.kefir.services.persontype;
 
 import com.kefir.entities.PersonType;
 import com.kefir.exceptions.ApiException;

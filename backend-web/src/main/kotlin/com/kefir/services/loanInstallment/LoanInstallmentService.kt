@@ -12,10 +12,10 @@ import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.LoanInstallmentRepository
 import com.kefir.repositories.LoanRepository
-import com.kefir.services.UserService
 import com.kefir.services.account.AccountService
 import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
 import com.kefir.services.loanInstallment.payment.PaymentMethodService
+import com.kefir.services.user.UserService
 import com.kefir.web.dtos.loanInstallment.InstallmentData
 import com.kefir.web.dtos.loanInstallmentPayment.LoanInstallmentResponse
 import com.kefir.web.dtos.loanInstallmentPayment.toResponse

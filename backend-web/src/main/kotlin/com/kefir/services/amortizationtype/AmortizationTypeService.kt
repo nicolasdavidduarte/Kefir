@@ -1,4 +1,4 @@
-package com.kefir.services
+package com.kefir.services.amortizationtype
 
 import com.kefir.entities.AmortizationType
 import com.kefir.enums.AmortizationTypeName
