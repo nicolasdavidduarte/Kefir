@@ -48,8 +48,10 @@ public class AuthService {
   public Integer getCurrentUserId() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
+    assert auth != null;
     AuthenticatedUser principal = (AuthenticatedUser) auth.getPrincipal();
 
+    assert principal != null;
     return principal.id();
   }
 }

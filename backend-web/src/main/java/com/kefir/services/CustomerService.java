@@ -129,7 +129,7 @@ public class CustomerService {
             .findById(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
 
-    if (!customer.getStatus().equals(CustomerStatus.ACTIVE))
+    if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
 
     updateIfChanged(request.name1(), customer.getName1(), customer::setName1);
@@ -179,8 +179,8 @@ public class CustomerService {
             .findById(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
 
-    if (!customer.getStatus().equals(CustomerStatus.PENDING)
-        && !customer.getStatus().equals(CustomerStatus.DEACTIVATED))
+    if ((customer.getStatus() != CustomerStatus.PENDING)
+        && (customer.getStatus() != CustomerStatus.DEACTIVATED))
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
 
     User user = userService.getById(authService.getCurrentUserId());
@@ -209,7 +209,7 @@ public class CustomerService {
             .findById(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
 
-    if (!customer.getStatus().equals(CustomerStatus.ACTIVE))
+    if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
 
     User user = userService.getById(authService.getCurrentUserId());

@@ -447,7 +447,7 @@ class CustomerControllerIT extends IntegrationTestBase {
     "'page=2', 'Page and size must be provided together'",
     "'size=23', 'Page and size must be provided together'"
   })
-  void getAllCustomersWithInvalidPaginationParameters_returnsBadRequest(
+  void getAllCustomersWithInvalidPaginationParametersReturnsBadRequest(
       String queryParams, String expectedMessage) throws Exception {
     mockMvc
         .perform(get("/api/customers?" + queryParams))
