@@ -1,5 +1,6 @@
 package com.kefir.web.controllers;
 
+import com.kefir.services.loan.LoanQueryService;
 import com.kefir.services.loan.LoanService;
 import com.kefir.web.dtos.loan.LoanChargeOffRequest;
 import com.kefir.web.dtos.loan.LoanRequest;
@@ -28,16 +29,18 @@ import org.springframework.web.bind.annotation.*;
 public class LoanController {
 
   private final LoanService loanService;
+  private final LoanQueryService loanQueryService;
 
-  public LoanController(LoanService loanService) {
+  public LoanController(LoanService loanService, LoanQueryService loanQueryService) {
     this.loanService = loanService;
+    this.loanQueryService = loanQueryService;
   }
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public List<LoanResponse> getAll(
       @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
-    return loanService.getAll(Pagination.from(page, size));
+    return loanQueryService.getAll(Pagination.from(page, size));
   }
 
   // Endpoint to retrieve a single record by ID using a JSON request body
@@ -73,7 +76,7 @@ public class LoanController {
               example = "12345")
           @PathVariable
           Long loanId) {
-    return loanService.getByIdWithResponse(loanId);
+    return loanQueryService.getByIdWithResponse(loanId);
   }
 
   // Endpoint to create a new loan
