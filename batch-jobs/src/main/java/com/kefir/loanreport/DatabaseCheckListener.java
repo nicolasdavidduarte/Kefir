@@ -3,10 +3,10 @@ package com.kefir.loanreport;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.batch.core.job.JobExecution;
 import org.springframework.batch.core.listener.JobExecutionListener;
 import org.springframework.dao.DataAccessException;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 @Slf4j
