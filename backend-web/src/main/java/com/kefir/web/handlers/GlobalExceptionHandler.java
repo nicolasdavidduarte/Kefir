@@ -38,6 +38,21 @@ public class GlobalExceptionHandler {
     return buildResponse(HttpStatus.BAD_REQUEST, fieldErrors);
   }
 
+  @ExceptionHandler(DomainException.class)
+  public ResponseEntity<ApiErrorResponse> handleDomainException(DomainException ex) {
+
+    HttpStatus status =
+        switch (ex.getErrorCode().getType()) {
+          case VALIDATION -> HttpStatus.BAD_REQUEST;
+          case NOT_FOUND -> HttpStatus.NOT_FOUND;
+          case CONFLICT -> HttpStatus.CONFLICT;
+          case BUSINESS_RULE -> HttpStatus.UNPROCESSABLE_CONTENT;
+        };
+
+    return ResponseEntity.status(status)
+        .body(new ApiErrorResponse(ex.getMessage(), status.value(), OffsetDateTime.now()));
+  }
+
   @ExceptionHandler(InvalidPaginationException.class)
   public ResponseEntity<ApiErrorResponse> handleInvalidPagination(InvalidPaginationException e) {
     return buildResponse(HttpStatus.BAD_REQUEST, e.getMessage());

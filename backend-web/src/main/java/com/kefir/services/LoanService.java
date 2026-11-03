@@ -223,15 +223,11 @@ public class LoanService {
             .findByIdForUpdate(id)
             .orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
-    if (loan.getStatus() != LoanStatus.PENDING) throw new ApiException(ErrorCode.LOAN_NOT_VALID);
-
-    accountService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount());
-
     User user = userService.getById(authService.getCurrentUserId());
 
-    loan.setStatus(LoanStatus.ACTIVE);
-    loan.setUpdatedBy(user);
-    loan.setUpdatedAt(OffsetDateTime.now());
+    loan.approve(user, OffsetDateTime.now());
+
+    accountService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount());
 
     operationLogService.log(
         new OperationLogCommand(

@@ -1,6 +1,8 @@
 package com.kefir.entities;
 
 import com.kefir.enums.LoanStatus;
+import com.kefir.exceptions.DomainErrorCode;
+import com.kefir.exceptions.DomainException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -116,5 +118,14 @@ public class Loan {
         + this.expirationDate
         + " / Status: "
         + this.status;
+  }
+
+  public void approve(User approvedBy, OffsetDateTime approvedAt) {
+    if (!this.getStatus().equals(LoanStatus.PENDING))
+      throw new DomainException(DomainErrorCode.LOAN_NOT_VALID);
+
+    this.status = LoanStatus.ACTIVE;
+    this.updatedBy = approvedBy;
+    this.updatedAt = approvedAt;
   }
 }
