@@ -195,8 +195,7 @@ public class LoanService {
     Loan loan =
         loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
-    if (!loan.getStatus().equals(LoanStatus.ACTIVE))
-      throw new ApiException(ErrorCode.LOAN_NOT_VALID);
+    if (loan.getStatus() != LoanStatus.ACTIVE) throw new ApiException(ErrorCode.LOAN_NOT_VALID);
 
     User user = userService.getById(authService.getCurrentUserId());
 
@@ -224,8 +223,7 @@ public class LoanService {
             .findByIdForUpdate(id)
             .orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
-    if (!loan.getStatus().equals(LoanStatus.PENDING))
-      throw new ApiException(ErrorCode.LOAN_NOT_VALID);
+    if (loan.getStatus() != LoanStatus.PENDING) throw new ApiException(ErrorCode.LOAN_NOT_VALID);
 
     accountService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount());
 

@@ -164,7 +164,7 @@ class LoanControllerIT extends IntegrationTestBase {
     mockMvc
         .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
         .andDo(print())
-        .andExpect(status().isUnprocessableEntity());
+        .andExpect(status().isUnprocessableContent());
   }
 
   @Test
@@ -418,7 +418,7 @@ class LoanControllerIT extends IntegrationTestBase {
     "'page=2', 'Page and size must be provided together'",
     "'size=23', 'Page and size must be provided together'"
   })
-  void getAllLoansWithInvalidPaginationParameters_returnsBadRequest(
+  void getAllLoansWithInvalidPaginationParametersReturnsBadRequest(
       String queryParams, String expectedMessage) throws Exception {
 
     mockMvc
@@ -470,7 +470,7 @@ class LoanControllerIT extends IntegrationTestBase {
             patch("/api/loans/" + loan.getId() + "/approve")
                 .contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
-        .andExpect(status().isUnprocessableEntity())
+        .andExpect(status().isUnprocessableContent())
         .andExpect(jsonPath("$.message").value("Loan is not in a valid state"));
   }
 
@@ -540,7 +540,7 @@ class LoanControllerIT extends IntegrationTestBase {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andDo(print())
-        .andExpect(status().isUnprocessableEntity())
+        .andExpect(status().isUnprocessableContent())
         .andExpect(jsonPath("$.message").value("Loan is not in a valid state"));
   }
 
@@ -604,7 +604,7 @@ class LoanControllerIT extends IntegrationTestBase {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody))
         .andDo(print())
-        .andExpect(status().isUnprocessableEntity())
+        .andExpect(status().isUnprocessableContent())
         .andExpect(
             jsonPath("message")
                 .value("Account does not have the necessary funds to complete the operation"));

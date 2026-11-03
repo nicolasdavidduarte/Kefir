@@ -10,10 +10,6 @@ public class LoanActiveState {
 
   private final AtomicInteger activeLoans = new AtomicInteger(0);
 
-  public AtomicInteger getActiveLoans() {
-    return activeLoans;
-  }
-
   public void set(int value) {
     activeLoans.set(value);
   }

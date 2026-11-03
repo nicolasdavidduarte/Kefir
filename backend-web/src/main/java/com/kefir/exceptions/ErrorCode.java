@@ -9,14 +9,14 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
   ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "Account not found"),
 
-  ACCOUNT_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Account is not in a valid state"),
+  ACCOUNT_NOT_VALID(HttpStatus.UNPROCESSABLE_CONTENT, "Account is not in a valid state"),
 
   ACCOUNT_NOT_VALID_FOR_CLOSURE(
-      HttpStatus.UNPROCESSABLE_ENTITY,
+      HttpStatus.UNPROCESSABLE_CONTENT,
       "Account has active loans pending of payment and cannot be closed"),
 
   ACCOUNT_WITHOUT_FUNDS(
-      HttpStatus.UNPROCESSABLE_ENTITY,
+      HttpStatus.UNPROCESSABLE_CONTENT,
       "Account does not have the necessary funds to complete the operation"),
 
   ACCOUNT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Account type not found"),
@@ -35,31 +35,31 @@ public enum ErrorCode {
   CURRENCY_NOT_FOUND(HttpStatus.NOT_FOUND, "Currency not found"),
 
   CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer not found"),
-  CUSTOMER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Customer is not valid"),
+  CUSTOMER_NOT_VALID(HttpStatus.UNPROCESSABLE_CONTENT, "Customer is not valid"),
 
   CUSTOMER_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer type not found"),
 
   LOAN_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan not found"),
 
-  LOAN_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "Loan is not in a valid state"),
+  LOAN_NOT_VALID(HttpStatus.UNPROCESSABLE_CONTENT, "Loan is not in a valid state"),
 
   LOAN_INSTALLMENTS_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan installments not found"),
 
   LOAN_INSTALLMENT_NOT_VALID_FOR_PAYMENT(
-      HttpStatus.UNPROCESSABLE_ENTITY, "Installment is not valid for payment"),
+      HttpStatus.UNPROCESSABLE_CONTENT, "Installment is not valid for payment"),
 
   LOAN_INSTALLMENT_PENDING(
-      HttpStatus.UNPROCESSABLE_ENTITY, "There is a previous installment pending of payment"),
+      HttpStatus.UNPROCESSABLE_CONTENT, "There is a previous installment pending of payment"),
 
   LOAN_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Loan type not found"),
   LOAN_TYPE_INTEREST_RATE_ZERO(
-      HttpStatus.UNPROCESSABLE_ENTITY, "Loan type interest cannot be zero"),
+      HttpStatus.UNPROCESSABLE_CONTENT, "Loan type interest cannot be zero"),
 
   PERSON_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Person type not found"),
 
-  ROLES_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "One or more roles are not valid"),
+  ROLES_NOT_VALID(HttpStatus.UNPROCESSABLE_CONTENT, "One or more roles are not valid"),
 
-  USER_NOT_VALID(HttpStatus.UNPROCESSABLE_ENTITY, "User not valid"),
+  USER_NOT_VALID(HttpStatus.UNPROCESSABLE_CONTENT, "User not valid"),
 
   DOCUMENT_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Document type not found");
 
