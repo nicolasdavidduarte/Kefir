@@ -25,6 +25,9 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
+# Patch Alpine packages with known High CVEs in the base image (e.g. expat)
+RUN apk upgrade --no-cache
+
 RUN addgroup -S spring && \
     adduser -S spring -G spring
 

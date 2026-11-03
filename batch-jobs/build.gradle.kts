@@ -31,10 +31,6 @@ dependencies {
     // Kotlin
     implementation(kotlin("stdlib"))
 
-    // JAXB
-    implementation("jakarta.xml.bind:jakarta.xml.bind-api")
-    runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
-
     // Lombok
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
