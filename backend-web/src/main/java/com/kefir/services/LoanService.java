@@ -1,10 +1,7 @@
 package com.kefir.services;
 
 import com.kefir.entities.*;
-import com.kefir.enums.AccountStatus;
-import com.kefir.enums.CustomerStatus;
 import com.kefir.enums.EntityName;
-import com.kefir.enums.LoanStatus;
 import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
@@ -18,8 +15,6 @@ import com.kefir.web.dtos.loan.LoanResponse;
 import com.kefir.web.dtos.operationLog.OperationLogCommand;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.observation.annotation.Observed;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -101,18 +96,16 @@ public class LoanService {
   @Transactional
   public LoanResponse create(LoanRequest loanRequest) {
 
-    Customer customer = customerService.getById(loanRequest.customerId());
-
-    Account account =
-        accountService.getByIdAndCustomerId(loanRequest.accountId(), loanRequest.customerId());
-
-    if (customer.getStatus() != CustomerStatus.ACTIVE)
-      throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
-
-    if (account.getStatus() != AccountStatus.OPENED)
-      throw new ApiException(ErrorCode.ACCOUNT_NOT_VALID);
+    boolean success = false;
 
     try {
+
+      Customer customer = customerService.getById(loanRequest.customerId());
+      customer.validateCanCreateLoan();
+
+      Account account =
+          accountService.getByIdAndCustomerId(loanRequest.accountId(), loanRequest.customerId());
+      account.validateCanBeUsedToCreateLoan();
 
       OffsetDateTime now = OffsetDateTime.now();
 
@@ -120,55 +113,30 @@ public class LoanService {
 
       LoanType loanType = loanTypeService.getByNameIgnoringCase(loanRequest.loanType());
 
-      BigDecimal annualInterestRate = loanType.getAnnualInterestRate();
-      BigDecimal monthlyInterestRate =
-          annualInterestRate.divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP);
-
       AmortizationType amortizationType =
           amortizationTypeService.getByNameIgnoringCase(loanRequest.amortizationType());
 
       Currency currency = currencyService.getByIsoCode(loanRequest.currencyIsoCode());
 
       Loan loan =
-          Loan.builder()
-              .customer(customer)
-              .account(account)
-              .loanType(loanType)
-              .amortizationType(amortizationType)
-              .principalAmount(loanRequest.principalAmount())
-              .interestAmount(BigDecimal.ZERO)
-              .totalOperationAmount(BigDecimal.ZERO)
-              .annualInterestRate(annualInterestRate)
-              .monthlyInterestRate(monthlyInterestRate)
-              .openingDate(now)
-              .currency(currency)
-              .numberOfInstallments(loanRequest.numberOfInstallments())
-              .expirationDate(now.plusMonths(loanRequest.numberOfInstallments()))
-              .status(LoanStatus.PENDING)
-              .externalId(loanRequest.externalId())
-              .createdBy(user)
-              .createdAt(now)
-              .updatedBy(user)
-              .updatedAt(now)
-              .build();
+          Loan.create(
+              customer,
+              account,
+              loanType,
+              amortizationType,
+              loanRequest.principalAmount(),
+              currency,
+              loanRequest.numberOfInstallments(),
+              loanRequest.externalId(),
+              user,
+              now);
 
       loanRepository.save(loan);
 
       List<LoanInstallment> loanInstallments =
           loanInstallmentService.createInstallmentsSchedule(loan);
 
-      BigDecimal totalOperationAmount =
-          loanInstallments.stream()
-              .map(LoanInstallment::getTotalAmount)
-              .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-      BigDecimal interestAmount =
-          loanInstallments.stream()
-              .map(LoanInstallment::getInterestAmount)
-              .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-      loan.setTotalOperationAmount(totalOperationAmount);
-      loan.setInterestAmount(interestAmount);
+      loan.initializeFinancialAmounts(loanInstallments);
 
       operationLogService.log(
           new OperationLogCommand(
@@ -178,15 +146,14 @@ public class LoanService {
               "Loan successfully created",
               user));
 
-      registry.counter("loan.created", "status", "success").increment();
-
       log.info("Loan successfully created - id: {}", loan);
+
+      success = true;
 
       return LoanResponse.fromEntity(loan);
 
-    } catch (Exception e) {
-      registry.counter("loan.created", "status", "error").increment();
-      throw e;
+    } finally {
+      registry.counter("loan.created", "status", success ? "success" : "error").increment();
     }
   }
 
@@ -195,13 +162,9 @@ public class LoanService {
     Loan loan =
         loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
-    if (loan.getStatus() != LoanStatus.ACTIVE) throw new ApiException(ErrorCode.LOAN_NOT_VALID);
-
     User user = userService.getById(authService.getCurrentUserId());
 
-    loan.setStatus(LoanStatus.CHARGE_OFF);
-    loan.setUpdatedAt(OffsetDateTime.now());
-    loan.setUpdatedBy(user);
+    loan.chargeOff(user, OffsetDateTime.now());
 
     loanInstallmentService.updateInstallmentsForChargeOff(id, user);
 

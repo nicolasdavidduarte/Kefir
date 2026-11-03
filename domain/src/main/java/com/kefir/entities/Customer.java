@@ -1,6 +1,8 @@
 package com.kefir.entities;
 
 import com.kefir.enums.CustomerStatus;
+import com.kefir.exceptions.DomainErrorCode;
+import com.kefir.exceptions.DomainException;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 import lombok.*;
@@ -93,5 +95,11 @@ public class Customer {
         + " / Status: "
         + status
         + "}";
+  }
+
+  public void validateCanCreateLoan() {
+    if (status != CustomerStatus.ACTIVE) {
+      throw new DomainException(DomainErrorCode.CUSTOMER_NOT_VALID);
+    }
   }
 }

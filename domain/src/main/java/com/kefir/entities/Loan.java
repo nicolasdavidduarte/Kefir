@@ -16,7 +16,9 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.OffsetDateTime;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -121,11 +123,79 @@ public class Loan {
   }
 
   public void approve(User approvedBy, OffsetDateTime approvedAt) {
-    if (!this.getStatus().equals(LoanStatus.PENDING))
+    if (this.getStatus() != LoanStatus.PENDING)
       throw new DomainException(DomainErrorCode.LOAN_NOT_VALID);
 
     this.status = LoanStatus.ACTIVE;
     this.updatedBy = approvedBy;
     this.updatedAt = approvedAt;
+  }
+
+  public void chargeOff(User approvedBy, OffsetDateTime approvedAt) {
+    if (this.getStatus() != LoanStatus.ACTIVE)
+      throw new DomainException(DomainErrorCode.LOAN_NOT_VALID);
+
+    this.setStatus(LoanStatus.CHARGE_OFF);
+    this.setUpdatedBy(approvedBy);
+    this.setUpdatedAt(approvedAt);
+  }
+
+  public static Loan create(
+      Customer customer,
+      Account account,
+      LoanType loanType,
+      AmortizationType amortizationType,
+      BigDecimal principalAmount,
+      Currency currency,
+      int numberOfInstallments,
+      Long externalId,
+      User user,
+      OffsetDateTime now) {
+
+    if (principalAmount == null || principalAmount.compareTo(BigDecimal.ZERO) <= 0) {
+      throw new DomainException(DomainErrorCode.INVALID_AMOUNT);
+    }
+
+    if (numberOfInstallments <= 0) {
+      throw new DomainException(DomainErrorCode.INVALID_INSTALLMENTS);
+    }
+
+    BigDecimal annualRate = loanType.getAnnualInterestRate();
+
+    BigDecimal monthlyRate = annualRate.divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP);
+
+    return Loan.builder()
+        .customer(customer)
+        .account(account)
+        .loanType(loanType)
+        .numberOfInstallments(numberOfInstallments)
+        .currency(currency)
+        .amortizationType(amortizationType)
+        .annualInterestRate(annualRate)
+        .monthlyInterestRate(monthlyRate)
+        .principalAmount(principalAmount)
+        .interestAmount(BigDecimal.ZERO)
+        .totalOperationAmount(BigDecimal.ZERO)
+        .openingDate(now)
+        .expirationDate(now.plusMonths(numberOfInstallments))
+        .externalId(externalId)
+        .status(LoanStatus.PENDING)
+        .createdBy(user)
+        .createdAt(now)
+        .updatedBy(user)
+        .updatedAt(now)
+        .build();
+  }
+
+  public void initializeFinancialAmounts(List<LoanInstallment> loanInstallments) {
+    this.totalOperationAmount =
+        loanInstallments.stream()
+            .map(LoanInstallment::getTotalAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    this.interestAmount =
+        loanInstallments.stream()
+            .map(LoanInstallment::getInterestAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 }

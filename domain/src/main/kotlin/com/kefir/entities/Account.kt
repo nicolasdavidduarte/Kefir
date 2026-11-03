@@ -1,6 +1,8 @@
 package com.kefir.entities
 
 import com.kefir.enums.AccountStatus
+import com.kefir.exceptions.DomainErrorCode
+import com.kefir.exceptions.DomainException
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -67,4 +69,10 @@ class Account(
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
 ) {
     override fun toString(): String = "{Id: $id / CBU: $cbu / Balance: $balance / Status: $status}"
+
+    fun validateCanBeUsedToCreateLoan() {
+        if (status != AccountStatus.OPENED) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+    }
 }
