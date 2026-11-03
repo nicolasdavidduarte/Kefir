@@ -1,4 +1,4 @@
-package com.kefir.services
+package com.kefir.services.accounttype
 
 import com.kefir.entities.AccountType
 import com.kefir.exceptions.ApiException

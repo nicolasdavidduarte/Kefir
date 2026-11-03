@@ -1,4 +1,4 @@
-package com.kefir.services;
+package com.kefir.services.customertype;
 
 import com.kefir.entities.CustomerType;
 import com.kefir.exceptions.ApiException;

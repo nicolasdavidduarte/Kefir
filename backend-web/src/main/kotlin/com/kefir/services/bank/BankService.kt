@@ -1,4 +1,4 @@
-package com.kefir.services
+package com.kefir.services.bank
 
 import com.kefir.entities.Bank
 import com.kefir.entities.enable
@@ -6,6 +6,7 @@ import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.BankRepository
+import com.kefir.services.user.UserService
 import com.kefir.web.dtos.bank.BankRequest
 import com.kefir.web.dtos.bank.BankResponse
 import com.kefir.web.dtos.bank.toResponse

@@ -1,4 +1,4 @@
-package com.kefir.services
+package com.kefir.services.operationlog
 
 import com.kefir.entities.OperationLog
 import com.kefir.repositories.OperationLogRepository

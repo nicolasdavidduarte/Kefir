@@ -1,6 +1,6 @@
 package com.kefir.web.controllers
 
-import com.kefir.services.BankService
+import com.kefir.services.bank.BankService
 import com.kefir.web.dtos.bank.BankRequest
 import com.kefir.web.dtos.bank.BankResponse
 import com.kefir.web.dtos.entityOperation.EntityOperationResponse

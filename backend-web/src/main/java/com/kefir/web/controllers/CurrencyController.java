@@ -1,7 +1,7 @@
 package com.kefir.web.controllers;
 
 import com.kefir.enums.CurrencyIsoCodes;
-import com.kefir.services.CurrencyService;
+import com.kefir.services.currency.CurrencyService;
 import com.kefir.web.dtos.currency.CurrencyResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.kefir.services;
+package com.kefir.services.customer;
 
 import com.kefir.entities.*;
 import com.kefir.enums.CustomerStatus;
@@ -8,6 +8,11 @@ import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.CustomerRepository;
+import com.kefir.services.customertype.CustomerTypeService;
+import com.kefir.services.documenttype.DocumentTypeService;
+import com.kefir.services.operationlog.OperationLogService;
+import com.kefir.services.persontype.PersonTypeService;
+import com.kefir.services.user.UserService;
 import com.kefir.web.dtos.customer.CustomerCreationRequest;
 import com.kefir.web.dtos.customer.CustomerResponse;
 import com.kefir.web.dtos.customer.CustomerUpdateRequest;

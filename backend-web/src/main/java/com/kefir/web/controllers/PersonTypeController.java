@@ -1,6 +1,6 @@
 package com.kefir.web.controllers;
 
-import com.kefir.services.PersonTypeService;
+import com.kefir.services.persontype.PersonTypeService;
 import com.kefir.web.dtos.personType.PersonTypeResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

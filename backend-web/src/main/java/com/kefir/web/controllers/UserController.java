@@ -1,6 +1,6 @@
 package com.kefir.web.controllers;
 
-import com.kefir.services.UserService;
+import com.kefir.services.user.UserService;
 import com.kefir.web.dtos.common.ApiEntityResponse;
 import com.kefir.web.dtos.common.EntityStatusUpdate;
 import com.kefir.web.dtos.user.UserRequest;

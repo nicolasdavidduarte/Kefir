@@ -1,4 +1,4 @@
-package com.kefir.services
+package com.kefir.services.bankbranch
 
 import com.kefir.entities.BankBranch
 import com.kefir.exceptions.ApiException

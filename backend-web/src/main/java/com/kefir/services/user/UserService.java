@@ -1,4 +1,4 @@
-package com.kefir.services;
+package com.kefir.services.user;
 
 import com.kefir.entities.Role;
 import com.kefir.entities.User;
@@ -6,6 +6,7 @@ import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.UserRepository;
+import com.kefir.services.role.RoleService;
 import com.kefir.web.dtos.common.EntityStatusUpdate;
 import com.kefir.web.dtos.user.UserRequest;
 import com.kefir.web.dtos.user.UserResponse;

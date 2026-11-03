@@ -1,6 +1,6 @@
 package com.kefir.web.controllers;
 
-import com.kefir.services.CustomerService;
+import com.kefir.services.customer.CustomerService;
 import com.kefir.web.dtos.customer.CustomerCreationRequest;
 import com.kefir.web.dtos.customer.CustomerResponse;
 import com.kefir.web.dtos.customer.CustomerUpdateRequest;

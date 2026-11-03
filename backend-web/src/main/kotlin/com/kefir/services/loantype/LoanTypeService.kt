@@ -1,4 +1,4 @@
-package com.kefir.services
+package com.kefir.services.loantype
 
 import com.kefir.entities.LoanType
 import com.kefir.enums.LoanTypeName
@@ -6,6 +6,7 @@ import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.LoanTypeRepository
+import com.kefir.services.user.UserService
 import com.kefir.web.dtos.loanType.LoanTypeRequest
 import com.kefir.web.dtos.loanType.LoanTypeResponse
 import com.kefir.web.dtos.loanType.toResponse
