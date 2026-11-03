@@ -179,7 +179,8 @@ public class CustomerService {
             .findById(id)
             .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
 
-    if (!customer.getStatus().equals(CustomerStatus.PENDING))
+    if (!customer.getStatus().equals(CustomerStatus.PENDING)
+        && !customer.getStatus().equals(CustomerStatus.DEACTIVATED))
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
 
     User user = userService.getById(authService.getCurrentUserId());
