@@ -26,6 +26,7 @@ subprojects {
     extra["junit-jupiter.version"] = "6.0.3"
     extra["netty.version"] = "4.1.136.Final"
     extra["commons-lang3.version"] = "3.18.0"
+    // extra["glassfish-jaxb.version"] = "4.0.10" // enable when CVE-2026-92877 fix is released
 
     pluginManager.apply("com.diffplug.spotless")
     //pluginManager.apply("org.jetbrains.dokka")
