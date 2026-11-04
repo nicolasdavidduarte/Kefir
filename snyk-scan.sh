@@ -38,11 +38,14 @@ run_snyk() {
     "$@"
     local exit_code=$?
     set -e
-    if [[ $exit_code -ne 0 ]]; then
-        print_warning "$stage_name reported findings (exit $exit_code); continuing remaining stages..."
+    if [[ $exit_code -eq 0 ]]; then
+        print_success "$stage_name passed"
+    elif [[ $exit_code -eq 1 ]]; then
+        print_warning "$stage_name reported findings (exit 1); continuing remaining stages..."
         SCAN_FAILURES=$((SCAN_FAILURES + 1))
     else
-        print_success "$stage_name passed"
+        print_error "$stage_name did not complete its scan (exit $exit_code); continuing remaining stages..."
+        SCAN_ERRORS=$((SCAN_ERRORS + 1))
     fi
 }
 
@@ -99,6 +102,11 @@ print_warning "Review the findings above. Use 'snyk monitor' to track in the Sny
 
 if [[ $SCAN_FAILURES -gt 0 ]]; then
     print_error "Snyk security scan finished with $SCAN_FAILURES stage(s) reporting findings."
+fi
+if [[ $SCAN_ERRORS -gt 0 ]]; then
+    print_error "Snyk security scan finished with $SCAN_ERRORS stage(s) reporting findings."
+fi
+if [[ $SCAN_FAILURES -gt 0 || $SCAN_ERRORS -gt 0 ]]; then
     exit 1
 fi
 
