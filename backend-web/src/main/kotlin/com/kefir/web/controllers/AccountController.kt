@@ -1,6 +1,7 @@
 package com.kefir.web.controllers
 
-import com.kefir.services.account.AccountService
+import com.kefir.services.account.AccountCommandService
+import com.kefir.services.account.AccountQueryService
 import com.kefir.web.dtos.account.AccountRequest
 import com.kefir.web.dtos.account.AccountResponse
 import com.kefir.web.dtos.loan.AccountSuspensionRequest
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/accounts")
 class AccountController(
-    val accountService: AccountService,
+    val accountCommandService: AccountCommandService,
+    val accountQueryService: AccountQueryService,
 ) {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -31,37 +33,37 @@ class AccountController(
         @RequestParam(name = "size", required = false) size: Int?,
     ): List<AccountResponse> {
         val accounts = if (customerId != null) {
-            accountService.getAllByCustomerWithResponse(customerId)
+            accountQueryService.getAllByCustomerWithResponse(customerId)
         } else {
-            accountService.getAll(Pagination.from(page, size))
+            accountQueryService.getAll(Pagination.from(page, size))
         }
         return accounts.sortedBy { it.id }
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    fun getById(@PathVariable id: Long): AccountResponse = accountService.getByIdWithResponse(id)
+    fun getById(@PathVariable id: Long): AccountResponse = accountQueryService.getByIdWithResponse(id)
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun create(
         @RequestBody @Valid accountRequest: AccountRequest,
-    ) = accountService.create(accountRequest)
+    ) = accountCommandService.create(accountRequest)
 
     @PatchMapping("/{id}/open")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun open(
         @PathVariable id: Long,
-    ) = accountService.open(id)
+    ) = accountCommandService.open(id)
 
     @PatchMapping("/{id}/close")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun close(
         @PathVariable id: Long,
-    ) = accountService.close(id)
+    ) = accountCommandService.close(id)
 
     @PatchMapping("/{id}/suspend")
     @ResponseStatus(HttpStatus.OK)
@@ -69,5 +71,5 @@ class AccountController(
     fun suspend(
         @PathVariable id: Long,
         @RequestBody @Valid accountSuspensionRequest: AccountSuspensionRequest,
-    ) = accountService.suspend(id, accountSuspensionRequest.reason)
+    ) = accountCommandService.suspend(id, accountSuspensionRequest.reason)
 }

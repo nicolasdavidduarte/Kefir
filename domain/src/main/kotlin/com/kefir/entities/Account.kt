@@ -17,6 +17,8 @@ import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.time.OffsetDateTime
+import kotlin.minus
+import kotlin.plus
 
 @Entity
 @Table(name = "account")
@@ -74,5 +76,84 @@ class Account(
         if (status != AccountStatus.OPENED) {
             throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
         }
+    }
+
+    fun addBalance(amount: BigDecimal) {
+        if (this.status != AccountStatus.OPENED) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        this.balance += amount
+    }
+
+    fun subtractBalance(amount: BigDecimal) {
+        if (this.status != AccountStatus.OPENED) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        if (this.balance < amount) {
+            throw DomainException(DomainErrorCode.INSUFFICIENT_FUNDS)
+        }
+
+        this.balance -= amount
+    }
+
+    fun open(updatedBy: User) {
+        if (this.status != AccountStatus.PENDING) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        this.status = AccountStatus.OPENED
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
+    }
+
+    fun suspend(updatedBy: User) {
+        if (this.status != AccountStatus.OPENED) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        this.status = AccountStatus.SUSPENDED
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
+    }
+
+    fun close(updatedBy: User, loans: List<Loan>) {
+        if ((this.status != AccountStatus.OPENED) && (this.status != AccountStatus.PENDING)) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        val loanPending = loans.any { it.isActive }
+
+        if (loanPending) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID_FOR_CLOSURE)
+        }
+
+        this.status = AccountStatus.CLOSED
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
+    }
+
+    companion object {
+        fun create(
+            accountType: AccountType,
+            customer: Customer,
+            currency: Currency,
+            bankBranch: BankBranch,
+            initialBalance: BigDecimal,
+            createdBy: User,
+            accountNumber: String,
+            cbu: String,
+        ): Account = Account(
+            type = accountType,
+            customer = customer,
+            currency = currency,
+            bank = bankBranch.bank,
+            balance = initialBalance,
+            createdBy = createdBy,
+            updatedBy = createdBy,
+            accountNumber = accountNumber,
+            cbu = cbu,
+        )
     }
 }

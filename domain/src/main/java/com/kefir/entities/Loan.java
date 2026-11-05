@@ -198,4 +198,8 @@ public class Loan {
             .map(LoanInstallment::getInterestAmount)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
+
+  public boolean isActive() {
+    return this.status == LoanStatus.ACTIVE;
+  }
 }
