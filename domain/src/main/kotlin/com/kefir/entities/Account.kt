@@ -83,12 +83,20 @@ class Account(
             throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
         }
 
+        if (amount.signum() < 0) {
+            throw DomainException(DomainErrorCode.INVALID_AMOUNT)
+        }
+
         this.balance += amount
     }
 
     fun subtractBalance(amount: BigDecimal) {
         if (this.status != AccountStatus.OPENED) {
             throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        if (amount.signum() < 0) {
+            throw DomainException(DomainErrorCode.INVALID_AMOUNT)
         }
 
         if (this.balance < amount) {
