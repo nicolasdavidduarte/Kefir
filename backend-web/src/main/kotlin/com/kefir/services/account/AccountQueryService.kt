@@ -33,4 +33,7 @@ class AccountQueryService(
 
     @Transactional(readOnly = true)
     fun getAllByCustomerWithResponse(customerId: Long): List<AccountResponse> = accountRepository.findAllByCustomerId(customerId).map(Account::toResponse)
+
+    @Transactional
+    fun getByLoanIdForUpdate(loanId: Long): Account = accountRepository.findByLoanIdForUpdate(loanId).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 }

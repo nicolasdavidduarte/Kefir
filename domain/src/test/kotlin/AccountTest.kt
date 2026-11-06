@@ -150,7 +150,7 @@ class AccountTest {
     fun accountIsValidWhenUsedToCreateLoanWithOpenedStatus() {
         val account = AccountMother.sample(status = AccountStatus.OPENED)
 
-        account.validateCanBeUsedToCreateLoan()
+        account.isValid()
     }
 
     @ParameterizedTest
@@ -159,7 +159,7 @@ class AccountTest {
         val account = AccountMother.sample(status = status)
 
         val exception = assertThrows<DomainException> {
-            account.validateCanBeUsedToCreateLoan()
+            account.isValid()
         }
 
         assertEquals("Account is not in a valid state", exception.message)
