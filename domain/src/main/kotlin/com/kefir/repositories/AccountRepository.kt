@@ -34,6 +34,6 @@ interface AccountRepository : JpaRepository<Account, Long> {
     fun findNextAccountNumberSequence(): Long
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query(value = "select a from Account join Loan l on l.account.id = a.id where l.id = loanId")
+    @Query(value = "select a from Account a join Loan l on l.account.id = a.id where l.id = :loanId")
     fun findByLoanIdForUpdate(loanId: Long): Optional<Account>
 }
