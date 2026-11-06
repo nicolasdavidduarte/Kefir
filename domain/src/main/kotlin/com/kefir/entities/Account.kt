@@ -78,7 +78,7 @@ class Account(
 
     override fun toString(): String = "{Id: $id / CBU: $cbu / Balance: $balance / Status: $status}"
 
-    fun validateCanBeUsedToCreateLoan() {
+    fun isValid() {
         if (status != AccountStatus.OPENED) {
             throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
         }

@@ -34,7 +34,6 @@ public class LoanCommandService {
   private final LoanRepository loanRepository;
   private final LoanInstallmentService loanInstallmentService;
   private final AccountQueryService accountQueryService;
-  private final AccountCommandService accountCommandService;
   private final AuthService authService;
   private final UserService userService;
   private final MeterRegistry registry;
@@ -67,7 +66,6 @@ public class LoanCommandService {
     this.userService = userService;
     this.amortizationTypeService = amortizationTypeService;
     this.accountQueryService = accountQueryService;
-    this.accountCommandService = accountCommandService;
     this.operationLogService = operationLogService;
   }
 
@@ -84,7 +82,7 @@ public class LoanCommandService {
       Account account =
           accountQueryService.getByIdAndCustomerId(
               loanRequest.accountId(), loanRequest.customerId());
-      account.validateCanBeUsedToCreateLoan();
+      account.isValid();
 
       OffsetDateTime now = OffsetDateTime.now();
 
@@ -139,7 +137,9 @@ public class LoanCommandService {
   @Transactional
   public LoanResponse chargeOff(Long id, LoanChargeOffRequest chargeOffRequest) {
     Loan loan =
-        loanRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
+        loanRepository
+            .findByIdForUpdate(id)
+            .orElseThrow(() -> new ApiException(ErrorCode.LOAN_NOT_FOUND));
 
     User user = userService.getById(authService.getCurrentUserId());
 
@@ -160,6 +160,9 @@ public class LoanCommandService {
 
   @Transactional
   public LoanResponse approve(Long id) {
+    Account account = accountQueryService.getByLoanIdForUpdate(id);
+    account.isValid();
+
     Loan loan =
         loanRepository
             .findByIdForUpdate(id)
@@ -169,7 +172,7 @@ public class LoanCommandService {
 
     loan.approve(user, OffsetDateTime.now());
 
-    accountCommandService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount(), user);
+    account.addBalance(loan.getPrincipalAmount(), user);
 
     operationLogService.log(
         new OperationLogCommand(

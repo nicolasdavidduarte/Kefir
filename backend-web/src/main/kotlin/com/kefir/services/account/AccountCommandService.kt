@@ -21,7 +21,6 @@ import com.kefir.web.dtos.account.toResponse
 import com.kefir.web.dtos.operationLog.OperationLogCommand
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.math.BigDecimal
 
 @Service
 class AccountCommandService(
@@ -38,20 +37,6 @@ class AccountCommandService(
 
     companion object {
         private const val SYSTEM_USER = 1
-    }
-
-    @Transactional
-    fun addBalance(accountId: Long, amount: BigDecimal, updatedBy: User) {
-        val account = accountRepository.findByIdForUpdate(accountId).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
-
-        account.addBalance(amount, updatedBy)
-    }
-
-    @Transactional
-    fun subtractBalance(accountId: Long, amount: BigDecimal, updatedBy: User) {
-        val account = accountRepository.findByIdForUpdate(accountId).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
-
-        account.subtractBalance(amount, updatedBy)
     }
 
     @Transactional

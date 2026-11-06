@@ -12,7 +12,7 @@ import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.LoanInstallmentRepository
 import com.kefir.repositories.LoanRepository
-import com.kefir.services.account.AccountCommandService
+import com.kefir.services.account.AccountQueryService
 import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
 import com.kefir.services.loanInstallment.payment.PaymentMethodService
 import com.kefir.services.user.UserService
@@ -29,7 +29,7 @@ class LoanInstallmentService(
     private val loanInstallmentRepository: LoanInstallmentRepository,
     private val paymentMethodService: PaymentMethodService,
     private val loanInstallmentPaymentService: LoanInstallmentPaymentService,
-    private val accountCommandService: AccountCommandService,
+    private val accountQueryService: AccountQueryService,
     private val userService: UserService,
     private val authService: AuthService,
     calculatorsList: List<AmortizationCalculator>,
@@ -51,6 +51,9 @@ class LoanInstallmentService(
 
     @Transactional
     fun createPayment(loanId: Long, installmentNumber: Int, paymentMethod: PaymentMethodName): LoanInstallmentResponse {
+        val account = accountQueryService.getByLoanIdForUpdate(loanId)
+        account.isValid()
+
         val loan = loanRepository.findByIdForUpdate(loanId).orElseThrow { throw ApiException(ErrorCode.LOAN_NOT_FOUND) }
 
         val paymentSchedule = loanInstallmentRepository.findAllByLoanIdOrderByNumberAsc(loanId)
@@ -69,7 +72,7 @@ class LoanInstallmentService(
 
         val user = userService.getById(authService.currentUserId)
 
-        accountCommandService.subtractBalance(loan.account.id, currentInstallment.totalAmount, user)
+        account.subtractBalance(currentInstallment.totalAmount, user)
 
         currentInstallment.status = LoanInstallmentStatus.PAID
         currentInstallment.updatedAt = OffsetDateTime.now()
