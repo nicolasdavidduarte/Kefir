@@ -70,6 +70,12 @@ class Account(
     @Column(name = "updated_at", nullable = false, updatable = true)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
 ) {
+    init {
+        if (balance.signum() < 0) {
+            throw DomainException(DomainErrorCode.INVALID_AMOUNT)
+        }
+    }
+
     override fun toString(): String = "{Id: $id / CBU: $cbu / Balance: $balance / Status: $status}"
 
     fun validateCanBeUsedToCreateLoan() {
@@ -78,7 +84,7 @@ class Account(
         }
     }
 
-    fun addBalance(amount: BigDecimal) {
+    fun addBalance(amount: BigDecimal, updatedBy: User) {
         if (this.status != AccountStatus.OPENED) {
             throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
         }
@@ -88,9 +94,11 @@ class Account(
         }
 
         this.balance += amount
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
     }
 
-    fun subtractBalance(amount: BigDecimal) {
+    fun subtractBalance(amount: BigDecimal, updatedBy: User) {
         if (this.status != AccountStatus.OPENED) {
             throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
         }
@@ -104,6 +112,8 @@ class Account(
         }
 
         this.balance -= amount
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
     }
 
     fun open(updatedBy: User) {

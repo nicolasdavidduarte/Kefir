@@ -169,7 +169,7 @@ public class LoanCommandService {
 
     loan.approve(user, OffsetDateTime.now());
 
-    accountCommandService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount());
+    accountCommandService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount(), user);
 
     operationLogService.log(
         new OperationLogCommand(

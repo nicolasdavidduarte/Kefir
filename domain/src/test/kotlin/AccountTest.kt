@@ -41,6 +41,24 @@ class AccountTest {
     }
 
     @Test
+    fun getExceptionErrorWhenCreateWithNegativeInitialBalance() {
+        val accountType = AccountTypeMother.sample()
+        val customer = CustomerMother.sample()
+        val currency = CurrencyMother.sample()
+        val bankBranch = BankBranchMother.sample()
+        val initialBalance = BigDecimal.valueOf(-5000.00)
+        val accountNumber = "123456789"
+        val cbu = "987654321"
+        val user = UserMother.sample()
+
+        val exception = assertThrows<DomainException> {
+            Account.create(accountType, customer, currency, bankBranch, initialBalance, user, accountNumber, cbu)
+        }
+
+        assertEquals("Amount must be positive", exception.message)
+    }
+
+    @Test
     fun accountStatusUpdatedWhenOpened() {
         val account = AccountMother.sample(status = AccountStatus.PENDING)
         val user = UserMother.sample()
@@ -151,8 +169,9 @@ class AccountTest {
     fun accountBalanceUpdatedWhenAddBalanceWithOpenedStatus() {
         val account = AccountMother.sample(status = AccountStatus.OPENED, balance = BigDecimal.valueOf(1000.00))
         val amount = BigDecimal.valueOf(500.00)
+        val updatedBy = UserMother.sample()
 
-        account.addBalance(amount)
+        account.addBalance(amount, updatedBy)
 
         assertEquals(BigDecimal.valueOf(1500.00), account.balance)
     }
@@ -162,9 +181,10 @@ class AccountTest {
     fun accountThrowsErrorWhenAddBalanceWithWrongStatus(status: AccountStatus) {
         val account = AccountMother.sample(status = status)
         val amount = BigDecimal.valueOf(500.00)
+        val updatedBy = UserMother.sample()
 
         val exception = assertThrows<DomainException> {
-            account.addBalance(amount)
+            account.addBalance(amount, updatedBy)
         }
 
         assertEquals("Account is not in a valid state", exception.message)
@@ -174,9 +194,10 @@ class AccountTest {
     fun accountThrowsErrorWhenAddBalanceWithNegativeAmount() {
         val account = AccountMother.sample(status = AccountStatus.OPENED)
         val amount = BigDecimal.valueOf(-100.00)
+        val updatedBy = UserMother.sample()
 
         val exception = assertThrows<DomainException> {
-            account.addBalance(amount)
+            account.addBalance(amount, updatedBy)
         }
 
         assertEquals("Amount must be positive", exception.message)
@@ -186,8 +207,9 @@ class AccountTest {
     fun accountBalanceUpdatedWhenSubtractBalanceWithOpenedStatus() {
         val account = AccountMother.sample(status = AccountStatus.OPENED, balance = BigDecimal.valueOf(1000.00))
         val amount = BigDecimal.valueOf(400.00)
+        val updatedBy = UserMother.sample()
 
-        account.subtractBalance(amount)
+        account.subtractBalance(amount, updatedBy)
 
         assertEquals(BigDecimal.valueOf(600.00), account.balance)
     }
@@ -197,9 +219,10 @@ class AccountTest {
     fun accountThrowsErrorWhenSubtractBalanceWithWrongStatus(status: AccountStatus) {
         val account = AccountMother.sample(status = status)
         val amount = BigDecimal.valueOf(100.00)
+        val updatedBy = UserMother.sample()
 
         val exception = assertThrows<DomainException> {
-            account.subtractBalance(amount)
+            account.subtractBalance(amount, updatedBy)
         }
 
         assertEquals("Account is not in a valid state", exception.message)
@@ -209,9 +232,10 @@ class AccountTest {
     fun accountThrowsErrorWhenSubtractBalanceWithNegativeAmount() {
         val account = AccountMother.sample(status = AccountStatus.OPENED)
         val amount = BigDecimal.valueOf(-100.00)
+        val updatedBy = UserMother.sample()
 
         val exception = assertThrows<DomainException> {
-            account.subtractBalance(amount)
+            account.subtractBalance(amount, updatedBy)
         }
 
         assertEquals("Amount must be positive", exception.message)
@@ -221,9 +245,10 @@ class AccountTest {
     fun accountThrowsErrorWhenSubtractBalanceWithInsufficientFunds() {
         val account = AccountMother.sample(status = AccountStatus.OPENED, balance = BigDecimal.valueOf(100.00))
         val amount = BigDecimal.valueOf(200.00)
+        val updatedBy = UserMother.sample()
 
         val exception = assertThrows<DomainException> {
-            account.subtractBalance(amount)
+            account.subtractBalance(amount, updatedBy)
         }
 
         assertEquals("Account does not have the necessary funds to complete the operation", exception.message)

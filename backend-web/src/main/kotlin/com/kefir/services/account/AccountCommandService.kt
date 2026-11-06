@@ -41,17 +41,17 @@ class AccountCommandService(
     }
 
     @Transactional
-    fun addBalance(accountId: Long, amount: BigDecimal) {
+    fun addBalance(accountId: Long, amount: BigDecimal, updatedBy: User) {
         val account = accountRepository.findByIdForUpdate(accountId).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
-        account.addBalance(amount)
+        account.addBalance(amount, updatedBy)
     }
 
     @Transactional
-    fun subtractBalance(accountId: Long, amount: BigDecimal) {
+    fun subtractBalance(accountId: Long, amount: BigDecimal, updatedBy: User) {
         val account = accountRepository.findByIdForUpdate(accountId).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
-        account.subtractBalance(amount)
+        account.subtractBalance(amount, updatedBy)
     }
 
     @Transactional
@@ -129,7 +129,7 @@ class AccountCommandService(
 
     @Transactional
     fun close(id: Long): AccountResponse {
-        val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+        val account = accountRepository.findByIdForUpdate(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
         val user = userService.getById(authService.currentUserId)
 

@@ -67,9 +67,9 @@ class LoanInstallmentService(
 
         paymentValidations(currentInstallment, previousInstallment)
 
-        accountCommandService.subtractBalance(loan.account.id, currentInstallment.totalAmount)
-
         val user = userService.getById(authService.currentUserId)
+
+        accountCommandService.subtractBalance(loan.account.id, currentInstallment.totalAmount, user)
 
         currentInstallment.status = LoanInstallmentStatus.PAID
         currentInstallment.updatedAt = OffsetDateTime.now()
