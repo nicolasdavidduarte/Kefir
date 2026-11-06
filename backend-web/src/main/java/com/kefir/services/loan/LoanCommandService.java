@@ -7,7 +7,8 @@ import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.repositories.LoanRepository;
-import com.kefir.services.account.AccountService;
+import com.kefir.services.account.AccountCommandService;
+import com.kefir.services.account.AccountQueryService;
 import com.kefir.services.amortizationtype.AmortizationTypeService;
 import com.kefir.services.currency.CurrencyService;
 import com.kefir.services.customer.CustomerService;
@@ -32,7 +33,8 @@ public class LoanCommandService {
 
   private final LoanRepository loanRepository;
   private final LoanInstallmentService loanInstallmentService;
-  private final AccountService accountService;
+  private final AccountQueryService accountQueryService;
+  private final AccountCommandService accountCommandService;
   private final AuthService authService;
   private final UserService userService;
   private final MeterRegistry registry;
@@ -45,7 +47,8 @@ public class LoanCommandService {
   public LoanCommandService(
       LoanRepository loanRepository,
       LoanInstallmentService loanInstallmentService,
-      AccountService accountService,
+      AccountQueryService accountQueryService,
+      AccountCommandService accountCommandService,
       AuthService authService,
       MeterRegistry registry,
       CustomerService customerService,
@@ -63,7 +66,8 @@ public class LoanCommandService {
     this.currencyService = currencyService;
     this.userService = userService;
     this.amortizationTypeService = amortizationTypeService;
-    this.accountService = accountService;
+    this.accountQueryService = accountQueryService;
+    this.accountCommandService = accountCommandService;
     this.operationLogService = operationLogService;
   }
 
@@ -78,7 +82,8 @@ public class LoanCommandService {
       customer.validateCanCreateLoan();
 
       Account account =
-          accountService.getByIdAndCustomerId(loanRequest.accountId(), loanRequest.customerId());
+          accountQueryService.getByIdAndCustomerId(
+              loanRequest.accountId(), loanRequest.customerId());
       account.validateCanBeUsedToCreateLoan();
 
       OffsetDateTime now = OffsetDateTime.now();
@@ -164,7 +169,7 @@ public class LoanCommandService {
 
     loan.approve(user, OffsetDateTime.now());
 
-    accountService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount());
+    accountCommandService.addBalance(loan.getAccount().getId(), loan.getPrincipalAmount(), user);
 
     operationLogService.log(
         new OperationLogCommand(

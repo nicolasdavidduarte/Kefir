@@ -12,7 +12,7 @@ import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.repositories.LoanInstallmentRepository
 import com.kefir.repositories.LoanRepository
-import com.kefir.services.account.AccountService
+import com.kefir.services.account.AccountCommandService
 import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
 import com.kefir.services.loanInstallment.payment.PaymentMethodService
 import com.kefir.services.user.UserService
@@ -29,7 +29,7 @@ class LoanInstallmentService(
     private val loanInstallmentRepository: LoanInstallmentRepository,
     private val paymentMethodService: PaymentMethodService,
     private val loanInstallmentPaymentService: LoanInstallmentPaymentService,
-    private val accountService: AccountService,
+    private val accountCommandService: AccountCommandService,
     private val userService: UserService,
     private val authService: AuthService,
     calculatorsList: List<AmortizationCalculator>,
@@ -67,9 +67,9 @@ class LoanInstallmentService(
 
         paymentValidations(currentInstallment, previousInstallment)
 
-        accountService.subtractBalance(loan.account.id, currentInstallment.totalAmount)
-
         val user = userService.getById(authService.currentUserId)
+
+        accountCommandService.subtractBalance(loan.account.id, currentInstallment.totalAmount, user)
 
         currentInstallment.status = LoanInstallmentStatus.PAID
         currentInstallment.updatedAt = OffsetDateTime.now()

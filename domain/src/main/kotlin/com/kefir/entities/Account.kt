@@ -17,6 +17,8 @@ import jakarta.persistence.SequenceGenerator
 import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.time.OffsetDateTime
+import kotlin.minus
+import kotlin.plus
 
 @Entity
 @Table(name = "account")
@@ -68,11 +70,108 @@ class Account(
     @Column(name = "updated_at", nullable = false, updatable = true)
     var updatedAt: OffsetDateTime = OffsetDateTime.now(),
 ) {
+    init {
+        if (balance.signum() < 0) {
+            throw DomainException(DomainErrorCode.INVALID_AMOUNT)
+        }
+    }
+
     override fun toString(): String = "{Id: $id / CBU: $cbu / Balance: $balance / Status: $status}"
 
     fun validateCanBeUsedToCreateLoan() {
         if (status != AccountStatus.OPENED) {
             throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
         }
+    }
+
+    fun addBalance(amount: BigDecimal, updatedBy: User) {
+        if (this.status != AccountStatus.OPENED) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        if (amount.signum() < 0) {
+            throw DomainException(DomainErrorCode.INVALID_AMOUNT)
+        }
+
+        this.balance += amount
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
+    }
+
+    fun subtractBalance(amount: BigDecimal, updatedBy: User) {
+        if (this.status != AccountStatus.OPENED) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        if (amount.signum() < 0) {
+            throw DomainException(DomainErrorCode.INVALID_AMOUNT)
+        }
+
+        if (this.balance < amount) {
+            throw DomainException(DomainErrorCode.INSUFFICIENT_FUNDS)
+        }
+
+        this.balance -= amount
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
+    }
+
+    fun open(updatedBy: User) {
+        if (this.status != AccountStatus.PENDING) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        this.status = AccountStatus.OPENED
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
+    }
+
+    fun suspend(updatedBy: User) {
+        if (this.status != AccountStatus.OPENED) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        this.status = AccountStatus.SUSPENDED
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
+    }
+
+    fun close(updatedBy: User, loans: List<Loan>) {
+        if ((this.status != AccountStatus.OPENED) && (this.status != AccountStatus.PENDING)) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID)
+        }
+
+        val loanPending = loans.any { it.isActive }
+
+        if (loanPending) {
+            throw DomainException(DomainErrorCode.ACCOUNT_NOT_VALID_FOR_CLOSURE)
+        }
+
+        this.status = AccountStatus.CLOSED
+        this.updatedAt = OffsetDateTime.now()
+        this.updatedBy = updatedBy
+    }
+
+    companion object {
+        fun create(
+            accountType: AccountType,
+            customer: Customer,
+            currency: Currency,
+            bankBranch: BankBranch,
+            initialBalance: BigDecimal,
+            createdBy: User,
+            accountNumber: String,
+            cbu: String,
+        ): Account = Account(
+            type = accountType,
+            customer = customer,
+            currency = currency,
+            bank = bankBranch.bank,
+            balance = initialBalance,
+            createdBy = createdBy,
+            updatedBy = createdBy,
+            accountNumber = accountNumber,
+            cbu = cbu,
+        )
     }
 }
