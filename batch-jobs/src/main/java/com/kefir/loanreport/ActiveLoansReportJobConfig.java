@@ -4,11 +4,12 @@ import com.kefir.entities.Loan;
 import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.job.parameters.RunIdIncrementer;
+import org.springframework.batch.core.job.parameters.JobParameters;
+import org.springframework.batch.core.job.parameters.JobParametersBuilder;
+import org.springframework.batch.core.job.parameters.JobParametersIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -17,12 +18,12 @@ import org.springframework.batch.infrastructure.item.database.JpaPagingItemReade
 import org.springframework.batch.infrastructure.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemWriter;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemWriterBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
-@Slf4j
 @Configuration
 public class ActiveLoansReportJobConfig {
 
@@ -37,7 +38,7 @@ public class ActiveLoansReportJobConfig {
     return new JobBuilder("loanReportJob", jobRepository)
         .start(loanReportStep)
         .listener(databaseCheckListener)
-        .incrementer(new RunIdIncrementer())
+        .incrementer(new DailyReportJobParametersIncrementer())
         .build();
   }
 
@@ -75,20 +76,34 @@ public class ActiveLoansReportJobConfig {
 
   @Bean
   @StepScope
-  public FlatFileItemWriter<Loan> loanWriter() {
+  public FlatFileItemWriter<Loan> loanWriter(
+      @Value("#{jobParameters['reportDate']}") String reportDate) {
 
-    String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-    String filePath = "batch-jobs/reports/ACTIVE_LOANS_REPORT_" + currentDate + ".csv";
+    if (reportDate == null || reportDate.isBlank()) {
+      reportDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    }
+
+    String filePath = "batch-jobs/reports/ACTIVE_LOANS_REPORT_" + reportDate + ".csv";
 
     return new FlatFileItemWriterBuilder<Loan>()
         .name("loanCsvWriter")
         .resource(new FileSystemResource(filePath))
-        .append(false)
         .delimited()
         .delimiter(",")
         .names(new String[] {"id", "customer", "totalOperationAmount", "openingDate", "status"})
-        .headerCallback(
-            writer -> writer.write("ID,Customer,Amount,Date,Status"))
+        .headerCallback(writer -> writer.write("ID,Customer,Amount,Date,Status"))
         .build();
+  }
+
+  public static class DailyReportJobParametersIncrementer implements JobParametersIncrementer {
+    @Override
+    public JobParameters getNext(JobParameters parameters) {
+      String reportDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+      return new JobParametersBuilder(parameters != null ? parameters : new JobParameters())
+          .addString("reportDate", reportDate)
+          .addLong("run.id", System.currentTimeMillis())
+          .toJobParameters();
+    }
   }
 }
