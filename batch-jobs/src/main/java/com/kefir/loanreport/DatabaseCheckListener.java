@@ -20,7 +20,7 @@ public class DatabaseCheckListener implements JobExecutionListener {
     try {
       em.createNativeQuery("SELECT 1").getSingleResult();
       if (log.isInfoEnabled()) {
-        log.info("✅ Database connection verified");
+        log.info("Database connection verified");
       }
     } catch (DataAccessException e) {
       if (log.isErrorEnabled()) {
