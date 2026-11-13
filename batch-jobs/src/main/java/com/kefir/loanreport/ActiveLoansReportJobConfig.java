@@ -2,27 +2,33 @@ package com.kefir.loanreport;
 
 import com.kefir.entities.Loan;
 import jakarta.persistence.EntityManagerFactory;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.job.parameters.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.infrastructure.item.ItemProcessor;
-import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.batch.infrastructure.item.database.JpaPagingItemReader;
 import org.springframework.batch.infrastructure.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.batch.infrastructure.item.file.FlatFileItemWriter;
+import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
-public class LoanReportJobConfig {
+public class ActiveLoansReportJobConfig {
 
   private final DatabaseCheckListener databaseCheckListener;
 
-  public LoanReportJobConfig(DatabaseCheckListener databaseCheckListener) {
+  public ActiveLoansReportJobConfig(DatabaseCheckListener databaseCheckListener) {
     this.databaseCheckListener = databaseCheckListener;
   }
 
@@ -31,6 +37,7 @@ public class LoanReportJobConfig {
     return new JobBuilder("loanReportJob", jobRepository)
         .start(loanReportStep)
         .listener(databaseCheckListener)
+        .incrementer(new RunIdIncrementer())
         .build();
   }
 
@@ -40,7 +47,7 @@ public class LoanReportJobConfig {
       PlatformTransactionManager transactionManager,
       JpaPagingItemReader<Loan> reader,
       ItemProcessor<Loan, Loan> processor,
-      ItemWriter<Loan> writer) {
+      FlatFileItemWriter<Loan> writer) {
 
     return new StepBuilder("loanReportStep", jobRepository)
         .<Loan, Loan>chunk(10)
@@ -56,7 +63,7 @@ public class LoanReportJobConfig {
     return new JpaPagingItemReaderBuilder<Loan>()
         .name("loanReader")
         .entityManagerFactory(entityManagerFactory)
-        .queryString("SELECT l FROM Loan l")
+        .queryString("SELECT l FROM Loan l WHERE l.status = 'ACTIVE'")
         .pageSize(10)
         .build();
   }
@@ -67,22 +74,21 @@ public class LoanReportJobConfig {
   }
 
   @Bean
-  public ItemWriter<Loan> loanWriter() {
-    return items -> {
-      if (log.isInfoEnabled()) {
-        log.info(">>> Loans report:");
-      }
-      for (Loan loan : items) {
-        if (log.isInfoEnabled()) {
-          log.info(
-              "ID: {} | Customer: {} | Amount: {} | Date: {} | Status: {}}",
-              loan.getId(),
-              loan.getCustomer(),
-              loan.getTotalOperationAmount(),
-              loan.getOpeningDate(),
-              loan.getStatus());
-        }
-      }
-    };
+  @StepScope
+  public FlatFileItemWriter<Loan> loanWriter() {
+
+    String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    String filePath = "batch-jobs/reports/ACTIVE_LOANS_REPORT_" + currentDate + ".csv";
+
+    return new FlatFileItemWriterBuilder<Loan>()
+        .name("loanCsvWriter")
+        .resource(new FileSystemResource(filePath))
+        .append(false)
+        .delimited()
+        .delimiter(",")
+        .names(new String[] {"id", "customer", "totalOperationAmount", "openingDate", "status"})
+        .headerCallback(
+            writer -> writer.write("ID,Customer,Amount,Date,Status"))
+        .build();
   }
 }
