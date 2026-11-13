@@ -18,6 +18,7 @@ import org.springframework.batch.infrastructure.item.database.JpaPagingItemReade
 import org.springframework.batch.infrastructure.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemWriter;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemWriterBuilder;
+import org.springframework.batch.infrastructure.item.file.transform.PassThroughLineAggregator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,11 +48,11 @@ public class ActiveLoansReportJobConfig {
       JobRepository jobRepository,
       PlatformTransactionManager transactionManager,
       JpaPagingItemReader<Loan> reader,
-      ItemProcessor<Loan, Loan> processor,
-      FlatFileItemWriter<Loan> writer) {
+      ItemProcessor<Loan, String[]> processor,
+      FlatFileItemWriter<String[]> writer) {
 
     return new StepBuilder("loanReportStep", jobRepository)
-        .<Loan, Loan>chunk(10)
+        .<Loan, String[]>chunk(10)
         .transactionManager(transactionManager)
         .reader(reader)
         .processor(processor)
@@ -70,13 +71,20 @@ public class ActiveLoansReportJobConfig {
   }
 
   @Bean
-  public ItemProcessor<Loan, Loan> loanProcessor() {
-    return loan -> loan;
+  public ItemProcessor<Loan, String[]> loanProcessor() {
+    return loan ->
+        new String[] {
+          escapeCsv(String.valueOf(loan.getId())),
+          escapeCsv(loan.getCustomer() != null ? loan.getCustomer().toString() : ""),
+          escapeCsv(String.valueOf(loan.getTotalOperationAmount())),
+          escapeCsv(String.valueOf(loan.getOpeningDate())),
+          escapeCsv(String.valueOf(loan.getStatus()))
+        };
   }
 
   @Bean
   @StepScope
-  public FlatFileItemWriter<Loan> loanWriter(
+  public FlatFileItemWriter<String[]> loanWriter(
       @Value("#{jobParameters['reportDate']}") String reportDate) {
 
     if (reportDate == null || reportDate.isBlank()) {
@@ -85,13 +93,13 @@ public class ActiveLoansReportJobConfig {
 
     String filePath = "batch-jobs/reports/ACTIVE_LOANS_REPORT_" + reportDate + ".csv";
 
-    return new FlatFileItemWriterBuilder<Loan>()
+    return new FlatFileItemWriterBuilder<String[]>()
         .name("loanCsvWriter")
         .resource(new FileSystemResource(filePath))
-        .delimited()
-        .delimiter(",")
-        .names(new String[] {"id", "customer", "totalOperationAmount", "openingDate", "status"})
-        .headerCallback(writer -> writer.write("ID,Customer,Amount,Date,Status"))
+        .append(true)
+        .lineAggregator(new PassThroughLineAggregator<>())
+        .headerCallback(
+            writer -> writer.write("\"ID\",\"Customer\",\"Amount\",\"Date\",\"Status\""))
         .build();
   }
 
@@ -105,5 +113,12 @@ public class ActiveLoansReportJobConfig {
           .addLong("run.id", System.currentTimeMillis())
           .toJobParameters();
     }
+  }
+
+  private String escapeCsv(String value) {
+    if (value == null) {
+      return "\"\"";
+    }
+    return "\"" + value.replace("\"", "\"\"") + "\"";
   }
 }
