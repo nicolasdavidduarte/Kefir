@@ -95,9 +95,9 @@ public class UserService {
         userRepository.findById(id).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
     if (status.enabled()) {
-      user.enable(user);
+      user.enable(currentUser);
     } else {
-      user.disable(user);
+      user.disable(currentUser);
     }
 
     userRepository.save(user);
