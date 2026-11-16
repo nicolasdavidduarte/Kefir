@@ -11,14 +11,15 @@ public enum DomainErrorCode {
   INSUFFICIENT_FUNDS(
       "Account does not have the necessary funds to complete the operation",
       DomainErrorType.BUSINESS_RULE),
-
   INVALID_INSTALLMENTS(
       "The number of installments cannot be less than 1", DomainErrorType.BUSINESS_RULE),
+  LOAN_ALREADY_ACCRUED("Loan has been already accrued today", DomainErrorType.BUSINESS_RULE),
 
+  // ACCOUNT
   ACCOUNT_NOT_VALID("Account is not in a valid state", DomainErrorType.BUSINESS_RULE),
-
   ACCOUNT_NOT_VALID_FOR_CLOSURE("Account is not valid for closure", DomainErrorType.BUSINESS_RULE),
 
+  // CUSTOMER
   CUSTOMER_NOT_VALID("Customer is not in a valid state", DomainErrorType.BUSINESS_RULE);
 
   private final String message;

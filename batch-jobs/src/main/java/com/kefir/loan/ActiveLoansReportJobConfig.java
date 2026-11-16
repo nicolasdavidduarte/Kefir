@@ -1,4 +1,4 @@
-package com.kefir.loanreport;
+package com.kefir.loan;
 
 import com.kefir.entities.Loan;
 import jakarta.persistence.EntityManagerFactory;
@@ -65,7 +65,7 @@ public class ActiveLoansReportJobConfig {
     return new JpaPagingItemReaderBuilder<Loan>()
         .name("loanReader")
         .entityManagerFactory(entityManagerFactory)
-        .queryString("SELECT l FROM Loan l WHERE l.status = 'ACTIVE'")
+        .queryString("SELECT l FROM Loan l WHERE l.status = 'ACTIVE' ORDER BY l.id")
         .pageSize(10)
         .build();
   }
@@ -84,7 +84,7 @@ public class ActiveLoansReportJobConfig {
 
   @Bean
   @StepScope
-  public FlatFileItemWriter<String[]> loanWriter(
+  public FlatFileItemWriter<String[]> loanFileWriter(
       @Value("#{jobParameters['reportDate']}") String reportDate) {
 
     if (reportDate == null || reportDate.isBlank()) {

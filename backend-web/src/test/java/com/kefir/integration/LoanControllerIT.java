@@ -571,8 +571,13 @@ class LoanControllerIT extends IntegrationTestBase {
         .andDo(print())
         .andExpect(status().isOk());
 
+    Loan updatedLoan = loanRepository.findById(loan.getId()).orElseThrow();
     LoanInstallment loanInstallment =
         loanInstallmentRepository.findByLoanIdAndNumber(loan.getId(), installment).orElseThrow();
+
+    BigDecimal loanRemainingBalance =
+        loan.getPrincipalAmount().subtract(loanInstallment.getPrincipalAmount());
+    assertThat(updatedLoan.getRemainingBalance()).isEqualTo(loanRemainingBalance);
     assertThat(loanInstallment.getStatus()).isEqualTo(LoanInstallmentStatus.PAID);
   }
 
@@ -645,6 +650,7 @@ class LoanControllerIT extends IntegrationTestBase {
 
     Loan loanPayOff = loanRepository.findById(loan.getId()).orElseThrow();
     assertThat(loanPayOff.getStatus()).isEqualTo(LoanStatus.CLOSED);
+    assertThat(loanPayOff.getRemainingBalance()).isEqualByComparingTo(BigDecimal.ZERO);
   }
 
   private Customer createTestCustomer(Integer id, String documentNumber, CustomerStatus status) {
@@ -769,6 +775,7 @@ class LoanControllerIT extends IntegrationTestBase {
                 .totalOperationAmount(new BigDecimal("11609.80"))
                 .openingDate(now)
                 .expirationDate(now.plusMonths(4))
+                .remainingBalance(new BigDecimal("10000.00"))
                 .externalId(externalId)
                 .status(status)
                 .createdBy(user)

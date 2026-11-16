@@ -1,13 +1,26 @@
 package com.kefir.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
 @Entity
 @Builder
 @Table(name = "core_user")
@@ -67,5 +80,17 @@ public class User {
         + fullName
         + " / enabled: "
         + enabled;
+  }
+
+  public void enable(User updatedBy) {
+    this.enabled = true;
+    this.updatedBy = updatedBy;
+    this.updatedAt = OffsetDateTime.now();
+  }
+
+  public void disable(User updatedBy) {
+    this.enabled = false;
+    this.updatedBy = updatedBy;
+    this.updatedAt = OffsetDateTime.now();
   }
 }

@@ -71,19 +71,21 @@ class LoanInstallmentService(
         paymentValidations(currentInstallment, previousInstallment)
 
         val user = userService.getById(authService.currentUserId)
-
-        account.subtractBalance(currentInstallment.totalAmount, user)
+        val now = OffsetDateTime.now()
 
         currentInstallment.status = LoanInstallmentStatus.PAID
-        currentInstallment.updatedAt = OffsetDateTime.now()
+        currentInstallment.updatedAt = now
         currentInstallment.updatedBy = user
 
         loanInstallmentPaymentService.create(currentInstallment, paymentMethod)
 
+        account.subtractBalance(currentInstallment.totalAmount, user)
+
+        loan.updateRemainingBalance(user, currentInstallment.principalAmount)
+
         if (currentInstallment.number == paymentSchedule.last().number) {
-            loan.status = LoanStatus.CLOSED
-            loan.updatedBy = user
-            loan.updatedAt = OffsetDateTime.now()
+            loan.updateRemainingBalanceAfterLastInstallmentPayment(user)
+            loan.close(user)
         }
 
         return currentInstallment.toResponse()

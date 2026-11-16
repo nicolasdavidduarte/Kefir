@@ -17,17 +17,17 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -84,6 +84,16 @@ public class Loan {
   @Column(name = "expiration_date", nullable = false)
   private OffsetDateTime expirationDate;
 
+  @Column(name = "remainingBalance")
+  private BigDecimal remainingBalance;
+
+  @Builder.Default
+  @Column(name = "accruedInterest")
+  private BigDecimal accruedInterest = BigDecimal.ZERO;
+
+  @Column(name = "lastAccrualDate")
+  private LocalDate lastAccrualDate;
+
   @Column(name = "external_id")
   private Long externalId;
 
@@ -122,22 +132,28 @@ public class Loan {
         + this.status;
   }
 
-  public void approve(User approvedBy, OffsetDateTime approvedAt) {
+  public void approve(User approvedBy) {
     if (this.getStatus() != LoanStatus.PENDING)
       throw new DomainException(DomainErrorCode.LOAN_NOT_VALID);
 
     this.status = LoanStatus.ACTIVE;
     this.updatedBy = approvedBy;
-    this.updatedAt = approvedAt;
+    this.updatedAt = OffsetDateTime.now();
   }
 
-  public void chargeOff(User approvedBy, OffsetDateTime approvedAt) {
+  public void chargeOff(User approvedBy) {
     if (this.getStatus() != LoanStatus.ACTIVE)
       throw new DomainException(DomainErrorCode.LOAN_NOT_VALID);
 
-    this.setStatus(LoanStatus.CHARGE_OFF);
-    this.setUpdatedBy(approvedBy);
-    this.setUpdatedAt(approvedAt);
+    this.status = LoanStatus.CHARGE_OFF;
+    this.updatedBy = approvedBy;
+    this.updatedAt = OffsetDateTime.now();
+  }
+
+  public void close(User closedBy) {
+    this.status = LoanStatus.CLOSED;
+    this.updatedBy = closedBy;
+    this.updatedAt = OffsetDateTime.now();
   }
 
   public static Loan create(
@@ -149,8 +165,7 @@ public class Loan {
       Currency currency,
       int numberOfInstallments,
       Long externalId,
-      User user,
-      OffsetDateTime now) {
+      User user) {
 
     if (principalAmount == null || principalAmount.compareTo(BigDecimal.ZERO) <= 0) {
       throw new DomainException(DomainErrorCode.INVALID_AMOUNT);
@@ -159,6 +174,8 @@ public class Loan {
     if (numberOfInstallments <= 0) {
       throw new DomainException(DomainErrorCode.INVALID_INSTALLMENTS);
     }
+
+    OffsetDateTime now = OffsetDateTime.now();
 
     BigDecimal annualRate = loanType.getAnnualInterestRate();
 
@@ -178,6 +195,8 @@ public class Loan {
         .totalOperationAmount(BigDecimal.ZERO)
         .openingDate(now)
         .expirationDate(now.plusMonths(numberOfInstallments))
+        .accruedInterest(BigDecimal.ZERO)
+        .remainingBalance(principalAmount)
         .externalId(externalId)
         .status(LoanStatus.PENDING)
         .createdBy(user)
@@ -201,5 +220,46 @@ public class Loan {
 
   public boolean isActive() {
     return this.status == LoanStatus.ACTIVE;
+  }
+
+  public void updateRemainingBalance(User updatedBy, BigDecimal capitalAmount) {
+    if (this.status != LoanStatus.ACTIVE) {
+      throw new DomainException(DomainErrorCode.LOAN_NOT_VALID);
+    }
+
+    if (capitalAmount.signum() < 0) {
+      throw new DomainException(DomainErrorCode.INVALID_AMOUNT);
+    }
+
+    this.remainingBalance = remainingBalance.subtract(capitalAmount);
+    this.updatedBy = updatedBy;
+    this.updatedAt = OffsetDateTime.now();
+  }
+
+  public void updateRemainingBalanceAfterLastInstallmentPayment(User updatedBy) {
+    this.remainingBalance = BigDecimal.ZERO;
+    this.updatedBy = updatedBy;
+    this.updatedAt = OffsetDateTime.now();
+  }
+
+  public void accrueInterest(User updatedBy, BigDecimal interestAmount) {
+    if (this.status != LoanStatus.ACTIVE) {
+      throw new DomainException(DomainErrorCode.LOAN_NOT_VALID);
+    }
+
+    LocalDate today = LocalDate.now();
+
+    if (Objects.equals(this.lastAccrualDate, today)) {
+      throw new DomainException(DomainErrorCode.LOAN_ALREADY_ACCRUED);
+    }
+
+    if (interestAmount.signum() < 0) {
+      throw new DomainException(DomainErrorCode.INVALID_AMOUNT);
+    }
+
+    this.accruedInterest = accruedInterest.add(interestAmount);
+    this.lastAccrualDate = LocalDate.now();
+    this.updatedBy = updatedBy;
+    this.updatedAt = OffsetDateTime.now();
   }
 }

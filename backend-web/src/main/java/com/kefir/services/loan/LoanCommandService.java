@@ -105,8 +105,7 @@ public class LoanCommandService {
               currency,
               loanRequest.numberOfInstallments(),
               loanRequest.externalId(),
-              user,
-              now);
+              user);
 
       loanRepository.save(loan);
 
@@ -143,7 +142,7 @@ public class LoanCommandService {
 
     User user = userService.getById(authService.getCurrentUserId());
 
-    loan.chargeOff(user, OffsetDateTime.now());
+    loan.chargeOff(user);
 
     loanInstallmentService.updateInstallmentsForChargeOff(id, user);
 
@@ -170,7 +169,7 @@ public class LoanCommandService {
 
     User user = userService.getById(authService.getCurrentUserId());
 
-    loan.approve(user, OffsetDateTime.now());
+    loan.approve(user);
 
     account.addBalance(loan.getPrincipalAmount(), user);
 
