@@ -1,6 +1,7 @@
 package com.kefir.entities;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +14,7 @@ import lombok.*;
 @Table(name = "core_user")
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class User implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "core_user_id_seq_gen")

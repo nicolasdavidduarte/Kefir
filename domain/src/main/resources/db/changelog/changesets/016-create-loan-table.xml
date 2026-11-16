@@ -55,6 +55,15 @@
             <column name="expiration_date" type="TIMESTAMPTZ">
                 <constraints nullable="false"/>
             </column>
+            <column name="remaining_balance" type="NUMERIC(19,4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="accrued_interest" type="NUMERIC(19,4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_accrual_date" type="TIMESTAMPTZ">
+                <constraints nullable="true"/>
+            </column>
             <column name="external_id" type="BIGINT">
                 <constraints nullable="true"/>
             </column>

@@ -1,4 +1,4 @@
-package com.kefir.loanreport;
+package com.kefir.loan;
 
 import com.kefir.entities.Loan;
 import jakarta.persistence.EntityManagerFactory;
@@ -84,7 +84,7 @@ public class ActiveLoansReportJobConfig {
 
   @Bean
   @StepScope
-  public FlatFileItemWriter<String[]> loanWriter(
+  public FlatFileItemWriter<String[]> loanFileWriter(
       @Value("#{jobParameters['reportDate']}") String reportDate) {
 
     if (reportDate == null || reportDate.isBlank()) {
