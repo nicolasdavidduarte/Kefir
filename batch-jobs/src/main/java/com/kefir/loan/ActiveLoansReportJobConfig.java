@@ -65,7 +65,7 @@ public class ActiveLoansReportJobConfig {
     return new JpaPagingItemReaderBuilder<Loan>()
         .name("loanReader")
         .entityManagerFactory(entityManagerFactory)
-        .queryString("SELECT l FROM Loan l WHERE l.status = 'ACTIVE'")
+        .queryString("SELECT l FROM Loan l WHERE l.status = 'ACTIVE' ORDER BY l.id")
         .pageSize(10)
         .build();
   }

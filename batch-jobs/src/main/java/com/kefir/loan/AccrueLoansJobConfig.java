@@ -2,6 +2,7 @@ package com.kefir.loan;
 
 import com.kefir.entities.Loan;
 import com.kefir.entities.User;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -10,6 +11,7 @@ import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.scope.context.StepContext;
 import org.springframework.batch.core.scope.context.StepSynchronizationManager;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -58,15 +60,9 @@ public class AccrueLoansJobConfig {
   }
 
   @Bean
-  public ItemProcessor<Loan, Loan> loanAccrualProcessor() {
+  public ItemProcessor<Loan, Loan> loanAccrualProcessor(EntityManager em) {
     return loan -> {
-      User user =
-          (User)
-              StepSynchronizationManager.getContext()
-                  .getStepExecution()
-                  .getJobExecution()
-                  .getExecutionContext()
-                  .get("SYSTEM_USER");
+      User user = getSystemUser(em);
       BigDecimal air =
           loan.getAnnualInterestRate().divide(BigDecimal.valueOf(100), FINANCIAL_CONTEXT);
       BigDecimal perDiem = air.divide(BigDecimal.valueOf(DAYS_365), FINANCIAL_CONTEXT);
@@ -80,5 +76,22 @@ public class AccrueLoansJobConfig {
   @StepScope
   public JpaItemWriter<Loan> loanWriter(EntityManagerFactory emf) {
     return new JpaItemWriterBuilder<Loan>().entityManagerFactory(emf).build();
+  }
+
+  private User getSystemUser(EntityManager em) {
+    StepContext stepContext = StepSynchronizationManager.getContext();
+    assert stepContext != null;
+    Integer userId =
+        (Integer)
+            stepContext
+                .getStepExecution()
+                .getJobExecution()
+                .getExecutionContext()
+                .get("SYSTEM_USER");
+    User user = em.find(User.class, userId);
+    if (user == null) {
+      throw new IllegalStateException("System user " + userId + " not found");
+    }
+    return user;
   }
 }

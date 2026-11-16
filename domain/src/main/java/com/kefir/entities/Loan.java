@@ -26,10 +26,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -147,9 +145,9 @@ public class Loan {
     if (this.getStatus() != LoanStatus.ACTIVE)
       throw new DomainException(DomainErrorCode.LOAN_NOT_VALID);
 
-    this.setStatus(LoanStatus.CHARGE_OFF);
-    this.setUpdatedBy(approvedBy);
-    this.setUpdatedAt(OffsetDateTime.now());
+    this.status = LoanStatus.CHARGE_OFF;
+    this.updatedBy = approvedBy;
+    this.updatedAt = OffsetDateTime.now();
   }
 
   public void close(User closedBy) {
@@ -229,11 +227,17 @@ public class Loan {
       throw new DomainException(DomainErrorCode.LOAN_NOT_VALID);
     }
 
-    if (interestAmount.signum() < 0) {
+    if (capitalAmount.signum() < 0) {
       throw new DomainException(DomainErrorCode.INVALID_AMOUNT);
     }
 
     this.remainingBalance = remainingBalance.subtract(capitalAmount);
+    this.updatedBy = updatedBy;
+    this.updatedAt = OffsetDateTime.now();
+  }
+
+  public void updateRemainingBalanceAfterLastInstallmentPayment(User updatedBy) {
+    this.remainingBalance = BigDecimal.ZERO;
     this.updatedBy = updatedBy;
     this.updatedAt = OffsetDateTime.now();
   }

@@ -33,6 +33,10 @@ public class DatabaseCheckListener implements JobExecutionListener {
     }
 
     User systemUser = em.find(User.class, SYSTEM_USER);
-    jobExecution.getExecutionContext().put("SYSTEM_USER", systemUser);
+
+    if (systemUser == null) {
+      throw new IllegalStateException("System user " + SYSTEM_USER + " not found");
+    }
+    jobExecution.getExecutionContext().put("SYSTEM_USER", systemUser.getId());
   }
 }

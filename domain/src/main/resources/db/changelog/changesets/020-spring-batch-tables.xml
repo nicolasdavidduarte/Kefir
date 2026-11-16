@@ -8,7 +8,7 @@
 
     <changeSet id="020" author="ndd">
 
-        <createSequence sequenceName="batch_job_seq" maxValue="9223372036854775807" cycle="false"/>
+        <createSequence sequenceName="batch_job_instance_seq" maxValue="9223372036854775807" cycle="false"/>
         <createSequence sequenceName="batch_job_execution_seq" maxValue="9223372036854775807" cycle="false"/>
         <createSequence sequenceName="batch_step_execution_seq" maxValue="9223372036854775807" cycle="false"/>
 
@@ -21,9 +21,11 @@
                 <constraints nullable="false"/>
             </column>
             <column name="job_key" type="VARCHAR(32)">
-                <constraints nullable="false" unique="true" uniqueConstraintName="job_inst_un"/>
+                <constraints nullable="false"/>
             </column>
         </createTable>
+        
+        <addUniqueConstraint tableName="batch_job_instance" columnNames="job_name, job_key" constraintName="job_inst_un"/>
 
         <createTable tableName="batch_job_execution">
             <column name="job_execution_id" type="BIGINT">

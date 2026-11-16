@@ -84,6 +84,7 @@ class LoanInstallmentService(
         loan.updateRemainingBalance(user, currentInstallment.principalAmount)
 
         if (currentInstallment.number == paymentSchedule.last().number) {
+            loan.updateRemainingBalanceAfterLastInstallmentPayment(user)
             loan.close(user)
         }
 
