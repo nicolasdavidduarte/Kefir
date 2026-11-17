@@ -15,6 +15,7 @@ infrastructure, batch processing, and modern development practices.
 
 ## Live Demo
 https://kefir.dedyn.io _(deployed in Google Cloud Platform)_
+User: demo / Password: demo
 
 
 ## Main Components
