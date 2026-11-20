@@ -28,9 +28,15 @@ class BankController(
         @RequestBody @Valid bankRequest: BankRequest,
     ) = bankService.create(bankRequest)
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/activate")
     @PreAuthorize("hasAnyRole('ADMIN','OPR')")
     fun activate(
         @PathVariable id: Int,
     ): EntityOperationResponse = bankService.enable(id)
+
+    @PutMapping("/{id}/deactivate")
+    @PreAuthorize("hasAnyRole('ADMIN','OPR')")
+    fun deactivate(
+        @PathVariable id: Int,
+    ): EntityOperationResponse = bankService.disable(id)
 }

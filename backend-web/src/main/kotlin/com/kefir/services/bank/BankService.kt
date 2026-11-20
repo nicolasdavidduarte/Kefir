@@ -1,6 +1,7 @@
 package com.kefir.services.bank
 
 import com.kefir.entities.Bank
+import com.kefir.entities.disable
 import com.kefir.entities.enable
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
@@ -43,9 +44,22 @@ class BankService(
     @Transactional
     fun enable(id: Int): EntityOperationResponse {
         val bank = bankRepository.findById(id).orElseThrow { ApiException(ErrorCode.BANK_NOT_FOUND) }
-        bank.enable()
-        bankRepository.save(bank)
+
+        val user = userService.getById(authService.currentUserId)
+
+        bank.enable(user)
 
         return EntityOperationResponse(operation = "Enable", entity = "Bank", id = id.toLong(), message = "Bank enabled!", timestamp = LocalDateTime.now())
+    }
+
+    @Transactional
+    fun disable(id: Int): EntityOperationResponse {
+        val bank = bankRepository.findById(id).orElseThrow { ApiException(ErrorCode.BANK_NOT_FOUND) }
+
+        val user = userService.getById(authService.currentUserId)
+
+        bank.disable(user)
+
+        return EntityOperationResponse(operation = "Enable", entity = "Bank", id = id.toLong(), message = "Bank disabled!", timestamp = LocalDateTime.now())
     }
 }
