@@ -47,10 +47,14 @@ class Bank(
     override fun toString(): String = "{Id: $id / Name: $name / Status: $status}"
 }
 
-fun Bank.enable() {
+fun Bank.enable(user: User) {
     status = BankStatus.ACTIVE
+    updatedBy = user
+    updatedAt = OffsetDateTime.now()
 }
 
-fun Bank.disable() {
+fun Bank.disable(user: User) {
     status = BankStatus.CLOSED
+    updatedBy = user
+    updatedAt = OffsetDateTime.now()
 }
