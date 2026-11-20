@@ -48,8 +48,7 @@ public class UserController {
   @PreAuthorize("hasAnyRole('ADMIN')")
   public ApiEntityResponse updateStatus(
       @PathVariable Integer id, @RequestBody EntityStatusUpdate status) {
-    String okMessage = userService.updateStatus(id, status);
-
-    return new ApiEntityResponse(id.longValue(), okMessage, OffsetDateTime.now());
+    return new ApiEntityResponse(
+        id.longValue(), userService.updateStatus(id, status), OffsetDateTime.now());
   }
 }
