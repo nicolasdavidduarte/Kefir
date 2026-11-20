@@ -5,10 +5,10 @@ import com.kefir.exceptions.DomainErrorCode;
 import com.kefir.exceptions.DomainException;
 import jakarta.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.function.Consumer;
 import lombok.*;
 
 @Getter
-@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -82,6 +82,99 @@ public class Customer {
   @Column(name = "updated_at", nullable = false)
   private OffsetDateTime updatedAt;
 
+  public static Customer create(
+      String name1,
+      String name2,
+      String name3,
+      String lastname1,
+      String lastname2,
+      String lastname3,
+      PersonType personType,
+      DocumentType documentType,
+      String documentNumber,
+      CustomerType customerType,
+      String email,
+      User user) {
+    return Customer.builder()
+        .name1(name1)
+        .name2(name2)
+        .name3(name3)
+        .lastname1(lastname1)
+        .lastname2(lastname2)
+        .lastname3(lastname3)
+        .fullname(generateFullname(name1, name2, name3, lastname1, lastname2, lastname3))
+        .personType(personType)
+        .documentType(documentType)
+        .documentNumber(documentNumber)
+        .customerType(customerType)
+        .email(email)
+        .createdBy(user)
+        .createdAt(OffsetDateTime.now())
+        .updatedBy(user)
+        .updatedAt(OffsetDateTime.now())
+        .build();
+  }
+
+  public void update(
+      String name1,
+      String name2,
+      String name3,
+      String lastname1,
+      String lastname2,
+      String lastname3,
+      PersonType personType,
+      DocumentType documentType,
+      String documentNumber,
+      CustomerType customerType,
+      String email,
+      User user) {
+    if (status != CustomerStatus.ACTIVE)
+      throw new DomainException(DomainErrorCode.CUSTOMER_NOT_VALID);
+
+    updateIfChanged(name1, this.name1, (n1) -> this.name1 = n1.toString());
+    updateIfChanged(name2, this.name2, (n2) -> this.name2 = n2.toString());
+    updateIfChanged(name3, this.name3, (n3) -> this.name2 = n3.toString());
+
+    updateIfChanged(lastname1, this.getLastname1(), (ln1) -> this.lastname1 = ln1.toString());
+    updateIfChanged(lastname2, this.getLastname2(), (ln2) -> this.lastname2 = ln2.toString());
+    updateIfChanged(lastname3, this.getLastname3(), (ln3) -> this.lastname3 = ln3.toString());
+
+    String fullname =
+        Customer.generateFullname(name1, name2, name3, lastname1, lastname2, lastname3);
+    updateIfChanged(fullname, this.fullname, (fn) -> this.fullname = fn.toString());
+
+    updateIfChanged(personType, this.personType, (pt -> this.personType = (PersonType) pt));
+
+    updateIfChanged(customerType, this.customerType, (ct -> this.customerType = (CustomerType) ct));
+
+    updateIfChanged(documentType, this.documentType, (dt -> this.documentType = (DocumentType) dt));
+
+    updateIfChanged(documentNumber, this.documentNumber, (dn -> this.documentNumber = (String) dn));
+
+    updateIfChanged(email, this.email, (e -> this.email = (String) e));
+
+    this.updatedBy = user;
+    this.updatedAt = OffsetDateTime.now();
+  }
+
+  public void activate(User user) {
+    if ((status != CustomerStatus.PENDING) && (status != CustomerStatus.DEACTIVATED))
+      throw new DomainException(DomainErrorCode.CUSTOMER_NOT_VALID);
+
+    this.status = CustomerStatus.ACTIVE;
+    this.updatedBy = user;
+    this.updatedAt = OffsetDateTime.now();
+  }
+
+  public void deactivate(User user) {
+    if (status != CustomerStatus.ACTIVE)
+      throw new DomainException(DomainErrorCode.CUSTOMER_NOT_VALID);
+
+    this.status = CustomerStatus.DEACTIVATED;
+    this.updatedBy = user;
+    this.updatedAt = OffsetDateTime.now();
+  }
+
   @Override
   public String toString() {
     return "{Id: "
@@ -100,6 +193,44 @@ public class Customer {
   public void validateCanCreateLoan() {
     if (status != CustomerStatus.ACTIVE) {
       throw new DomainException(DomainErrorCode.CUSTOMER_NOT_VALID);
+    }
+  }
+
+  public static String generateFullname(
+      String name1,
+      String name2,
+      String name3,
+      String lastname1,
+      String lastname2,
+      String lastname3) {
+    StringBuilder fullname = new StringBuilder();
+
+    fullname.append(name1);
+
+    if ((name2 != null) && (!name2.isBlank())) {
+      fullname.append(' ').append(name2);
+    }
+
+    if ((name3 != null) && (!name3.isBlank())) {
+      fullname.append(' ').append(name3);
+    }
+
+    fullname.append(' ').append(lastname1);
+
+    if ((lastname2 != null) && (!lastname2.isBlank())) {
+      fullname.append(' ').append(lastname2);
+    }
+
+    if ((lastname3 != null) && (!lastname3.isBlank())) {
+      fullname.append(' ').append(lastname3);
+    }
+
+    return fullname.toString();
+  }
+
+  private void updateIfChanged(Object newValue, Object currentValue, Consumer<Object> setter) {
+    if (newValue != null && !newValue.equals(currentValue)) {
+      setter.accept(newValue);
     }
   }
 }

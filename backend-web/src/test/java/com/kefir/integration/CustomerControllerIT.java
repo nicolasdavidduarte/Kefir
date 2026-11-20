@@ -346,7 +346,7 @@ class CustomerControllerIT extends IntegrationTestBase {
         .perform(post("/api/customers/" + customer.getId() + "/status/activate"))
         .andDo(print())
         .andExpect(status().isUnprocessableContent())
-        .andExpect(jsonPath("message").value("Customer is not valid"));
+        .andExpect(jsonPath("message").value("Customer is not in a valid state"));
   }
 
   @Test
