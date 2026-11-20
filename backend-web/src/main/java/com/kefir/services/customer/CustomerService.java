@@ -127,11 +127,16 @@ public class CustomerService {
 
     User user = userService.getById(authService.getCurrentUserId());
 
-    PersonType personType = personTypeService.getByName(request.personType());
+    PersonType personType =
+        request.personType() != null ? personTypeService.getByName(request.personType()) : null;
 
-    DocumentType documentType = documentTypeService.getByName(request.documentType());
+    DocumentType documentType =
+        request.documentType() != null
+            ? documentTypeService.getByName(request.documentType())
+            : null;
 
-    CustomerType customerType = getCustomerType(request.customerType());
+    CustomerType customerType =
+        request.customerType() != null ? getCustomerType(request.customerType()) : null;
 
     customer.update(
         request.name1(),

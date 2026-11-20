@@ -133,15 +133,11 @@ public class Customer {
 
     updateIfChanged(name1, this.name1, (n1) -> this.name1 = n1.toString());
     updateIfChanged(name2, this.name2, (n2) -> this.name2 = n2.toString());
-    updateIfChanged(name3, this.name3, (n3) -> this.name2 = n3.toString());
+    updateIfChanged(name3, this.name3, (n3) -> this.name3 = n3.toString());
 
     updateIfChanged(lastname1, this.getLastname1(), (ln1) -> this.lastname1 = ln1.toString());
     updateIfChanged(lastname2, this.getLastname2(), (ln2) -> this.lastname2 = ln2.toString());
     updateIfChanged(lastname3, this.getLastname3(), (ln3) -> this.lastname3 = ln3.toString());
-
-    String fullname =
-        Customer.generateFullname(name1, name2, name3, lastname1, lastname2, lastname3);
-    updateIfChanged(fullname, this.fullname, (fn) -> this.fullname = fn.toString());
 
     updateIfChanged(personType, this.personType, (pt -> this.personType = (PersonType) pt));
 
@@ -152,6 +148,11 @@ public class Customer {
     updateIfChanged(documentNumber, this.documentNumber, (dn -> this.documentNumber = (String) dn));
 
     updateIfChanged(email, this.email, (e -> this.email = (String) e));
+
+    String fullname =
+        Customer.generateFullname(
+            this.name1, this.name2, this.name3, this.lastname1, this.lastname2, this.lastname3);
+    updateIfChanged(fullname, this.fullname, (fn) -> this.fullname = fn.toString());
 
     this.updatedBy = user;
     this.updatedAt = OffsetDateTime.now();
