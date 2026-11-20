@@ -100,8 +100,6 @@ public class UserService {
       user.disable(currentUser);
     }
 
-    userRepository.save(user);
-
     return status.enabled() ? "User successfully activated" : "User successfully deactivated";
   }
 }
