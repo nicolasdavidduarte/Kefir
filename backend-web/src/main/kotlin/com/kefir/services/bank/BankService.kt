@@ -60,6 +60,6 @@ class BankService(
 
         bank.disable(user)
 
-        return EntityOperationResponse(operation = "Enable", entity = "Bank", id = id.toLong(), message = "Bank enabled!", timestamp = LocalDateTime.now())
+        return EntityOperationResponse(operation = "Enable", entity = "Bank", id = id.toLong(), message = "Bank disabled!", timestamp = LocalDateTime.now())
     }
 }
