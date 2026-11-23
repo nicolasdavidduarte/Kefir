@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.kefir.exceptions.*;
 import com.kefir.web.dtos.common.ApiErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import java.security.SignatureException;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -125,6 +128,11 @@ public class GlobalExceptionHandler {
     }
 
     return buildResponse(HttpStatus.BAD_REQUEST, "Invalid request body");
+  }
+
+  @ExceptionHandler({MalformedJwtException.class, SignatureException.class})
+  public ResponseEntity<ApiErrorResponse> handleInvalidJwt(JwtException ex) {
+    return buildResponse(HttpStatus.UNAUTHORIZED, "Invalid authentication token");
   }
 
   private ResponseEntity<ApiErrorResponse> buildResponse(HttpStatus status, Object message) {
