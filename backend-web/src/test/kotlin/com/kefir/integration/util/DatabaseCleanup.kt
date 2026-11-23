@@ -18,6 +18,7 @@ class DatabaseCleanup {
         "account",
         "operation_log",
         "customer",
+        "idempotent_request",
     )
 
     @Transactional
