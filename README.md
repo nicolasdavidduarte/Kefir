@@ -39,15 +39,21 @@ This project uses Gradle for dependency management and build automation.
 
 
 ## Security Scanning
-Kefir includes automated security scanning using Trivy and Snyk.
+Kefir includes automated security scanning using Trivy and Snyk, both locally and enforced in CI/CD via GitHub Actions.
 The scans check for:
 * Dependency vulnerabilities 
 * Container image vulnerabilities 
 * Security misconfigurations 
 * Exposed secrets and sensitive data
 
+### CI / CD Security Pipeline
+GitHub Actions automatically enforces security gates on pushes and pull requests to `main`, `master`, and `develop`:
+* **Trivy Security Scan (`trivy-scan`):** Scans filesystem and Docker container images, failing the build on any `HIGH` or `CRITICAL` findings (`--exit-code 1`). SARIF reports are uploaded to GitHub Security tab.
+* **Snyk Security Scan (`snyk-scan`):** Runs Software Composition Analysis (SCA) on all Gradle modules via `snyk/actions/gradle`, failing on `HIGH` or `CRITICAL` vulnerabilities (`--severity-threshold=high`). Requires repository secret `SNYK_TOKEN`.
+* **Automated Dependency Updates:** Dependabot (`.github/dependabot.yml`) checks for Gradle dependency and GitHub Actions updates on a weekly cadence.
+* **Branch Protection:** Pull requests targeted at `main` require `test`, `trivy-scan`, and `snyk-scan` status checks to pass before merging.
 
-#### Quick Security Scan
+#### Quick Security Scan (Local)
 ### Trivy
 ```bash
 ./trivy-scan.sh
