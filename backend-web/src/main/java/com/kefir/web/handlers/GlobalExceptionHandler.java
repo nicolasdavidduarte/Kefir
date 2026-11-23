@@ -6,7 +6,7 @@ import com.kefir.web.dtos.common.ApiErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import java.security.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
