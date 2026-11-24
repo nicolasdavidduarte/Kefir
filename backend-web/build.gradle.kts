@@ -32,7 +32,7 @@ dependencies {
         implementation("io.netty:netty-transport:$nettyVersion")
         implementation("io.netty:netty-resolver:$nettyVersion")
 
-        implementation("org.apache.logging.log4j:log4j-to-slf4j:2.25.5")
+        implementation("org.apache.logging.log4j:log4j-to-slf4j:2.26.1")
 
         // Fixes High Severity Uncontrolled Recursion in Commons Lang
         implementation("org.apache.commons:commons-lang3:3.18.0")
