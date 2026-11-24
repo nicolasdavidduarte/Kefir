@@ -3,7 +3,7 @@ plugins {
     kotlin("plugin.spring") version "2.4.21" apply false
     kotlin("plugin.jpa") version "2.4.21" apply false
 
-    id("org.springframework.boot") version "4.1.2" apply false
+    id("org.springframework.boot") version "4.2.0" apply false
     id("io.spring.dependency-management") version "1.1.7" apply false
     id("com.diffplug.spotless") version "8.10.4" apply false
     id("com.github.ben-manes.versions") version "0.54.0" apply false
