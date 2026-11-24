@@ -35,7 +35,7 @@ dependencies {
         implementation("org.apache.logging.log4j:log4j-to-slf4j:2.26.1")
 
         // Fixes High Severity Uncontrolled Recursion in Commons Lang
-        implementation("org.apache.commons:commons-lang3:3.18.0")
+        implementation("org.apache.commons:commons-lang3:3.22.0")
         // Fixes CVE-2024-25710 and CVE-2024-26308
         testImplementation("org.apache.commons:commons-compress:1.26.0") {
             because("Fixes Infinite loop (CVE-2024-25710) and Resource Allocation (CVE-2024-26308)")
