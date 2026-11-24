@@ -3,7 +3,7 @@ package com.kefir.services.bankbranch
 import com.kefir.entities.BankBranch
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
-import com.kefir.repositories.BankBranchRepository
+import com.kefir.persistence.repositories.BankBranchRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

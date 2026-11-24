@@ -3,7 +3,7 @@ package com.kefir.services.documenttype
 import com.kefir.enums.DocumentType
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
-import com.kefir.repositories.DocumentTypeRepository
+import com.kefir.persistence.repositories.DocumentTypeRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

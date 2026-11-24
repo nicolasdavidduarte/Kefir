@@ -44,6 +44,7 @@ dependencies {
 
     // Project Modules
     implementation(project(":domain"))
+    implementation(project(":infrastructure"))
 
     // Spring Boot Starters (Versions managed by Parent/BOM)
     implementation("org.springframework.boot:spring-boot-starter-actuator")

@@ -2,7 +2,7 @@ package com.kefir.web.filters;
 
 import com.kefir.enums.IdempotencyState;
 import com.kefir.model.IdempotentRequest;
-import com.kefir.repositories.IdempotentRequestRepository;
+import com.kefir.persistence.repositories.IdempotentRequestRepository;
 import com.kefir.web.utils.CachedBodyHttpServletRequest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -10,8 +10,8 @@ import com.kefir.enums.PaymentMethodName
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
-import com.kefir.repositories.LoanInstallmentRepository
-import com.kefir.repositories.LoanRepository
+import com.kefir.persistence.repositories.LoanInstallmentRepository
+import com.kefir.persistence.repositories.LoanRepository
 import com.kefir.services.account.AccountQueryService
 import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
 import com.kefir.services.loanInstallment.payment.PaymentMethodService

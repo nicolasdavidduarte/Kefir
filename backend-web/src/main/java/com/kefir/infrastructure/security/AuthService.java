@@ -3,7 +3,7 @@ package com.kefir.infrastructure.security;
 import com.kefir.entities.User;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
-import com.kefir.repositories.UserRepository;
+import com.kefir.persistence.repositories.UserRepository;
 import com.kefir.web.dtos.auth.AuthResponse;
 import java.time.OffsetDateTime;
 import java.util.List;

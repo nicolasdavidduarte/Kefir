@@ -3,7 +3,7 @@ package com.kefir.services.loanInstallment.payment
 import com.kefir.entities.LoanInstallment
 import com.kefir.entities.LoanInstallmentPayment
 import com.kefir.entities.PaymentMethod
-import com.kefir.repositories.LoanInstallmentPaymentRepository
+import com.kefir.persistence.repositories.LoanInstallmentPaymentRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime

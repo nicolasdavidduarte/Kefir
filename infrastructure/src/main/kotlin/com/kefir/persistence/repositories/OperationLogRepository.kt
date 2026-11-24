@@ -1,4 +1,4 @@
-package com.kefir.repositories
+package com.kefir.persistence.repositories
 
 import com.kefir.entities.OperationLog
 import org.springframework.data.jpa.repository.JpaRepository

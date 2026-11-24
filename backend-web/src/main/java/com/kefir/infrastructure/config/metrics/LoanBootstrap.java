@@ -1,7 +1,7 @@
 package com.kefir.infrastructure.config.metrics;
 
 import com.kefir.enums.LoanStatus;
-import com.kefir.repositories.LoanRepository;
+import com.kefir.persistence.repositories.LoanRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

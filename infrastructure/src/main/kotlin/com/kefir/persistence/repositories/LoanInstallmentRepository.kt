@@ -1,4 +1,4 @@
-package com.kefir.repositories
+package com.kefir.persistence.repositories
 
 import com.kefir.entities.LoanInstallment
 import org.springframework.data.jpa.repository.EntityGraph

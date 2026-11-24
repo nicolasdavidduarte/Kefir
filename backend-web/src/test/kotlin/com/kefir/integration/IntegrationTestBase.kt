@@ -1,7 +1,7 @@
 package com.kefir.integration
 
 import com.kefir.integration.util.DatabaseCleanup
-import com.kefir.repositories.LoanRepository
+import com.kefir.persistence.repositories.LoanRepository
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest

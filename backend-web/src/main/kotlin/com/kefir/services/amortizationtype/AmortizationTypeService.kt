@@ -4,7 +4,7 @@ import com.kefir.entities.AmortizationType
 import com.kefir.enums.AmortizationTypeName
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
-import com.kefir.repositories.AmortizationTypeRepository
+import com.kefir.persistence.repositories.AmortizationTypeRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

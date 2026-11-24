@@ -1,8 +1,9 @@
 package com.kefir.infrastructure.security;
 
 import com.kefir.entities.User;
-import com.kefir.repositories.UserRepository;
+import com.kefir.persistence.repositories.UserRepository;
 import java.util.List;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +23,7 @@ public class CustomUserDetailsService implements UserDetailsService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username) {
+  public @NonNull UserDetails loadUserByUsername(@NonNull String username) {
     final User user =
         userRepository
             .findByUsername(username)

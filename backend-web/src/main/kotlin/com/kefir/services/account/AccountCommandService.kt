@@ -7,8 +7,8 @@ import com.kefir.enums.LogOperation
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
-import com.kefir.repositories.AccountRepository
-import com.kefir.repositories.LoanRepository
+import com.kefir.persistence.repositories.AccountRepository
+import com.kefir.persistence.repositories.LoanRepository
 import com.kefir.services.accounttype.AccountTypeService
 import com.kefir.services.bankbranch.BankBranchService
 import com.kefir.services.currency.CurrencyService

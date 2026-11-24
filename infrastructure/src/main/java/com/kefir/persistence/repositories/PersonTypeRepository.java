@@ -1,6 +1,6 @@
-package com.kefir.repositories;
+package com.kefir.persistence.repositories;
 
-import com.kefir.entities.Currency;
+import com.kefir.entities.PersonType;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -10,15 +10,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CurrencyRepository extends JpaRepository<Currency, Integer> {
+public interface PersonTypeRepository extends JpaRepository<PersonType, Integer> {
+  Optional<PersonType> findByNameIgnoreCase(String name);
 
   @EntityGraph(attributePaths = {"createdBy", "updatedBy"})
-  Optional<Currency> findByIsoCode(String isoCode);
+  @Query(value = "select pt from PersonType pt where pt.id = :id")
+  Optional<PersonType> findByIdWithDetails(@Param("id") Integer id);
 
   @EntityGraph(attributePaths = {"createdBy", "updatedBy"})
-  @Query(value = "select c from Currency c where c.id = :id")
-  Optional<Currency> findByIdWithDetails(@Param("id") Integer id);
-
-  @EntityGraph(attributePaths = {"createdBy", "updatedBy"})
-  List<Currency> findAllByOrderByIdAsc();
+  List<PersonType> findAllByOrderByIdAsc();
 }

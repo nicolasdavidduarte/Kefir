@@ -3,7 +3,7 @@ package com.kefir.services.account
 import com.kefir.entities.Account
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
-import com.kefir.repositories.AccountRepository
+import com.kefir.persistence.repositories.AccountRepository
 import com.kefir.web.dtos.account.AccountResponse
 import com.kefir.web.dtos.account.toResponse
 import org.springframework.data.domain.Pageable

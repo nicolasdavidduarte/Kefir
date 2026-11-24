@@ -15,17 +15,17 @@ import com.kefir.enums.PersonType
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthenticatedUser
-import com.kefir.repositories.AccountRepository
-import com.kefir.repositories.AccountTypeRepository
-import com.kefir.repositories.BankBranchRepository
-import com.kefir.repositories.BankRepository
-import com.kefir.repositories.CurrencyRepository
-import com.kefir.repositories.CustomerRepository
-import com.kefir.repositories.CustomerTypeRepository
-import com.kefir.repositories.DocumentTypeRepository
-import com.kefir.repositories.OperationLogRepository
-import com.kefir.repositories.PersonTypeRepository
-import com.kefir.repositories.UserRepository
+import com.kefir.persistence.repositories.AccountRepository
+import com.kefir.persistence.repositories.AccountTypeRepository
+import com.kefir.persistence.repositories.BankBranchRepository
+import com.kefir.persistence.repositories.BankRepository
+import com.kefir.persistence.repositories.CurrencyRepository
+import com.kefir.persistence.repositories.CustomerRepository
+import com.kefir.persistence.repositories.CustomerTypeRepository
+import com.kefir.persistence.repositories.DocumentTypeRepository
+import com.kefir.persistence.repositories.OperationLogRepository
+import com.kefir.persistence.repositories.PersonTypeRepository
+import com.kefir.persistence.repositories.UserRepository
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -206,23 +206,23 @@ class AccountControllerIT : IntegrationTestBase() {
             jsonPath("$") { isArray() }
             jsonPath("length()") { value(2) }
             // First account data
-            jsonPath("[0]id") { exists() }
-            jsonPath("[0]customer") { value("John Doe") }
-            jsonPath("[0]type") { value("SAVINGS ACCOUNT") }
-            jsonPath("[0]currencyIsoCode") { value("USD") }
-            jsonPath("[0]bank") { value("KEFIR BANK") }
-            jsonPath("[0]cbu") { exists() }
-            jsonPath("[0]balance") { value(BigDecimal("10000.0")) }
-            jsonPath("[0]status") { value("PENDING") }
+            jsonPath("[0].id") { exists() }
+            jsonPath("[0].customer") { value("John Doe") }
+            jsonPath("[0].type") { value("SAVINGS ACCOUNT") }
+            jsonPath("[0].currencyIsoCode") { value("USD") }
+            jsonPath("[0].bank") { value("KEFIR BANK") }
+            jsonPath("[0].cbu") { exists() }
+            jsonPath("[0].balance") { value(BigDecimal("10000.0")) }
+            jsonPath("[0].status") { value("PENDING") }
             // Second account data
-            jsonPath("[1]id") { exists() }
-            jsonPath("[1]customer") { value("John Doe") }
-            jsonPath("[1]type") { value("CHECKING ACCOUNT") }
-            jsonPath("[1]currencyIsoCode") { value("USD") }
-            jsonPath("[1]bank") { value("KEFIR BANK") }
-            jsonPath("[1]cbu") { exists() }
-            jsonPath("[1]balance") { value(BigDecimal("10000.0")) }
-            jsonPath("[1]status") { value("OPENED") }
+            jsonPath("[1].id") { exists() }
+            jsonPath("[1].customer") { value("John Doe") }
+            jsonPath("[1].type") { value("CHECKING ACCOUNT") }
+            jsonPath("[1].currencyIsoCode") { value("USD") }
+            jsonPath("[1].bank") { value("KEFIR BANK") }
+            jsonPath("[1].cbu") { exists() }
+            jsonPath("[1].balance") { value(BigDecimal("10000.0")) }
+            jsonPath("[1].status") { value("OPENED") }
         }
     }
 
@@ -375,8 +375,8 @@ class AccountControllerIT : IntegrationTestBase() {
             .get("/api/accounts?page=2&size=2") { contentType = MediaType.APPLICATION_JSON }.andExpect {
                 status { isOk() }
                 jsonPath("length()") { value(2) }
-                jsonPath("[0]id") { value(3) } // First customer data
-                jsonPath("[1]id") { value(4) } // Second customer data
+                jsonPath("[0].id") { value(3) } // First customer data
+                jsonPath("[1].id") { value(4) } // Second customer data
             }
     }
 
