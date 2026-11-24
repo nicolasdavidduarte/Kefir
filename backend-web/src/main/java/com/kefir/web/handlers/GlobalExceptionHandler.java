@@ -1,6 +1,5 @@
 package com.kefir.web.handlers;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.kefir.exceptions.*;
 import com.kefir.web.dtos.common.ApiErrorResponse;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -21,6 +20,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import tools.jackson.databind.exc.InvalidFormatException;
 
 @Slf4j
 @RestControllerAdvice
@@ -118,7 +118,8 @@ public class GlobalExceptionHandler {
 
     if (cause instanceof InvalidFormatException ife && ife.getTargetType().isEnum()) {
 
-      String fieldName = ife.getPath().getFirst().getFieldName();
+      String fieldName =
+          ife.getPath().isEmpty() ? null : ife.getPath().getFirst().getPropertyName();
 
       Object[] acceptedValues = ife.getTargetType().getEnumConstants();
 

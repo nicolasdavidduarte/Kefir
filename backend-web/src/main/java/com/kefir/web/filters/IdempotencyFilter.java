@@ -1,8 +1,5 @@
 package com.kefir.web.filters;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.kefir.enums.IdempotencyState;
 import com.kefir.model.IdempotentRequest;
 import com.kefir.repositories.IdempotentRequestRepository;
@@ -12,7 +9,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -26,13 +22,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 @Component
 public class IdempotencyFilter extends OncePerRequestFilter {
 
   private final IdempotentRequestRepository repository;
   private final ObjectMapper objectMapper =
-      new ObjectMapper().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+      JsonMapper.builder().enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS).build();
   static final String IDEMPOTENCY_ERROR = "Idempotency Error";
 
   public IdempotencyFilter(IdempotentRequestRepository repository) {
@@ -178,8 +178,8 @@ public class IdempotencyFilter extends OncePerRequestFilter {
     try {
       Object json = objectMapper.readValue(body, Object.class);
       return objectMapper.writeValueAsString(json);
-    } catch (JsonProcessingException e) {
-      throw new UncheckedIOException("Error normalizing JSON", e);
+    } catch (JacksonException e) {
+      throw new IllegalStateException("Error normalizing JSON", e);
     }
   }
 
