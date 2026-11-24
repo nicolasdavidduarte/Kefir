@@ -22,7 +22,7 @@ repositories {
 dependencies {
 
     constraints {
-        val nettyVersion = "4.1.136.Final"
+        val nettyVersion = "4.2.21.Final"
         implementation("io.netty:netty-codec:$nettyVersion")
         implementation("io.netty:netty-codec-http:$nettyVersion")
         implementation("io.netty:netty-codec-http2:$nettyVersion")
