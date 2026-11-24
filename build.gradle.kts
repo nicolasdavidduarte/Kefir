@@ -20,8 +20,6 @@ subprojects {
     extra["jackson-2-bom.version"] = "2.21.8"
     extra["logback.version"] = "1.5.36"
     extra["log4j2.version"] = "2.25.5"
-    extra["micrometer.version"] = "1.16.7"
-    extra["micrometer-tracing.version"] = "1.4.3"
     extra["opentelemetry.version"] = "1.62.0"
     extra["junit-jupiter.version"] = "6.0.3"
     extra["netty.version"] = "4.1.136.Final"
