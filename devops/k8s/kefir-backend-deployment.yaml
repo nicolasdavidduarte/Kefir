@@ -50,6 +50,18 @@ spec:
                 secretKeyRef:
                   name: kefir-postgres-secret
                   key: POSTGRES_PASSWORD
+
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: kefir-config
+                  key: SPRING_PROFILES_ACTIVE
+
+            - name: OTLP_ENDPOINT
+              valueFrom:
+                configMapKeyRef:
+                  name: kefir-config
+                  key: OTLP_ENDPOINT
           startupProbe:
             httpGet:
               path: /actuator/health

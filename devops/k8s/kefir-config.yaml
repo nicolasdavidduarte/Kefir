@@ -5,3 +5,5 @@ metadata:
 data:
   SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/kefir
   SPRING_DATASOURCE_USERNAME: postgres
+  SPRING_PROFILES_ACTIVE: prod
+  OTLP_ENDPOINT: http://tempo.monitoring.svc.cluster.local:4318/v1/traces
