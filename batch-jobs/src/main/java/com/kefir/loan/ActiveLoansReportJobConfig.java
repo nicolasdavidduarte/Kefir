@@ -28,6 +28,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class ActiveLoansReportJobConfig {
 
+  @Value("${kefir.batch.reports.directory}")
+  private String reportsDirectory;
+
   private final DatabaseCheckListener databaseCheckListener;
 
   public ActiveLoansReportJobConfig(DatabaseCheckListener databaseCheckListener) {
@@ -75,7 +78,7 @@ public class ActiveLoansReportJobConfig {
     return loan ->
         new String[] {
           escapeCsv(String.valueOf(loan.getId())),
-          escapeCsv(loan.getCustomer() != null ? loan.getCustomer().toString() : ""),
+          escapeCsv(loan.getCustomer() != null ? loan.getCustomer().getId().toString() : ""),
           escapeCsv(String.valueOf(loan.getTotalOperationAmount())),
           escapeCsv(String.valueOf(loan.getOpeningDate())),
           escapeCsv(String.valueOf(loan.getStatus()))
@@ -90,14 +93,13 @@ public class ActiveLoansReportJobConfig {
     if (reportDate == null || reportDate.isBlank()) {
       reportDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
     }
-
-    String filePath = "batch-jobs/reports/ACTIVE_LOANS_REPORT_" + reportDate + ".csv";
+    String filePath = reportsDirectory + "/ACTIVE_LOANS_REPORT_" + reportDate + ".csv";
 
     return new FlatFileItemWriterBuilder<String[]>()
         .name("loanCsvWriter")
         .resource(new FileSystemResource(filePath))
         .append(true)
-        .lineAggregator(new PassThroughLineAggregator<>())
+        .lineAggregator(item -> String.join(",", item))
         .headerCallback(
             writer -> writer.write("\"ID\",\"Customer\",\"Amount\",\"Date\",\"Status\""))
         .build();
