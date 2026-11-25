@@ -6,7 +6,7 @@ import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
-import com.kefir.repositories.LoanRepository;
+import com.kefir.persistence.repositories.LoanRepository;
 import com.kefir.services.account.AccountCommandService;
 import com.kefir.services.account.AccountQueryService;
 import com.kefir.services.amortizationtype.AmortizationTypeService;

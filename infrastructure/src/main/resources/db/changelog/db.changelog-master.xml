@@ -3,14 +3,14 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="
            http://www.liquibase.org/xml/ns/dbchangelog
-           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+           https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <include file="/db/changelog/changesets/000-create-idempotent-request.xml"/>
-    <include file="db/changelog/changesets/001-create-core-user-table.xml"/>
+    <include file="/db/changelog/changesets/001-create-core-user-table.xml"/>
     <include file="/db/changelog/changesets/002-create-role-table.xml"/>
     <include file="/db/changelog/changesets/003-create-user-role-table.xml"/>
-    <include file="db/changelog/changesets/004-create-document-type-table.xml"/>
-    <include file="db/changelog/changesets/005-create-person-type-table.xml"/>
+    <include file="/db/changelog/changesets/004-create-document-type-table.xml"/>
+    <include file="/db/changelog/changesets/005-create-person-type-table.xml"/>
     <include file="/db/changelog/changesets/006-create-customer-type-table.xml"/>
     <include file="/db/changelog/changesets/007-create-currency-table.xml"/>
     <include file="/db/changelog/changesets/008-create-customer-table.xml"/>

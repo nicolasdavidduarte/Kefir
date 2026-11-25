@@ -3,7 +3,7 @@ package com.kefir.services.loan;
 import com.kefir.entities.Loan;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
-import com.kefir.repositories.LoanRepository;
+import com.kefir.persistence.repositories.LoanRepository;
 import com.kefir.web.dtos.loan.LoanResponse;
 import io.micrometer.observation.annotation.Observed;
 import java.util.List;

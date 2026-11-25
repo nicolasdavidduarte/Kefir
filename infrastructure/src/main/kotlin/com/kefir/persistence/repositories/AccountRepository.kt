@@ -1,4 +1,4 @@
-package com.kefir.repositories
+package com.kefir.persistence.repositories
 
 import com.kefir.entities.Account
 import jakarta.persistence.LockModeType

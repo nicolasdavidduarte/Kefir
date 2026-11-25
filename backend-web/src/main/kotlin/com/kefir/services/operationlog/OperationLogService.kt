@@ -1,7 +1,7 @@
 package com.kefir.services.operationlog
 
 import com.kefir.entities.OperationLog
-import com.kefir.repositories.OperationLogRepository
+import com.kefir.persistence.repositories.OperationLogRepository
 import com.kefir.web.dtos.operationLog.OperationLogCommand
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional

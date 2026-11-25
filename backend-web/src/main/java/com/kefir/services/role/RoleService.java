@@ -4,7 +4,7 @@ import com.kefir.entities.Role;
 import com.kefir.enums.UserRoles;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
-import com.kefir.repositories.RoleRepository;
+import com.kefir.persistence.repositories.RoleRepository;
 import java.util.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

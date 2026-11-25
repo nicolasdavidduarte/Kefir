@@ -1,6 +1,6 @@
-package com.kefir.repositories;
+package com.kefir.persistence.repositories;
 
-import com.kefir.entities.PersonType;
+import com.kefir.entities.CustomerType;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -10,13 +10,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PersonTypeRepository extends JpaRepository<PersonType, Integer> {
-  Optional<PersonType> findByNameIgnoreCase(String name);
+public interface CustomerTypeRepository extends JpaRepository<CustomerType, Integer> {
+  Optional<CustomerType> findByNameIgnoreCase(String name);
 
   @EntityGraph(attributePaths = {"createdBy", "updatedBy"})
-  @Query(value = "select pt from PersonType pt where pt.id = :id")
-  Optional<PersonType> findByIdWithDetails(@Param("id") Integer id);
+  @Query(value = "select ct from CustomerType ct where ct.id = :id")
+  Optional<CustomerType> findByIdWithDetails(@Param("id") Integer id);
 
   @EntityGraph(attributePaths = {"createdBy", "updatedBy"})
-  List<PersonType> findAllByOrderByIdAsc();
+  List<CustomerType> findAllByOrderByIdAsc();
 }

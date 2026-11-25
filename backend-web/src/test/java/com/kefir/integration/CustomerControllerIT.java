@@ -14,7 +14,7 @@ import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthenticatedUser;
-import com.kefir.repositories.*;
+import com.kefir.persistence.repositories.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;

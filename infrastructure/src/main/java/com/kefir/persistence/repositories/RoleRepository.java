@@ -1,4 +1,4 @@
-package com.kefir.repositories;
+package com.kefir.persistence.repositories;
 
 import com.kefir.entities.Role;
 import java.util.List;

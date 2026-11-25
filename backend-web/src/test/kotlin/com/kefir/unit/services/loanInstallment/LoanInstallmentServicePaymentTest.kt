@@ -12,8 +12,8 @@ import com.kefir.enums.LoanInstallmentStatus
 import com.kefir.enums.LoanStatus
 import com.kefir.enums.PaymentMethodName
 import com.kefir.infrastructure.security.AuthService
-import com.kefir.repositories.LoanInstallmentRepository
-import com.kefir.repositories.LoanRepository
+import com.kefir.persistence.repositories.LoanInstallmentRepository
+import com.kefir.persistence.repositories.LoanRepository
 import com.kefir.services.account.AccountQueryService
 import com.kefir.services.loanInstallment.GermanAmortizationCalculator
 import com.kefir.services.loanInstallment.LoanInstallmentService

@@ -1,4 +1,4 @@
-package com.kefir.repositories
+package com.kefir.persistence.repositories
 
 import com.kefir.entities.AmortizationType
 import com.kefir.enums.AmortizationTypeName

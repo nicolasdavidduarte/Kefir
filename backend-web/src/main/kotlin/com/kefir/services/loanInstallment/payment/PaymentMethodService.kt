@@ -3,7 +3,7 @@ package com.kefir.services.loanInstallment.payment
 import com.kefir.entities.PaymentMethod
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
-import com.kefir.repositories.PaymentMethodRepository
+import com.kefir.persistence.repositories.PaymentMethodRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

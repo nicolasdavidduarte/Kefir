@@ -10,6 +10,7 @@ COPY build.gradle.kts .
 COPY backend-web/build.gradle.kts backend-web/
 COPY batch-jobs/build.gradle.kts batch-jobs/
 COPY domain/build.gradle.kts domain/
+COPY infrastructure/build.gradle.kts infrastructure/
 
 COPY --chmod=755 gradlew .
 

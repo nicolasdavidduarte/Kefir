@@ -3,7 +3,7 @@ package com.kefir.services.customertype;
 import com.kefir.entities.CustomerType;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
-import com.kefir.repositories.CustomerTypeRepository;
+import com.kefir.persistence.repositories.CustomerTypeRepository;
 import com.kefir.web.dtos.customerType.CustomerTypeResponse;
 import java.util.List;
 import org.springframework.stereotype.Service;

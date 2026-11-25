@@ -3,7 +3,7 @@ package com.kefir.services.persontype;
 import com.kefir.entities.PersonType;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
-import com.kefir.repositories.PersonTypeRepository;
+import com.kefir.persistence.repositories.PersonTypeRepository;
 import com.kefir.web.dtos.personType.PersonTypeResponse;
 import java.util.List;
 import org.springframework.stereotype.Service;

@@ -7,7 +7,7 @@ import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
-import com.kefir.repositories.CustomerRepository;
+import com.kefir.persistence.repositories.CustomerRepository;
 import com.kefir.services.customertype.CustomerTypeService;
 import com.kefir.services.documenttype.DocumentTypeService;
 import com.kefir.services.operationlog.OperationLogService;

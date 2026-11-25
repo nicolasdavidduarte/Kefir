@@ -3,7 +3,7 @@ package com.kefir.services.accounttype
 import com.kefir.entities.AccountType
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
-import com.kefir.repositories.AccountTypeRepository
+import com.kefir.persistence.repositories.AccountTypeRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

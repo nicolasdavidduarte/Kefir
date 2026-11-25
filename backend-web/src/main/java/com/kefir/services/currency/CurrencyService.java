@@ -4,7 +4,7 @@ import com.kefir.entities.Currency;
 import com.kefir.enums.CurrencyIsoCodes;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
-import com.kefir.repositories.CurrencyRepository;
+import com.kefir.persistence.repositories.CurrencyRepository;
 import com.kefir.web.dtos.currency.CurrencyResponse;
 import java.util.List;
 import org.springframework.stereotype.Service;
