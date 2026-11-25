@@ -113,6 +113,25 @@ class AccountControllerIT : IntegrationTestBase() {
 
         )
 
+        customerRepository.save(
+
+            Customer.builder()
+                .name1("Gary")
+                .lastname1("Stu")
+                .fullname("Gary Stu")
+                .personType(personType)
+                .documentType(documentType)
+                .documentNumber("33111345")
+                .customerType(customerType)
+                .createdBy(user)
+                .createdAt(OffsetDateTime.now())
+                .updatedBy(user)
+                .updatedAt(OffsetDateTime.now())
+                .status(CustomerStatus.DEACTIVATED)
+                .build(),
+
+        )
+
         val principal = AuthenticatedUser(
             1,
             "admin",
@@ -296,6 +315,19 @@ class AccountControllerIT : IntegrationTestBase() {
             }
     }
 
+    @Test
+    fun openAccountFailWhenCustomerIsNotValid() {
+        val account = createTestPendingAccountCustomerDeactivated()
+
+        mockMvc
+            .patch("/api/accounts/${account.id}/open") { contentType = MediaType.APPLICATION_JSON }.andExpect {
+                status {
+                    isUnprocessableContent()
+                }
+                jsonPath("message") { value("Customer is not valid") }
+            }
+    }
+
     @ParameterizedTest
     @EnumSource(AccountStatus::class, names = ["PENDING", "OPENED"], mode = EnumSource.Mode.INCLUDE)
     fun closeAccountSuccessfully(status: AccountStatus) {
@@ -446,6 +478,35 @@ class AccountControllerIT : IntegrationTestBase() {
                 accountNumber = "11111",
                 cbu = randomCbu,
                 status = status,
+            ),
+        )
+    }
+
+    private fun createTestPendingAccountCustomerDeactivated(): Account {
+        val accountType = accountTypeRepository.findByNameIgnoreCase(AccountType.SAVINGS_ACCOUNT.dbName).orElseThrow { ApiException(ErrorCode.ACCOUNT_TYPE_NOT_FOUND) }
+
+        val bankBranch = bankBranchRepository.findByBranchNumberAndBankId(1, 1).orElseThrow { ApiException(ErrorCode.BANK_BRANCH_NOT_FOUND) }
+
+        val currency = currencyRepository.findByIsoCode(CurrencyIsoCodes.USD.name).orElseThrow { ApiException(ErrorCode.CURRENCY_NOT_FOUND) }
+
+        val customer = customerRepository.findById(2).orElseThrow { ApiException(ErrorCode.CUSTOMER_NOT_FOUND) }
+
+        val user = userRepository.findByUsername("operator").orElseThrow { ApiException(ErrorCode.USER_NOT_FOUND) }
+
+        val randomCbu = "001000" + (1000000000000000..9999999999999999).random().toString()
+
+        return accountRepository.saveAndFlush(
+            Account(
+                type = accountType,
+                customer = customer,
+                currency = currency,
+                bank = bankBranch.bank,
+                balance = BigDecimal("20000.00"),
+                createdBy = user,
+                updatedBy = user,
+                accountNumber = "11111",
+                cbu = randomCbu,
+                status = AccountStatus.PENDING,
             ),
         )
     }

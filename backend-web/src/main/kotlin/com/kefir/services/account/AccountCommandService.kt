@@ -2,6 +2,7 @@ package com.kefir.services.account
 
 import com.kefir.entities.Account
 import com.kefir.entities.User
+import com.kefir.enums.CustomerStatus
 import com.kefir.enums.EntityName
 import com.kefir.enums.LogOperation
 import com.kefir.exceptions.ApiException
@@ -69,6 +70,10 @@ class AccountCommandService(
     @Transactional
     fun open(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+
+        if (account.customer.status != CustomerStatus.ACTIVE) {
+            throw ApiException(ErrorCode.CUSTOMER_NOT_VALID)
+        }
 
         val user = userService.getById(authService.currentUserId)
 
