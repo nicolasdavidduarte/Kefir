@@ -2,6 +2,7 @@ package com.kefir.persistence.repositories
 
 import com.kefir.entities.Account
 import jakarta.persistence.LockModeType
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
@@ -21,10 +22,10 @@ interface AccountRepository : JpaRepository<Account, Long> {
     fun findByIdWithDetails(@Param("id") id: Long): Optional<Account>
 
     @EntityGraph(attributePaths = ["type", "customer", "currency", "bank", "createdBy", "updatedBy"])
-    fun findAllByOrderByIdAsc(pageable: Pageable): List<Account>
+    fun findAllByOrderByIdAsc(pageable: Pageable): Page<Account>
 
     @EntityGraph(attributePaths = ["type", "customer", "currency", "bank", "createdBy", "updatedBy"])
-    fun findAllByCustomerId(customerId: Long): List<Account>
+    fun findAllByCustomerIdOrderByIdAsc(customerId: Long, pageable: Pageable): Page<Account>
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(value = "select a from Account a where a.id = :id")

@@ -31,13 +31,10 @@ class AccountController(
         @RequestParam(name = "customerId", required = false) customerId: Long?,
         @RequestParam(name = "page", required = false) page: Int?,
         @RequestParam(name = "size", required = false) size: Int?,
-    ): List<AccountResponse> {
-        val accounts = if (customerId != null) {
-            accountQueryService.getAllByCustomerWithResponse(customerId)
-        } else {
-            accountQueryService.getAll(Pagination.from(page, size))
-        }
-        return accounts.sortedBy { it.id }
+    ): Any = if (customerId != null) {
+        accountQueryService.getAllByCustomerWithResponse(customerId, Pagination.from(page, size))
+    } else {
+        accountQueryService.getAllWithResponse(Pagination.from(page, size))
     }
 
     @GetMapping("/{id}")

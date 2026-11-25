@@ -6,6 +6,7 @@ import com.kefir.exceptions.ErrorCode
 import com.kefir.persistence.repositories.AccountRepository
 import com.kefir.web.dtos.account.AccountResponse
 import com.kefir.web.dtos.account.toResponse
+import com.kefir.web.utils.PageResponse
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,9 +15,6 @@ import org.springframework.transaction.annotation.Transactional
 class AccountQueryService(
     private val accountRepository: AccountRepository,
 ) {
-
-    @Transactional(readOnly = true)
-    fun getAll(pageable: Pageable): List<AccountResponse> = accountRepository.findAllByOrderByIdAsc(pageable).map(Account::toResponse).toList()
 
     @Transactional(readOnly = true)
     fun getById(id: Long): Account = accountRepository.findById(id).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
@@ -32,7 +30,16 @@ class AccountQueryService(
     }
 
     @Transactional(readOnly = true)
-    fun getAllByCustomerWithResponse(customerId: Long): List<AccountResponse> = accountRepository.findAllByCustomerId(customerId).map(Account::toResponse)
+    fun getAllWithResponse(pageable: Pageable): PageResponse<AccountResponse> {
+        val page = accountRepository.findAllByOrderByIdAsc(pageable)
+        return PageResponse.from(page, Account::toResponse)
+    }
+
+    @Transactional(readOnly = true)
+    fun getAllByCustomerWithResponse(customerId: Long, pageable: Pageable): PageResponse<AccountResponse> {
+        val page = accountRepository.findAllByCustomerIdOrderByIdAsc(customerId, pageable)
+        return PageResponse.from(page, Account::toResponse)
+    }
 
     @Transactional
     fun getByLoanIdForUpdate(loanId: Long): Account = accountRepository.findByLoanIdForUpdate(loanId).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }

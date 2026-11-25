@@ -17,7 +17,9 @@ import com.kefir.web.dtos.customer.CustomerCreationRequest;
 import com.kefir.web.dtos.customer.CustomerResponse;
 import com.kefir.web.dtos.customer.CustomerUpdateRequest;
 import com.kefir.web.dtos.operationLog.OperationLogCommand;
+import com.kefir.web.utils.PageResponse;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,10 +53,9 @@ public class CustomerService {
   }
 
   @Transactional(readOnly = true)
-  public List<CustomerResponse> getAllWithResponse(Pageable pageable) {
-    return customerRepository.findAllByOrderByIdAsc(pageable).stream()
-        .map(CustomerResponse::fromEntity)
-        .toList();
+  public PageResponse<CustomerResponse> getAllWithResponse(Pageable pageable) {
+    Page<Customer> page = customerRepository.findAllByOrderByIdAsc(pageable);
+    return PageResponse.from(page, CustomerResponse::fromEntity);
   }
 
   @Transactional(readOnly = true)
