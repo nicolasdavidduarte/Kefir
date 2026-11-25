@@ -296,46 +296,51 @@ class LoanControllerIT extends IntegrationTestBase {
         .perform(get("/api/loans").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$.content.length()").value(2))
+        .andExpect(jsonPath("$.page").value(1))
+        .andExpect(jsonPath("$.size").value(2))
+        .andExpect(jsonPath("$.totalElements").value(2))
+        .andExpect(jsonPath("$.totalPages").value(1))
+        .andExpect(jsonPath("$.last").value(true))
         // First loan data
-        .andExpect(jsonPath("$[0].id").exists())
-        .andExpect(jsonPath("$[0].externalId").exists())
-        .andExpect(jsonPath("$[0].customer").value("John Doe"))
-        .andExpect(jsonPath("$[0].loanType").value("PERSONAL"))
-        .andExpect(jsonPath("$[0].amortizationType").value("FRENCH"))
-        .andExpect(jsonPath("$[0].currency").value("USD"))
-        .andExpect(jsonPath("$[0].numberOfInstallments").value(4))
-        .andExpect(jsonPath("$[0].annualInterestRate").value("75.0"))
-        .andExpect(jsonPath("$[0].monthlyInterestRate").value("6.25"))
-        .andExpect(jsonPath("$[0].totalPrincipal").value("10000.0"))
-        .andExpect(jsonPath("$[0].totalInterest").value("1609.81"))
-        .andExpect(jsonPath("$[0].openingDate").exists())
-        .andExpect(jsonPath("$[0].expirationDate").exists())
-        .andExpect(jsonPath("$[0].status").value("ACTIVE"))
-        .andExpect(jsonPath("$[0].createdBy").value("admin"))
-        .andExpect(jsonPath("$[0].createdAt").exists())
-        .andExpect(jsonPath("$[0].updatedBy").exists())
-        .andExpect(jsonPath("$[0].updatedAt").exists())
+        .andExpect(jsonPath("$.content.[0].id").exists())
+        .andExpect(jsonPath("$.content.[0].externalId").exists())
+        .andExpect(jsonPath("$.content.[0].customer").value("John Doe"))
+        .andExpect(jsonPath("$.content.[0].loanType").value("PERSONAL"))
+        .andExpect(jsonPath("$.content.[0].amortizationType").value("FRENCH"))
+        .andExpect(jsonPath("$.content.[0].currency").value("USD"))
+        .andExpect(jsonPath("$.content.[0].numberOfInstallments").value(4))
+        .andExpect(jsonPath("$.content.[0].annualInterestRate").value("75.0"))
+        .andExpect(jsonPath("$.content.[0].monthlyInterestRate").value("6.25"))
+        .andExpect(jsonPath("$.content.[0].totalPrincipal").value("10000.0"))
+        .andExpect(jsonPath("$.content.[0].totalInterest").value("1609.81"))
+        .andExpect(jsonPath("$.content.[0].openingDate").exists())
+        .andExpect(jsonPath("$.content.[0].expirationDate").exists())
+        .andExpect(jsonPath("$.content.[0].status").value("ACTIVE"))
+        .andExpect(jsonPath("$.content.[0].createdBy").value("admin"))
+        .andExpect(jsonPath("$.content.[0].createdAt").exists())
+        .andExpect(jsonPath("$.content.[0].updatedBy").exists())
+        .andExpect(jsonPath("$.content.[0].updatedAt").exists())
 
         // Second customer data
-        .andExpect(jsonPath("$[1].id").exists())
-        .andExpect(jsonPath("$[1].externalId").exists())
-        .andExpect(jsonPath("$[1].customer").value("John Doe"))
-        .andExpect(jsonPath("$[1].loanType").value("PERSONAL"))
-        .andExpect(jsonPath("$[1].amortizationType").value("FRENCH"))
-        .andExpect(jsonPath("$[1].currency").value("USD"))
-        .andExpect(jsonPath("$[1].numberOfInstallments").value(4))
-        .andExpect(jsonPath("$[1].annualInterestRate").value("75.0"))
-        .andExpect(jsonPath("$[1].monthlyInterestRate").value("6.25"))
-        .andExpect(jsonPath("$[1].totalPrincipal").value("10000.0"))
-        .andExpect(jsonPath("$[1].totalInterest").value("1609.81"))
-        .andExpect(jsonPath("$[1].openingDate").exists())
-        .andExpect(jsonPath("$[1].expirationDate").exists())
-        .andExpect(jsonPath("$[1].status").value("ACTIVE"))
-        .andExpect(jsonPath("$[1].createdBy").value("admin"))
-        .andExpect(jsonPath("$[1].createdAt").exists())
-        .andExpect(jsonPath("$[1].updatedBy").exists())
-        .andExpect(jsonPath("$[1].updatedAt").exists());
+        .andExpect(jsonPath("$.content.[1].id").exists())
+        .andExpect(jsonPath("$.content.[1].externalId").exists())
+        .andExpect(jsonPath("$.content.[1].customer").value("John Doe"))
+        .andExpect(jsonPath("$.content.[1].loanType").value("PERSONAL"))
+        .andExpect(jsonPath("$.content.[1].amortizationType").value("FRENCH"))
+        .andExpect(jsonPath("$.content.[1].currency").value("USD"))
+        .andExpect(jsonPath("$.content.[1].numberOfInstallments").value(4))
+        .andExpect(jsonPath("$.content.[1].annualInterestRate").value("75.0"))
+        .andExpect(jsonPath("$.content.[1].monthlyInterestRate").value("6.25"))
+        .andExpect(jsonPath("$.content.[1].totalPrincipal").value("10000.0"))
+        .andExpect(jsonPath("$.content.[1].totalInterest").value("1609.81"))
+        .andExpect(jsonPath("$.content.[1].openingDate").exists())
+        .andExpect(jsonPath("$.content.[1].expirationDate").exists())
+        .andExpect(jsonPath("$.content.[1].status").value("ACTIVE"))
+        .andExpect(jsonPath("$.content.[1].createdBy").value("admin"))
+        .andExpect(jsonPath("$.content.[1].createdAt").exists())
+        .andExpect(jsonPath("$.content.[1].updatedBy").exists())
+        .andExpect(jsonPath("$.content.[1].updatedAt").exists());
   }
 
   @Test
@@ -347,7 +352,7 @@ class LoanControllerIT extends IntegrationTestBase {
         .perform(get("/api/loans").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(0));
+        .andExpect(jsonPath("$.content.length()").value(0));
   }
 
   @Test
@@ -403,11 +408,16 @@ class LoanControllerIT extends IntegrationTestBase {
     mockMvc
         .perform(get("/api/loans?page=2&size=2").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
-        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$.content.length()").value(2))
+        .andExpect(jsonPath("$.page").value(2))
+        .andExpect(jsonPath("$.size").value(2))
+        .andExpect(jsonPath("$.totalElements").value(4))
+        .andExpect(jsonPath("$.totalPages").value(2))
+        .andExpect(jsonPath("$.last").value(true))
         // First loan / id = 3
-        .andExpect(jsonPath("$[0].id").value("3"))
+        .andExpect(jsonPath("$.content.[0].id").value("3"))
         // Second loan data / id = 4
-        .andExpect(jsonPath("$[1].id").value("4"));
+        .andExpect(jsonPath("$.content.[1].id").value("4"));
   }
 
   @ParameterizedTest

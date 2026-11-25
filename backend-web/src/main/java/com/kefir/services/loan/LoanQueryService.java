@@ -5,8 +5,10 @@ import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.persistence.repositories.LoanRepository;
 import com.kefir.web.dtos.loan.LoanResponse;
+import com.kefir.web.utils.PageResponse;
 import io.micrometer.observation.annotation.Observed;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +23,9 @@ public class LoanQueryService {
   }
 
   @Transactional(readOnly = true)
-  public List<LoanResponse> getAll(Pageable pageable) {
-    return loanRepository.findAllByOrderByIdAsc(pageable).stream()
-        .map(LoanResponse::fromEntity)
-        .toList();
+  public PageResponse<LoanResponse> getAll(Pageable pageable) {
+    Page<Loan> page = loanRepository.findAllByOrderByIdAsc(pageable);
+    return PageResponse.from(page, LoanResponse::fromEntity);
   }
 
   @Observed(name = "loan.service.get")

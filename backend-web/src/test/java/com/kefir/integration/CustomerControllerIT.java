@@ -174,35 +174,40 @@ class CustomerControllerIT extends IntegrationTestBase {
         .perform(get("/api/customers").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$.content.length()").value(2))
+        .andExpect(jsonPath("$.page").value(1))
+        .andExpect(jsonPath("$.size").value(2))
+        .andExpect(jsonPath("$.totalElements").value(2))
+        .andExpect(jsonPath("$.totalPages").value(1))
+        .andExpect(jsonPath("$.last").value(true))
         // First customer data
-        .andExpect(jsonPath("$[0].id").value(1))
-        .andExpect(jsonPath("$[0].name1").value("John"))
-        .andExpect(jsonPath("$[0].lastname1").value("Doe"))
-        .andExpect(jsonPath("$[0].fullname").value("John Doe"))
-        .andExpect(jsonPath("$[0].personType").value("NATURAL"))
-        .andExpect(jsonPath("$[0].documentType").value("DNI"))
-        .andExpect(jsonPath("$[0].documentNumber").value("123456788"))
-        .andExpect(jsonPath("$[0].customerType").value("RETAIL"))
-        .andExpect(jsonPath("$[0].status").value("ACTIVE"))
-        .andExpect(jsonPath("$[0].createdBy").value("admin"))
-        .andExpect(jsonPath("$[0].createdAt").exists())
-        .andExpect(jsonPath("$[0].updatedBy").value("admin"))
-        .andExpect(jsonPath("$[0].updatedAt").exists())
+        .andExpect(jsonPath("$.content.[0].id").value(1))
+        .andExpect(jsonPath("$.content.[0].name1").value("John"))
+        .andExpect(jsonPath("$.content.[0].lastname1").value("Doe"))
+        .andExpect(jsonPath("$.content.[0].fullname").value("John Doe"))
+        .andExpect(jsonPath("$.content.[0].personType").value("NATURAL"))
+        .andExpect(jsonPath("$.content.[0].documentType").value("DNI"))
+        .andExpect(jsonPath("$.content.[0].documentNumber").value("123456788"))
+        .andExpect(jsonPath("$.content.[0].customerType").value("RETAIL"))
+        .andExpect(jsonPath("$.content.[0].status").value("ACTIVE"))
+        .andExpect(jsonPath("$.content.[0].createdBy").value("admin"))
+        .andExpect(jsonPath("$.content.[0].createdAt").exists())
+        .andExpect(jsonPath("$.content.[0].updatedBy").value("admin"))
+        .andExpect(jsonPath("$.content.[0].updatedAt").exists())
         // Second customer data
-        .andExpect(jsonPath("$[1].id").value(2))
-        .andExpect(jsonPath("$[1].name1").value("John"))
-        .andExpect(jsonPath("$[1].lastname1").value("Doe"))
-        .andExpect(jsonPath("$[1].fullname").value("John Doe"))
-        .andExpect(jsonPath("$[1].personType").value("NATURAL"))
-        .andExpect(jsonPath("$[1].documentType").value("PASSPORT"))
-        .andExpect(jsonPath("$[1].documentNumber").value("123456789"))
-        .andExpect(jsonPath("$[1].customerType").value("RETAIL"))
-        .andExpect(jsonPath("$[1].status").value("ACTIVE"))
-        .andExpect(jsonPath("$[1].createdBy").value("admin"))
-        .andExpect(jsonPath("$[1].createdAt").exists())
-        .andExpect(jsonPath("$[1].updatedBy").value("admin"))
-        .andExpect(jsonPath("$[1].updatedAt").exists());
+        .andExpect(jsonPath("$.content.[1].id").value(2))
+        .andExpect(jsonPath("$.content.[1].name1").value("John"))
+        .andExpect(jsonPath("$.content.[1].lastname1").value("Doe"))
+        .andExpect(jsonPath("$.content.[1].fullname").value("John Doe"))
+        .andExpect(jsonPath("$.content.[1].personType").value("NATURAL"))
+        .andExpect(jsonPath("$.content.[1].documentType").value("PASSPORT"))
+        .andExpect(jsonPath("$.content.[1].documentNumber").value("123456789"))
+        .andExpect(jsonPath("$.content.[1].customerType").value("RETAIL"))
+        .andExpect(jsonPath("$.content.[1].status").value("ACTIVE"))
+        .andExpect(jsonPath("$.content.[1].createdBy").value("admin"))
+        .andExpect(jsonPath("$.content.[1].createdAt").exists())
+        .andExpect(jsonPath("$.content.[1].updatedBy").value("admin"))
+        .andExpect(jsonPath("$.content.[1].updatedAt").exists());
   }
 
   @Test
@@ -211,7 +216,7 @@ class CustomerControllerIT extends IntegrationTestBase {
         .perform(get("/api/customers").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(0));
+        .andExpect(jsonPath("$.content.length()").value(0));
   }
 
   @Test
@@ -432,11 +437,16 @@ class CustomerControllerIT extends IntegrationTestBase {
         .perform(get("/api/customers?page=2&size=2").contentType(MediaType.APPLICATION_JSON))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$.content.length()").value(2))
+        .andExpect(jsonPath("$.page").value(2))
+        .andExpect(jsonPath("$.size").value(2))
+        .andExpect(jsonPath("$.totalElements").value(4))
+        .andExpect(jsonPath("$.totalPages").value(2))
+        .andExpect(jsonPath("$.last").value(true))
         // First customer data
-        .andExpect(jsonPath("$[0].id").value(3))
+        .andExpect(jsonPath("$.content.[0].id").value(3))
         // Second customer data
-        .andExpect(jsonPath("$[1].id").value(4));
+        .andExpect(jsonPath("$.content.[1].id").value(4));
   }
 
   @ParameterizedTest

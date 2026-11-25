@@ -203,26 +203,30 @@ class AccountControllerIT : IntegrationTestBase() {
             contentType = MediaType.APPLICATION_JSON
         }.andExpect {
             status { isOk() }
-            jsonPath("$") { isArray() }
-            jsonPath("length()") { value(2) }
+            jsonPath("$.content.length()") { value(2) }
+            jsonPath("$.page") { value(1) }
+            jsonPath("$.size") { value(2) }
+            jsonPath("$.totalElements") { value(2) }
+            jsonPath("$.totalPages") { value(1) }
+            jsonPath("$.last") { value(true) }
             // First account data
-            jsonPath("[0].id") { exists() }
-            jsonPath("[0].customer") { value("John Doe") }
-            jsonPath("[0].type") { value("SAVINGS ACCOUNT") }
-            jsonPath("[0].currencyIsoCode") { value("USD") }
-            jsonPath("[0].bank") { value("KEFIR BANK") }
-            jsonPath("[0].cbu") { exists() }
-            jsonPath("[0].balance") { value(BigDecimal("10000.0")) }
-            jsonPath("[0].status") { value("PENDING") }
+            jsonPath("$.content.[0].id") { exists() }
+            jsonPath("$.content.[0].customer") { value("John Doe") }
+            jsonPath("$.content.[0].type") { value("SAVINGS ACCOUNT") }
+            jsonPath("$.content.[0].currencyIsoCode") { value("USD") }
+            jsonPath("$.content.[0].bank") { value("KEFIR BANK") }
+            jsonPath("$.content.[0].cbu") { exists() }
+            jsonPath("$.content.[0].balance") { value(BigDecimal("10000.0")) }
+            jsonPath("$.content.[0].status") { value("PENDING") }
             // Second account data
-            jsonPath("[1].id") { exists() }
-            jsonPath("[1].customer") { value("John Doe") }
-            jsonPath("[1].type") { value("CHECKING ACCOUNT") }
-            jsonPath("[1].currencyIsoCode") { value("USD") }
-            jsonPath("[1].bank") { value("KEFIR BANK") }
-            jsonPath("[1].cbu") { exists() }
-            jsonPath("[1].balance") { value(BigDecimal("10000.0")) }
-            jsonPath("[1].status") { value("OPENED") }
+            jsonPath("$.content.[1].id") { exists() }
+            jsonPath("$.content.[1].customer") { value("John Doe") }
+            jsonPath("$.content.[1].type") { value("CHECKING ACCOUNT") }
+            jsonPath("$.content.[1].currencyIsoCode") { value("USD") }
+            jsonPath("$.content.[1].bank") { value("KEFIR BANK") }
+            jsonPath("$.content.[1].cbu") { exists() }
+            jsonPath("$.content.[1].balance") { value(BigDecimal("10000.0")) }
+            jsonPath("$.content.[1].status") { value("OPENED") }
         }
     }
 
@@ -233,7 +237,7 @@ class AccountControllerIT : IntegrationTestBase() {
                 contentType = MediaType.APPLICATION_JSON
             }.andExpect {
                 status { isOk() }
-                jsonPath("length()") { value(0) }
+                jsonPath("$.content.length()") { value(0) }
             }
     }
 
@@ -374,9 +378,14 @@ class AccountControllerIT : IntegrationTestBase() {
         mockMvc
             .get("/api/accounts?page=2&size=2") { contentType = MediaType.APPLICATION_JSON }.andExpect {
                 status { isOk() }
-                jsonPath("length()") { value(2) }
-                jsonPath("[0].id") { value(3) } // First customer data
-                jsonPath("[1].id") { value(4) } // Second customer data
+                jsonPath("$.content.length()") { value(2) }
+                jsonPath("$.page") { value(2) }
+                jsonPath("$.size") { value(2) }
+                jsonPath("$.totalElements") { value(4) }
+                jsonPath("$.totalPages") { value(2) }
+                jsonPath("$.last") { value(true) }
+                jsonPath("$.content.[0].id") { value(3) } // First customer data
+                jsonPath("$.content.[1].id") { value(4) } // Second customer data
             }
     }
 

@@ -5,6 +5,7 @@ import com.kefir.services.loan.LoanQueryService;
 import com.kefir.web.dtos.loan.LoanChargeOffRequest;
 import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
+import com.kefir.web.utils.PageResponse;
 import com.kefir.web.utils.Pagination;
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.observation.annotation.Observed;
@@ -16,7 +17,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +38,7 @@ public class LoanController {
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  public List<LoanResponse> getAll(
+  public PageResponse<LoanResponse> getAll(
       @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
     return loanQueryService.getAll(Pagination.from(page, size));
   }
