@@ -21,7 +21,6 @@ import com.kefir.web.dtos.loan.LoanRequest;
 import com.kefir.web.dtos.loan.LoanResponse;
 import com.kefir.web.dtos.operationLog.OperationLogCommand;
 import io.micrometer.core.instrument.MeterRegistry;
-import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -83,8 +82,6 @@ public class LoanCommandService {
           accountQueryService.getByIdAndCustomerId(
               loanRequest.accountId(), loanRequest.customerId());
       account.isValid();
-
-      OffsetDateTime now = OffsetDateTime.now();
 
       User user = userService.getById(authService.getCurrentUserId());
 

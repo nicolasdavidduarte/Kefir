@@ -175,6 +175,12 @@ public class Loan {
       throw new DomainException(DomainErrorCode.INVALID_INSTALLMENTS);
     }
 
+    if (account.getCurrency() == null
+        || currency == null
+        || !Objects.equals(account.getCurrency().getIsoCode(), currency.getIsoCode())) {
+      throw new DomainException(DomainErrorCode.CURRENCY_MISMATCH);
+    }
+
     OffsetDateTime now = OffsetDateTime.now();
 
     BigDecimal annualRate = loanType.getAnnualInterestRate();

@@ -2,6 +2,7 @@ package com.kefir.services.account
 
 import com.kefir.entities.Account
 import com.kefir.entities.User
+import com.kefir.enums.CustomerStatus
 import com.kefir.enums.EntityName
 import com.kefir.enums.LogOperation
 import com.kefir.exceptions.ApiException
@@ -34,10 +35,6 @@ class AccountCommandService(
     private val accountTypeService: AccountTypeService,
     private val bankBranchService: BankBranchService,
 ) {
-
-    companion object {
-        private const val SYSTEM_USER = 1
-    }
 
     @Transactional
     fun create(accountRequest: AccountRequest): AccountResponse {
@@ -74,6 +71,10 @@ class AccountCommandService(
     fun open(id: Long): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
+        if (account.customer.status != CustomerStatus.ACTIVE) {
+            throw ApiException(ErrorCode.CUSTOMER_NOT_VALID)
+        }
+
         val user = userService.getById(authService.currentUserId)
 
         account.open(user)
@@ -95,7 +96,7 @@ class AccountCommandService(
     fun suspend(id: Long, reason: String): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
-        val user: User = userService.getById(SYSTEM_USER)
+        val user: User = userService.getById(authService.currentUserId)
 
         account.suspend(user)
 

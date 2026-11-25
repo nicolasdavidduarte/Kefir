@@ -1,6 +1,7 @@
 package com.kefir.persistence.repositories
 
 import com.kefir.entities.Account
+import com.kefir.enums.AccountStatus
 import jakarta.persistence.LockModeType
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -26,6 +27,9 @@ interface AccountRepository : JpaRepository<Account, Long> {
 
     @EntityGraph(attributePaths = ["type", "customer", "currency", "bank", "createdBy", "updatedBy"])
     fun findAllByCustomerIdOrderByIdAsc(customerId: Long, pageable: Pageable): Page<Account>
+
+    @EntityGraph(attributePaths = ["type", "customer", "currency", "bank", "createdBy", "updatedBy"])
+    fun findAllByCustomerIdAndStatus(customerId: Long, status: AccountStatus): List<Account>
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query(value = "select a from Account a where a.id = :id")

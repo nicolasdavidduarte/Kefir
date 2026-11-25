@@ -8,14 +8,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.jayway.jsonpath.JsonPath;
 import com.kefir.entities.*;
+import com.kefir.enums.AccountStatus;
+import com.kefir.enums.AmortizationTypeName;
+import com.kefir.enums.CurrencyIsoCodes;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.enums.EntityName;
+import com.kefir.enums.LoanStatus;
+import com.kefir.enums.LoanTypeName;
 import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthenticatedUser;
 import com.kefir.persistence.repositories.*;
+import com.kefir.services.account.AccountNumberGenerator;
+import com.kefir.services.account.CBUGenerator;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.charset.StandardCharsets;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -49,6 +58,20 @@ class CustomerControllerIT extends IntegrationTestBase {
   @Autowired private UserRepository userRepository;
 
   @Autowired private OperationLogRepository operationLogRepository;
+
+  @Autowired private AccountRepository accountRepository;
+
+  @Autowired private AccountTypeRepository accountTypeRepository;
+
+  @Autowired private BankBranchRepository bankBranchRepository;
+
+  @Autowired private CurrencyRepository currencyRepository;
+
+  @Autowired private LoanRepository loanRepository;
+
+  @Autowired private LoanTypeRepository loanTypeRepository;
+
+  @Autowired private AmortizationTypeRepository amortizationTypeRepository;
 
   @BeforeEach
   public void setup() {
@@ -427,6 +450,36 @@ class CustomerControllerIT extends IntegrationTestBase {
   }
 
   @Test
+  void deactivateCustomerFailsWhenCustomerHasOpenedAccounts() throws Exception {
+    Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+    createTestAccount(customer, AccountStatus.OPENED);
+
+    mockMvc
+        .perform(post("/api/customers/" + customer.getId() + "/status/deactivate"))
+        .andDo(print())
+        .andExpect(status().isUnprocessableContent())
+        .andExpect(
+            jsonPath("message")
+                .value("Customer is not valid for deactivation because has accounts opened"));
+  }
+
+  @Test
+  void deactivateCustomerFailsWhenCustomerHasActiveLoans() throws Exception {
+    Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+    Account account = createTestAccount(customer, AccountStatus.CLOSED);
+    createTestLoan(customer, account, LoanStatus.ACTIVE);
+
+    mockMvc
+        .perform(post("/api/customers/" + customer.getId() + "/status/deactivate"))
+        .andDo(print())
+        .andExpect(status().isUnprocessableContent())
+        .andExpect(
+            jsonPath("message")
+                .value(
+                    "Customer is not valid for deactivation because has loans pending of payment"));
+  }
+
+  @Test
   void getAllCustomersWithPagination() throws Exception {
     createTestCustomer(1, "123456786", CustomerStatus.ACTIVE);
     createTestCustomer(2, "123456787", CustomerStatus.ACTIVE);
@@ -499,5 +552,101 @@ class CustomerControllerIT extends IntegrationTestBase {
             .updatedBy(user)
             .updatedAt(now)
             .build());
+  }
+
+  private Account createTestAccount(Customer customer, AccountStatus status) {
+    String name = com.kefir.enums.AccountType.SAVINGS_ACCOUNT.getDbName();
+    AccountType accountType =
+        accountTypeRepository
+            .findByNameIgnoreCase(name)
+            .orElseThrow(() -> new ApiException(ErrorCode.ACCOUNT_TYPE_NOT_FOUND));
+
+    Currency currency =
+        currencyRepository
+            .findByIsoCode(CurrencyIsoCodes.USD.name())
+            .orElseThrow(() -> new ApiException(ErrorCode.CURRENCY_NOT_FOUND));
+
+    BankBranch bankBranch =
+        bankBranchRepository
+            .findById(1)
+            .orElseThrow(() -> new ApiException(ErrorCode.BANK_BRANCH_NOT_FOUND));
+
+    User user =
+        userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+
+    String accountNumber =
+        AccountNumberGenerator.INSTANCE.generate(accountType.getCode(), 100000001L);
+
+    String cbu =
+        CBUGenerator.INSTANCE.generate(
+            bankBranch.getBank().getId(), bankBranch.getBranchNumber(), accountNumber);
+
+    Account account =
+        new Account(
+            0L,
+            accountType,
+            customer,
+            currency,
+            bankBranch.getBank(),
+            accountNumber,
+            cbu,
+            new BigDecimal("1000.00"),
+            status,
+            user,
+            OffsetDateTime.now(),
+            user,
+            OffsetDateTime.now());
+
+    return accountRepository.save(account);
+  }
+
+  private void createTestLoan(Customer customer, Account account, LoanStatus status) {
+    LoanType loanType =
+        loanTypeRepository
+            .findByNameIgnoringCase(LoanTypeName.PERSONAL.name())
+            .orElseThrow(() -> new ApiException(ErrorCode.LOAN_TYPE_NOT_FOUND));
+
+    Currency currency =
+        currencyRepository
+            .findByIsoCode(CurrencyIsoCodes.USD.name())
+            .orElseThrow(() -> new ApiException(ErrorCode.CURRENCY_NOT_FOUND));
+
+    AmortizationType amortizationType =
+        amortizationTypeRepository
+            .findByName(AmortizationTypeName.FRENCH)
+            .orElseThrow(() -> new ApiException(ErrorCode.AMORTIZATION_TYPE_NOT_FOUND));
+
+    OffsetDateTime now = OffsetDateTime.now();
+    User user =
+        userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+
+    Loan loan =
+        Loan.builder()
+            .customer(customer)
+            .account(account)
+            .loanType(loanType)
+            .numberOfInstallments(4)
+            .currency(currency)
+            .amortizationType(amortizationType)
+            .annualInterestRate(loanType.getAnnualInterestRate())
+            .monthlyInterestRate(
+                loanType
+                    .getAnnualInterestRate()
+                    .divide(BigDecimal.valueOf(12), 10, RoundingMode.HALF_UP))
+            .principalAmount(new BigDecimal("1000.00"))
+            .interestAmount(new BigDecimal("100.00"))
+            .totalOperationAmount(new BigDecimal("1100.00"))
+            .openingDate(now)
+            .expirationDate(now.plusMonths(4))
+            .remainingBalance(new BigDecimal("1000.00"))
+            .status(status)
+            .externalId(12345L)
+            .createdBy(user)
+            .createdAt(now)
+            .updatedBy(user)
+            .updatedAt(now)
+            .build();
+
+    loanRepository.save(loan);
   }
 }
