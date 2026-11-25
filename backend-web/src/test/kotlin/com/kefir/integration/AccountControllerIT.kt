@@ -327,6 +327,14 @@ class AccountControllerIT : IntegrationTestBase() {
 
     @Test
     fun suspendAccountSuccessfully() {
+        val operator = userRepository.findByUsername("operator").orElseThrow()
+        val principal = AuthenticatedUser(operator.id, operator.username)
+        SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+            principal,
+            null,
+            listOf(SimpleGrantedAuthority("ROLE_ADMIN")),
+        )
+
         val account = createTestAccount(AccountType.SAVINGS_ACCOUNT, AccountStatus.OPENED)
 
         val requestBody = javaClass.classLoader
@@ -344,6 +352,10 @@ class AccountControllerIT : IntegrationTestBase() {
 
         val operationLog = operationLogRepository.findByEntityAndEntityIdAndOperation(EntityName.ACCOUNT.name, account.id, LogOperation.SUSPENSION.name).orElseThrow()
         assertThat(operationLog.comments).isEqualTo("Too many requests in short time")
+        assertThat(operationLog.user.id).isEqualTo(operator.id)
+
+        val updatedAccount = accountRepository.findById(account.id).orElseThrow()
+        assertThat(updatedAccount.updatedBy.id).isEqualTo(operator.id)
     }
 
     @ParameterizedTest

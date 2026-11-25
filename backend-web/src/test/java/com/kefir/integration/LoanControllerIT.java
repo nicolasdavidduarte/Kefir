@@ -204,6 +204,68 @@ class LoanControllerIT extends IntegrationTestBase {
   }
 
   @Test
+  void createLoanFailWhenPrincipalAmountIsNotPositive() throws Exception {
+    Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+    Account account =
+        createTestAccount(customer, AccountStatus.OPENED, 100000001L, new BigDecimal("10000.00"));
+
+    String requestBody =
+        """
+        {
+          "customerId": %d,
+          "accountId": %d,
+          "loanType": "PERSONAL",
+          "amortizationType":"AMERICAN",
+          "principalAmount": -100.00,
+          "currencyIsoCode": "USD",
+          "numberOfInstallments": 4,
+          "externalId": 2122
+        }
+        """
+            .formatted(customer.getId(), account.getId());
+
+    mockMvc
+        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.message.principalAmount").exists());
+  }
+
+  @Test
+  void createLoanFailWhenCurrencyDoesNotMatchAccount() throws Exception {
+    Customer customer = createTestCustomer(1, "123456789", CustomerStatus.ACTIVE);
+    Account account =
+        createTestAccountWithCurrency(
+            customer,
+            AccountStatus.OPENED,
+            100000001L,
+            new BigDecimal("10000.00"),
+            CurrencyIsoCodes.ARS.name());
+
+    String requestBody =
+        """
+        {
+          "customerId": %d,
+          "accountId": %d,
+          "loanType": "PERSONAL",
+          "amortizationType":"AMERICAN",
+          "principalAmount": 100.00,
+          "currencyIsoCode": "USD",
+          "numberOfInstallments": 4,
+          "externalId": 2122
+        }
+        """
+            .formatted(customer.getId(), account.getId());
+
+    mockMvc
+        .perform(post("/api/loans").contentType(MediaType.APPLICATION_JSON).content(requestBody))
+        .andDo(print())
+        .andExpect(status().isUnprocessableContent())
+        .andExpect(
+            jsonPath("$.message").value("Loan currency does not match with the account currency"));
+  }
+
+  @Test
   void createLoanFailWhenUserIsUnauthorized() throws Exception {
     AuthenticatedUser unauthorizedUser = new AuthenticatedUser(2, "viewer_user");
     UsernamePasswordAuthenticationToken lowPrivilegeToken =
@@ -710,6 +772,58 @@ class LoanControllerIT extends IntegrationTestBase {
     Currency currency =
         currencyRepository
             .findByIsoCode(CurrencyIsoCodes.USD.name())
+            .orElseThrow(() -> new ApiException(ErrorCode.CURRENCY_NOT_FOUND));
+
+    BankBranch bankBranch =
+        bankBranchRepository
+            .findById(1)
+            .orElseThrow(() -> new ApiException(ErrorCode.BANK_BRANCH_NOT_FOUND));
+
+    User user =
+        userRepository.findById(2).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+
+    String accountNumber =
+        AccountNumberGenerator.INSTANCE.generate(accountType.getCode(), sequence);
+
+    String cbu =
+        CBUGenerator.INSTANCE.generate(
+            bankBranch.getBank().getId(), bankBranch.getBranchNumber(), accountNumber);
+
+    Account account =
+        new Account(
+            0L,
+            accountType,
+            customer,
+            currency,
+            bankBranch.getBank(),
+            accountNumber,
+            cbu,
+            initialBalance,
+            status,
+            user,
+            OffsetDateTime.now(),
+            user,
+            OffsetDateTime.now());
+
+    return accountRepository.save(account);
+  }
+
+  private Account createTestAccountWithCurrency(
+      Customer customer,
+      AccountStatus status,
+      long sequence,
+      BigDecimal initialBalance,
+      String currencyIsoCode) {
+
+    String name = com.kefir.enums.AccountType.SAVINGS_ACCOUNT.getDbName();
+    AccountType accountType =
+        accountTypeRepository
+            .findByNameIgnoreCase(name)
+            .orElseThrow(() -> new ApiException(ErrorCode.ACCOUNT_TYPE_NOT_FOUND));
+
+    Currency currency =
+        currencyRepository
+            .findByIsoCode(currencyIsoCode)
             .orElseThrow(() -> new ApiException(ErrorCode.CURRENCY_NOT_FOUND));
 
     BankBranch bankBranch =

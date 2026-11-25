@@ -1,6 +1,7 @@
 package com.kefir.services.loan;
 
 import com.kefir.entities.Loan;
+import com.kefir.enums.LoanStatus;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.persistence.repositories.LoanRepository;
@@ -49,5 +50,10 @@ public class LoanQueryService {
     return loanRepository.findAllByAccountId(accountId).stream()
         .map(LoanResponse::fromEntity)
         .toList();
+  }
+
+  @Transactional(readOnly = true)
+  public List<Loan> getAllByCustomerByStatus(Long customerId, LoanStatus status) {
+    return loanRepository.findAllByCustomerIdAndStatus(customerId, status);
   }
 }

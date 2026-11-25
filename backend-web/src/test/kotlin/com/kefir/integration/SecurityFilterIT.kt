@@ -143,4 +143,37 @@ class SecurityFilterIT : SecuredIntegrationTestBase() {
             jsonPath("$.message") { value("Idempotency-Key reuse with different request body") }
         }
     }
+
+    @Test
+    fun loginWithBlankUsernameReturns400() {
+        mockMvc.post("/api/auth/login") {
+            contentType = MediaType.APPLICATION_JSON
+            content = """{"username":"","password":"validPassword123"}"""
+        }.andExpect {
+            status { isBadRequest() }
+            jsonPath("$.message.username") { exists() }
+        }
+    }
+
+    @Test
+    fun loginWithBlankPasswordReturns400() {
+        mockMvc.post("/api/auth/login") {
+            contentType = MediaType.APPLICATION_JSON
+            content = """{"username":"admin","password":""}"""
+        }.andExpect {
+            status { isBadRequest() }
+            jsonPath("$.message.password") { exists() }
+        }
+    }
+
+    @Test
+    fun loginWithUsernameExceedingMaxLengthReturns400() {
+        mockMvc.post("/api/auth/login") {
+            contentType = MediaType.APPLICATION_JSON
+            content = """{"username":"thisUsernameIsWayTooLong","password":"validPassword123"}"""
+        }.andExpect {
+            status { isBadRequest() }
+            jsonPath("$.message.username") { exists() }
+        }
+    }
 }

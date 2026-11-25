@@ -5,6 +5,7 @@ import com.kefir.web.dtos.auth.AuthResponse;
 import com.kefir.web.dtos.auth.LoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,7 +22,7 @@ public class AuthController {
       summary = "Login",
       security = {})
   @PostMapping("/login")
-  public AuthResponse login(@RequestBody LoginRequest request) {
+  public AuthResponse login(@Valid @RequestBody LoginRequest request) {
     return authService.login(request.username(), request.password());
   }
 }

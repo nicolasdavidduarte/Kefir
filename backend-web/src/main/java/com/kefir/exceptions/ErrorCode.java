@@ -36,6 +36,12 @@ public enum ErrorCode {
 
   CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer not found"),
   CUSTOMER_NOT_VALID(HttpStatus.UNPROCESSABLE_CONTENT, "Customer is not valid"),
+  CUSTOMER_NOT_VALID_FOR_DEACTIVATION_ACCOUNTS_OPENED(
+      HttpStatus.UNPROCESSABLE_CONTENT,
+      "Customer is not valid for deactivation because has accounts opened"),
+  CUSTOMER_NOT_VALID_FOR_DEACTIVATION_VALID_LOANS(
+      HttpStatus.UNPROCESSABLE_CONTENT,
+      "Customer is not valid for deactivation because has loans pending of payment"),
 
   CUSTOMER_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "Customer type not found"),
 

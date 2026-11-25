@@ -1,15 +1,19 @@
 package com.kefir.services.customer;
 
 import com.kefir.entities.*;
+import com.kefir.enums.AccountStatus;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.enums.EntityName;
+import com.kefir.enums.LoanStatus;
 import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
 import com.kefir.persistence.repositories.CustomerRepository;
+import com.kefir.services.account.AccountQueryService;
 import com.kefir.services.customertype.CustomerTypeService;
 import com.kefir.services.documenttype.DocumentTypeService;
+import com.kefir.services.loan.LoanQueryService;
 import com.kefir.services.operationlog.OperationLogService;
 import com.kefir.services.persontype.PersonTypeService;
 import com.kefir.services.user.UserService;
@@ -34,6 +38,8 @@ public class CustomerService {
   private final AuthService authService;
   private final UserService userService;
   private final OperationLogService operationLogService;
+  private final AccountQueryService accountQueryService;
+  private final LoanQueryService loanQueryService;
 
   public CustomerService(
       CustomerRepository customerRepository,
@@ -42,7 +48,9 @@ public class CustomerService {
       AuthService authService,
       UserService userService,
       PersonTypeService personTypeService,
-      OperationLogService operationLogService) {
+      OperationLogService operationLogService,
+      AccountQueryService accountQueryService,
+      LoanQueryService loanQueryService) {
     this.customerRepository = customerRepository;
     this.documentTypeService = documentTypeService;
     this.personTypeService = personTypeService;
@@ -50,6 +58,8 @@ public class CustomerService {
     this.authService = authService;
     this.userService = userService;
     this.operationLogService = operationLogService;
+    this.accountQueryService = accountQueryService;
+    this.loanQueryService = loanQueryService;
   }
 
   @Transactional(readOnly = true)
@@ -195,6 +205,20 @@ public class CustomerService {
 
     if (customer.getStatus() != CustomerStatus.ACTIVE)
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
+
+    List<Loan> loans =
+        loanQueryService.getAllByCustomerByStatus(customer.getId(), LoanStatus.ACTIVE);
+
+    if (!loans.isEmpty()) {
+      throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID_FOR_DEACTIVATION_VALID_LOANS);
+    }
+
+    List<Account> accounts =
+        accountQueryService.getAllByCustomerByStatus(customer.getId(), AccountStatus.OPENED);
+
+    if (!accounts.isEmpty()) {
+      throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID_FOR_DEACTIVATION_ACCOUNTS_OPENED);
+    }
 
     User user = userService.getById(authService.getCurrentUserId());
 

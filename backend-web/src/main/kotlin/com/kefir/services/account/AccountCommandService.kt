@@ -35,10 +35,6 @@ class AccountCommandService(
     private val bankBranchService: BankBranchService,
 ) {
 
-    companion object {
-        private const val SYSTEM_USER = 1
-    }
-
     @Transactional
     fun create(accountRequest: AccountRequest): AccountResponse {
         val customer = customerService.getById(accountRequest.customerId)
@@ -95,7 +91,7 @@ class AccountCommandService(
     fun suspend(id: Long, reason: String): AccountResponse {
         val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
-        val user: User = userService.getById(SYSTEM_USER)
+        val user: User = userService.getById(authService.currentUserId)
 
         account.suspend(user)
 

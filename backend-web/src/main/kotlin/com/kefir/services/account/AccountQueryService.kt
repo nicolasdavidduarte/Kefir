@@ -1,6 +1,7 @@
 package com.kefir.services.account
 
 import com.kefir.entities.Account
+import com.kefir.enums.AccountStatus
 import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.persistence.repositories.AccountRepository
@@ -40,6 +41,9 @@ class AccountQueryService(
         val page = accountRepository.findAllByCustomerIdOrderByIdAsc(customerId, pageable)
         return PageResponse.from(page, Account::toResponse)
     }
+
+    @Transactional(readOnly = true)
+    fun getAllByCustomerByStatus(customerId: Long, status: AccountStatus): List<Account> = accountRepository.findAllByCustomerIdAndStatus(customerId, status)
 
     @Transactional
     fun getByLoanIdForUpdate(loanId: Long): Account = accountRepository.findByLoanIdForUpdate(loanId).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }

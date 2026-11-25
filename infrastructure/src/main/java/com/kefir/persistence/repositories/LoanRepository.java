@@ -47,4 +47,6 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
       select l from Loan l where l.id = :id
       """)
   Optional<Loan> findByIdForUpdate(Long id);
+
+  List<Loan> findAllByCustomerIdAndStatus(Long customerId, LoanStatus status);
 }
