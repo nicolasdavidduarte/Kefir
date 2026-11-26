@@ -147,10 +147,18 @@ class AccountTest {
     }
 
     @Test
-    fun accountIsValidWhenUsedToCreateLoanWithOpenedStatus() {
+    fun accountIsActiveWhenOpened() {
         val account = AccountMother.sample(status = AccountStatus.OPENED)
 
-        account.isActive()
+        assertEquals(true, account.isActive())
+    }
+
+    @ParameterizedTest
+    @EnumSource(AccountStatus::class, names = ["OPENED"], mode = EnumSource.Mode.EXCLUDE)
+    fun accountIsNotActiveWhenStatusIsNotOpened(status: AccountStatus) {
+        val account = AccountMother.sample(status = status)
+
+        assertEquals(false, account.isActive())
     }
 
     @Test

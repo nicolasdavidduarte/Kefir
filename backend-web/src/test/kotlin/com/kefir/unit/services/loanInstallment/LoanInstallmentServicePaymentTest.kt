@@ -120,6 +120,7 @@ class LoanInstallmentServicePaymentTest {
         every { authService.currentUserId } returns userId
         every { userService.getById(userId) } returns user
         every { accountCommandService.getByLoanIdForUpdate(loanId) } returns account
+        every { account.isActive() } returns true
         every { loanRepository.findByIdForUpdate(loanId) } returns Optional.of(loan)
         every { paymentMethodService.getByName(PaymentMethodName.CASH.name) } returns paymentMethod
         every { loanInstallmentPaymentService.create(any(), any()) } returns mockk(relaxed = true)

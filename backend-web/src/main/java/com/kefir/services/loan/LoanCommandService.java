@@ -87,7 +87,7 @@ public class LoanCommandService {
           accountRepository
               .findByIdAndCustomerId(loanRequest.accountId(), loanRequest.customerId())
               .orElseThrow(() -> new ApiException(ErrorCode.ACCOUNT_NOT_FOUND));
-      if (account.isActive()) throw new ApiException(ErrorCode.ACCOUNT_NOT_VALID);
+      if (!account.isActive()) throw new ApiException(ErrorCode.ACCOUNT_NOT_VALID);
 
       User user = userService.getById(authService.getCurrentUserId());
 

@@ -52,7 +52,7 @@ class LoanInstallmentService(
     @Transactional
     fun createPayment(loanId: Long, installmentNumber: Int, paymentMethod: PaymentMethodName): LoanInstallmentResponse {
         val account = accountCommandService.getByLoanIdForUpdate(loanId)
-        account.isActive()
+        if (!account.isActive()) throw ApiException(ErrorCode.ACCOUNT_NOT_VALID)
 
         val loan = loanRepository.findByIdForUpdate(loanId).orElseThrow { throw ApiException(ErrorCode.LOAN_NOT_FOUND) }
 

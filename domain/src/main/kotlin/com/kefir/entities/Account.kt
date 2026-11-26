@@ -78,7 +78,7 @@ class Account(
 
     override fun toString(): String = "{Id: $id / CBU: $cbu / Balance: $balance / Status: $status}"
 
-    fun isActive(): Boolean = status != AccountStatus.OPENED
+    fun isActive(): Boolean = status == AccountStatus.OPENED
 
     fun addBalance(amount: BigDecimal, updatedBy: User) {
         if (this.status != AccountStatus.OPENED) {
