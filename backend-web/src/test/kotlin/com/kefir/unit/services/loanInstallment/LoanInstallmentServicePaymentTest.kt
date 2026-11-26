@@ -14,7 +14,7 @@ import com.kefir.enums.PaymentMethodName
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.persistence.repositories.LoanInstallmentRepository
 import com.kefir.persistence.repositories.LoanRepository
-import com.kefir.services.account.AccountQueryService
+import com.kefir.services.account.AccountCommandService
 import com.kefir.services.loanInstallment.GermanAmortizationCalculator
 import com.kefir.services.loanInstallment.LoanInstallmentService
 import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
@@ -35,7 +35,7 @@ class LoanInstallmentServicePaymentTest {
     private val loanInstallmentRepository: LoanInstallmentRepository = mockk()
     private val paymentMethodService: PaymentMethodService = mockk()
     private val loanInstallmentPaymentService: LoanInstallmentPaymentService = mockk()
-    private val accountQueryService: AccountQueryService = mockk()
+    private val accountCommandService: AccountCommandService = mockk()
     private val userService: UserService = mockk()
     private val authService: AuthService = mockk()
 
@@ -46,7 +46,7 @@ class LoanInstallmentServicePaymentTest {
         loanInstallmentRepository = loanInstallmentRepository,
         paymentMethodService = paymentMethodService,
         loanInstallmentPaymentService = loanInstallmentPaymentService,
-        accountQueryService = accountQueryService,
+        accountCommandService = accountCommandService,
         userService = userService,
         authService = authService,
         calculatorsList = listOf(germanCalculator),
@@ -119,8 +119,8 @@ class LoanInstallmentServicePaymentTest {
 
         every { authService.currentUserId } returns userId
         every { userService.getById(userId) } returns user
-        every { accountQueryService.getByLoanIdForUpdate(loanId) } returns account
-        every { account.isValid() } returns Unit
+        every { accountCommandService.getByLoanIdForUpdate(loanId) } returns account
+        every { account.isActive() } returns true
         every { loanRepository.findByIdForUpdate(loanId) } returns Optional.of(loan)
         every { paymentMethodService.getByName(PaymentMethodName.CASH.name) } returns paymentMethod
         every { loanInstallmentPaymentService.create(any(), any()) } returns mockk(relaxed = true)

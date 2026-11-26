@@ -1,6 +1,12 @@
 package com.kefir.services.customer;
 
-import com.kefir.entities.*;
+import com.kefir.entities.Account;
+import com.kefir.entities.Customer;
+import com.kefir.entities.CustomerType;
+import com.kefir.entities.DocumentType;
+import com.kefir.entities.Loan;
+import com.kefir.entities.PersonType;
+import com.kefir.entities.User;
 import com.kefir.enums.AccountStatus;
 import com.kefir.enums.CustomerStatus;
 import com.kefir.enums.EntityName;
@@ -9,11 +15,11 @@ import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
+import com.kefir.persistence.repositories.AccountRepository;
 import com.kefir.persistence.repositories.CustomerRepository;
-import com.kefir.services.account.AccountQueryService;
+import com.kefir.persistence.repositories.LoanRepository;
 import com.kefir.services.customertype.CustomerTypeService;
 import com.kefir.services.documenttype.DocumentTypeService;
-import com.kefir.services.loan.LoanQueryService;
 import com.kefir.services.operationlog.OperationLogService;
 import com.kefir.services.persontype.PersonTypeService;
 import com.kefir.services.user.UserService;
@@ -21,15 +27,12 @@ import com.kefir.web.dtos.customer.CustomerCreationRequest;
 import com.kefir.web.dtos.customer.CustomerResponse;
 import com.kefir.web.dtos.customer.CustomerUpdateRequest;
 import com.kefir.web.dtos.operationLog.OperationLogCommand;
-import com.kefir.web.utils.PageResponse;
 import java.util.List;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class CustomerService {
+public class CustomerCommandService {
 
   private final CustomerRepository customerRepository;
   private final DocumentTypeService documentTypeService;
@@ -38,10 +41,10 @@ public class CustomerService {
   private final AuthService authService;
   private final UserService userService;
   private final OperationLogService operationLogService;
-  private final AccountQueryService accountQueryService;
-  private final LoanQueryService loanQueryService;
+  private final AccountRepository accountRepository;
+  private final LoanRepository loanRepository;
 
-  public CustomerService(
+  public CustomerCommandService(
       CustomerRepository customerRepository,
       DocumentTypeService documentTypeService,
       CustomerTypeService customerTypeService,
@@ -49,8 +52,8 @@ public class CustomerService {
       UserService userService,
       PersonTypeService personTypeService,
       OperationLogService operationLogService,
-      AccountQueryService accountQueryService,
-      LoanQueryService loanQueryService) {
+      AccountRepository accountRepository,
+      LoanRepository loanRepository) {
     this.customerRepository = customerRepository;
     this.documentTypeService = documentTypeService;
     this.personTypeService = personTypeService;
@@ -58,36 +61,8 @@ public class CustomerService {
     this.authService = authService;
     this.userService = userService;
     this.operationLogService = operationLogService;
-    this.accountQueryService = accountQueryService;
-    this.loanQueryService = loanQueryService;
-  }
-
-  @Transactional(readOnly = true)
-  public PageResponse<CustomerResponse> getAllWithResponse(Pageable pageable) {
-    Page<Customer> page = customerRepository.findAllByOrderByIdAsc(pageable);
-    return PageResponse.from(page, CustomerResponse::fromEntity);
-  }
-
-  @Transactional(readOnly = true)
-  public Customer getById(Long id) {
-    return customerRepository
-        .findById(id)
-        .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
-  }
-
-  @Transactional(readOnly = true)
-  public CustomerResponse getByIdWithResponse(Long id) {
-    return customerRepository
-        .findByIdWithDetails(id)
-        .map(CustomerResponse::fromEntity)
-        .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
-  }
-
-  @Transactional(readOnly = true)
-  public List<CustomerResponse> getAllByFullnameOrDocumentNumber(String query) {
-    return customerRepository.findByFullnameOrDocumentNumber(query).stream()
-        .map(CustomerResponse::fromEntity)
-        .toList();
+    this.accountRepository = accountRepository;
+    this.loanRepository = loanRepository;
   }
 
   @Transactional
@@ -207,14 +182,14 @@ public class CustomerService {
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
 
     List<Loan> loans =
-        loanQueryService.getAllByCustomerByStatus(customer.getId(), LoanStatus.ACTIVE);
+        loanRepository.findAllByCustomerIdAndStatus(customer.getId(), LoanStatus.ACTIVE);
 
     if (!loans.isEmpty()) {
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID_FOR_DEACTIVATION_VALID_LOANS);
     }
 
     List<Account> accounts =
-        accountQueryService.getAllByCustomerByStatus(customer.getId(), AccountStatus.OPENED);
+        accountRepository.findAllByCustomerIdAndStatus(customer.getId(), AccountStatus.OPENED);
 
     if (!accounts.isEmpty()) {
       throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID_FOR_DEACTIVATION_ACCOUNTS_OPENED);

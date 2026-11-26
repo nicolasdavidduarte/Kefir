@@ -12,7 +12,7 @@ import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.persistence.repositories.LoanInstallmentRepository
 import com.kefir.persistence.repositories.LoanRepository
-import com.kefir.services.account.AccountQueryService
+import com.kefir.services.account.AccountCommandService
 import com.kefir.services.loanInstallment.payment.LoanInstallmentPaymentService
 import com.kefir.services.loanInstallment.payment.PaymentMethodService
 import com.kefir.services.user.UserService
@@ -29,7 +29,7 @@ class LoanInstallmentService(
     private val loanInstallmentRepository: LoanInstallmentRepository,
     private val paymentMethodService: PaymentMethodService,
     private val loanInstallmentPaymentService: LoanInstallmentPaymentService,
-    private val accountQueryService: AccountQueryService,
+    private val accountCommandService: AccountCommandService,
     private val userService: UserService,
     private val authService: AuthService,
     calculatorsList: List<AmortizationCalculator>,
@@ -51,8 +51,8 @@ class LoanInstallmentService(
 
     @Transactional
     fun createPayment(loanId: Long, installmentNumber: Int, paymentMethod: PaymentMethodName): LoanInstallmentResponse {
-        val account = accountQueryService.getByLoanIdForUpdate(loanId)
-        account.isValid()
+        val account = accountCommandService.getByLoanIdForUpdate(loanId)
+        if (!account.isActive()) throw ApiException(ErrorCode.ACCOUNT_NOT_VALID)
 
         val loan = loanRepository.findByIdForUpdate(loanId).orElseThrow { throw ApiException(ErrorCode.LOAN_NOT_FOUND) }
 

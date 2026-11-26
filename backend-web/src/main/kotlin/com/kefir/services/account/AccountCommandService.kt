@@ -9,11 +9,11 @@ import com.kefir.exceptions.ApiException
 import com.kefir.exceptions.ErrorCode
 import com.kefir.infrastructure.security.AuthService
 import com.kefir.persistence.repositories.AccountRepository
+import com.kefir.persistence.repositories.CustomerRepository
 import com.kefir.persistence.repositories.LoanRepository
 import com.kefir.services.accounttype.AccountTypeService
 import com.kefir.services.bankbranch.BankBranchService
 import com.kefir.services.currency.CurrencyService
-import com.kefir.services.customer.CustomerService
 import com.kefir.services.operationlog.OperationLogService
 import com.kefir.services.user.UserService
 import com.kefir.web.dtos.account.AccountRequest
@@ -30,7 +30,7 @@ class AccountCommandService(
     private val operationLogService: OperationLogService,
     private val authService: AuthService,
     private val userService: UserService,
-    private val customerService: CustomerService,
+    private val customerRepository: CustomerRepository,
     private val currencyService: CurrencyService,
     private val accountTypeService: AccountTypeService,
     private val bankBranchService: BankBranchService,
@@ -38,8 +38,8 @@ class AccountCommandService(
 
     @Transactional
     fun create(accountRequest: AccountRequest): AccountResponse {
-        val customer = customerService.getById(accountRequest.customerId)
-        customer.validateCanCreateLoan()
+        val customer = customerRepository.findById(requireNotNull(accountRequest.customerId)).orElseThrow { ApiException(ErrorCode.CUSTOMER_NOT_FOUND) }
+        if (!customer.isActive) throw ApiException(ErrorCode.CUSTOMER_NOT_VALID)
 
         val user = userService.getById(authService.currentUserId)
         val accountType = accountTypeService.getByName(accountRequest.type?.dbName)
@@ -69,7 +69,7 @@ class AccountCommandService(
 
     @Transactional
     fun open(id: Long): AccountResponse {
-        val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+        val account = accountRepository.findByIdForUpdate(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
         if (account.customer.status != CustomerStatus.ACTIVE) {
             throw ApiException(ErrorCode.CUSTOMER_NOT_VALID)
@@ -94,7 +94,7 @@ class AccountCommandService(
 
     @Transactional
     fun suspend(id: Long, reason: String): AccountResponse {
-        val account = accountRepository.findById(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
+        val account = accountRepository.findByIdForUpdate(id).orElseThrow { throw ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 
         val user: User = userService.getById(authService.currentUserId)
 
@@ -135,4 +135,7 @@ class AccountCommandService(
 
         return account.toResponse()
     }
+
+    @Transactional
+    fun getByLoanIdForUpdate(loanId: Long): Account = accountRepository.findByLoanIdForUpdate(loanId).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 }

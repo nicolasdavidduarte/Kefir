@@ -1,6 +1,7 @@
 package com.kefir.web.controllers;
 
-import com.kefir.services.customer.CustomerService;
+import com.kefir.services.customer.CustomerCommandService;
+import com.kefir.services.customer.CustomerQueryService;
 import com.kefir.web.dtos.customer.CustomerCreationRequest;
 import com.kefir.web.dtos.customer.CustomerResponse;
 import com.kefir.web.dtos.customer.CustomerUpdateRequest;
@@ -18,29 +19,32 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Customers services", description = "APIs for customers")
 public class CustomerController {
 
-  private final CustomerService customerService;
+  private final CustomerCommandService customerCommandService;
+  private final CustomerQueryService customerQueryService;
 
-  public CustomerController(CustomerService customerService) {
-    this.customerService = customerService;
+  public CustomerController(
+      CustomerCommandService customerCommandService, CustomerQueryService customerQueryService) {
+    this.customerCommandService = customerCommandService;
+    this.customerQueryService = customerQueryService;
   }
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   public PageResponse<CustomerResponse> getAll(
       @RequestParam(required = false) Integer page, @RequestParam(required = false) Integer size) {
-    return customerService.getAllWithResponse(Pagination.from(page, size));
+    return customerQueryService.getAllWithResponse(Pagination.from(page, size));
   }
 
   @GetMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public CustomerResponse getById(@PathVariable Long id) {
-    return customerService.getByIdWithResponse(id);
+    return customerQueryService.getByIdWithResponse(id);
   }
 
   @GetMapping("/search/{query}")
   @ResponseStatus(HttpStatus.OK)
   public List<CustomerResponse> getAllByFullname(@PathVariable String query) {
-    return customerService.getAllByFullnameOrDocumentNumber(query);
+    return customerQueryService.getAllByFullnameOrDocumentNumber(query);
   }
 
   @PostMapping
@@ -48,7 +52,7 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
   public CustomerResponse create(@RequestBody @Valid CustomerCreationRequest customer) {
 
-    return customerService.create(customer);
+    return customerCommandService.create(customer);
   }
 
   @PatchMapping("/{id}")
@@ -56,7 +60,7 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
   public CustomerResponse update(
       @RequestBody @Valid CustomerUpdateRequest request, @PathVariable Long id) {
-    return customerService.update(request, id);
+    return customerCommandService.update(request, id);
   }
 
   @PostMapping("/{id}/status/activate")
@@ -64,7 +68,7 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
   public CustomerResponse activate(@PathVariable Long id) {
 
-    return customerService.activate(id);
+    return customerCommandService.activate(id);
   }
 
   @PostMapping("/{id}/status/deactivate")
@@ -72,6 +76,6 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ADMIN','OPR')")
   public CustomerResponse deactivate(@PathVariable Long id) {
 
-    return customerService.deactivate(id);
+    return customerCommandService.deactivate(id);
   }
 }
