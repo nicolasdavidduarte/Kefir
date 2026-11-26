@@ -44,7 +44,4 @@ class AccountQueryService(
 
     @Transactional(readOnly = true)
     fun getAllByCustomerByStatus(customerId: Long, status: AccountStatus): List<Account> = accountRepository.findAllByCustomerIdAndStatus(customerId, status)
-
-    @Transactional
-    fun getByLoanIdForUpdate(loanId: Long): Account = accountRepository.findByLoanIdForUpdate(loanId).orElseThrow { ApiException(ErrorCode.ACCOUNT_NOT_FOUND) }
 }

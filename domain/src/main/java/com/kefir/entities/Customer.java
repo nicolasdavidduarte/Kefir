@@ -191,10 +191,8 @@ public class Customer {
         + "}";
   }
 
-  public void validateCanCreateLoan() {
-    if (status != CustomerStatus.ACTIVE) {
-      throw new DomainException(DomainErrorCode.CUSTOMER_NOT_VALID);
-    }
+  public boolean isActive() {
+    return status == CustomerStatus.ACTIVE;
   }
 
   public static String generateFullname(

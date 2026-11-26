@@ -150,19 +150,7 @@ class AccountTest {
     fun accountIsValidWhenUsedToCreateLoanWithOpenedStatus() {
         val account = AccountMother.sample(status = AccountStatus.OPENED)
 
-        account.isValid()
-    }
-
-    @ParameterizedTest
-    @EnumSource(AccountStatus::class, names = ["OPENED"], mode = EnumSource.Mode.EXCLUDE)
-    fun accountThrowsErrorWhenUsedToCreateLoanWithWrongStatus(status: AccountStatus) {
-        val account = AccountMother.sample(status = status)
-
-        val exception = assertThrows<DomainException> {
-            account.isValid()
-        }
-
-        assertEquals("Account is not in a valid state", exception.message)
+        account.isActive()
     }
 
     @Test

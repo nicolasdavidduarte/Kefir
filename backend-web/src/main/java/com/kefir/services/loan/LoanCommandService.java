@@ -6,12 +6,12 @@ import com.kefir.enums.LogOperation;
 import com.kefir.exceptions.ApiException;
 import com.kefir.exceptions.ErrorCode;
 import com.kefir.infrastructure.security.AuthService;
+import com.kefir.persistence.repositories.AccountRepository;
+import com.kefir.persistence.repositories.CustomerRepository;
 import com.kefir.persistence.repositories.LoanRepository;
 import com.kefir.services.account.AccountCommandService;
-import com.kefir.services.account.AccountQueryService;
 import com.kefir.services.amortizationtype.AmortizationTypeService;
 import com.kefir.services.currency.CurrencyService;
-import com.kefir.services.customer.CustomerService;
 import com.kefir.services.loanInstallment.LoanInstallmentService;
 import com.kefir.services.loantype.LoanTypeService;
 import com.kefir.services.operationlog.OperationLogService;
@@ -32,11 +32,12 @@ public class LoanCommandService {
 
   private final LoanRepository loanRepository;
   private final LoanInstallmentService loanInstallmentService;
-  private final AccountQueryService accountQueryService;
+  private final AccountRepository accountRepository;
+  private final AccountCommandService accountCommandService;
   private final AuthService authService;
   private final UserService userService;
   private final MeterRegistry registry;
-  private final CustomerService customerService;
+  private final CustomerRepository customerRepository;
   private final LoanTypeService loanTypeService;
   private final CurrencyService currencyService;
   private final AmortizationTypeService amortizationTypeService;
@@ -45,26 +46,27 @@ public class LoanCommandService {
   public LoanCommandService(
       LoanRepository loanRepository,
       LoanInstallmentService loanInstallmentService,
-      AccountQueryService accountQueryService,
+      AccountRepository accountRepository,
       AccountCommandService accountCommandService,
       AuthService authService,
       MeterRegistry registry,
-      CustomerService customerService,
+      CustomerRepository customerRepository,
       LoanTypeService loanTypeService,
       CurrencyService currencyService,
       UserService userService,
       AmortizationTypeService amortizationTypeService,
       OperationLogService operationLogService) {
     this.loanRepository = loanRepository;
+    this.accountRepository = accountRepository;
     this.registry = registry;
     this.authService = authService;
     this.loanInstallmentService = loanInstallmentService;
-    this.customerService = customerService;
+    this.customerRepository = customerRepository;
     this.loanTypeService = loanTypeService;
     this.currencyService = currencyService;
     this.userService = userService;
     this.amortizationTypeService = amortizationTypeService;
-    this.accountQueryService = accountQueryService;
+    this.accountCommandService = accountCommandService;
     this.operationLogService = operationLogService;
   }
 
@@ -75,13 +77,17 @@ public class LoanCommandService {
 
     try {
 
-      Customer customer = customerService.getById(loanRequest.customerId());
-      customer.validateCanCreateLoan();
+      Customer customer =
+          customerRepository
+              .findById(loanRequest.customerId())
+              .orElseThrow(() -> new ApiException(ErrorCode.CUSTOMER_NOT_FOUND));
+      if (!customer.isActive()) throw new ApiException(ErrorCode.CUSTOMER_NOT_VALID);
 
       Account account =
-          accountQueryService.getByIdAndCustomerId(
-              loanRequest.accountId(), loanRequest.customerId());
-      account.isValid();
+          accountRepository
+              .findByIdAndCustomerId(loanRequest.accountId(), loanRequest.customerId())
+              .orElseThrow(() -> new ApiException(ErrorCode.ACCOUNT_NOT_FOUND));
+      if (account.isActive()) throw new ApiException(ErrorCode.ACCOUNT_NOT_VALID);
 
       User user = userService.getById(authService.getCurrentUserId());
 
@@ -156,8 +162,8 @@ public class LoanCommandService {
 
   @Transactional
   public LoanResponse approve(Long id) {
-    Account account = accountQueryService.getByLoanIdForUpdate(id);
-    account.isValid();
+    Account account = accountCommandService.getByLoanIdForUpdate(id);
+    account.isActive();
 
     Loan loan =
         loanRepository
