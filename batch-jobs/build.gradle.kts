@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(project(":infrastructure"))
 
     // Spring Batch 6
     implementation("org.springframework.boot:spring-boot-starter-batch-jdbc")
@@ -37,6 +38,8 @@ dependencies {
 
     // Tests
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter")
+    testImplementation("org.testcontainers:testcontainers-postgresql")
 }
 
 tasks.test {
