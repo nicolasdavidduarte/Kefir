@@ -1,9 +1,14 @@
 package com.kefir.loan;
 
 import com.kefir.entities.Loan;
+import com.kefir.enums.LoanStatus;
 import jakarta.persistence.EntityManagerFactory;
+import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Arrays;
+import java.util.Map;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -18,6 +23,8 @@ import org.springframework.batch.infrastructure.item.database.JpaPagingItemReade
 import org.springframework.batch.infrastructure.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemWriter;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemWriterBuilder;
+import org.springframework.batch.infrastructure.item.file.transform.BeanWrapperFieldExtractor;
+import org.springframework.batch.infrastructure.item.file.transform.DelimitedLineAggregator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +34,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class ActiveLoansReportJobConfig {
 
-  @Value("${kefir.batch.reports.directory}")
+  public static final String[] CSV_COLUMN_NAMES =
+      new String[] {
+        "loanId", "customerId", "status", "principal", "outstanding", "dueDate", "daysPastDue"
+      };
+
+  public static final String CSV_HEADER = String.join(",", CSV_COLUMN_NAMES);
+
+  @Value("${kefir.batch.reports.directory:./reports}")
   private String reportsDirectory;
 
   private final DatabaseCheckListener databaseCheckListener;
@@ -41,7 +55,6 @@ public class ActiveLoansReportJobConfig {
     return new JobBuilder("loanReportJob", jobRepository)
         .start(loanReportStep)
         .listener(databaseCheckListener)
-        .incrementer(new DailyReportJobParametersIncrementer())
         .build();
   }
 
@@ -50,11 +63,11 @@ public class ActiveLoansReportJobConfig {
       JobRepository jobRepository,
       PlatformTransactionManager transactionManager,
       JpaPagingItemReader<Loan> reader,
-      ItemProcessor<Loan, String[]> processor,
-      FlatFileItemWriter<String[]> writer) {
+      ItemProcessor<Loan, LoanReportLine> processor,
+      FlatFileItemWriter<LoanReportLine> writer) {
 
     return new StepBuilder("loanReportStep", jobRepository)
-        .<Loan, String[]>chunk(10)
+        .<Loan, LoanReportLine>chunk(10)
         .transactionManager(transactionManager)
         .reader(reader)
         .processor(processor)
@@ -63,63 +76,137 @@ public class ActiveLoansReportJobConfig {
   }
 
   @Bean
-  public JpaPagingItemReader<Loan> loanReader(EntityManagerFactory entityManagerFactory) {
-    return new JpaPagingItemReaderBuilder<Loan>()
-        .name("loanReader")
-        .entityManagerFactory(entityManagerFactory)
-        .queryString("SELECT l FROM Loan l WHERE l.status = 'ACTIVE' ORDER BY l.id")
-        .pageSize(10)
-        .build();
-  }
+  @StepScope
+  public JpaPagingItemReader<Loan> loanReader(
+      EntityManagerFactory entityManagerFactory,
+      @Value("#{jobParameters['statusFilter']}") String statusFilter) {
 
-  @Bean
-  public ItemProcessor<Loan, String[]> loanProcessor() {
-    return loan ->
-        new String[] {
-          escapeCsv(String.valueOf(loan.getId())),
-          escapeCsv(loan.getCustomer() != null ? loan.getCustomer().getId().toString() : ""),
-          escapeCsv(String.valueOf(loan.getTotalOperationAmount())),
-          escapeCsv(String.valueOf(loan.getOpeningDate())),
-          escapeCsv(String.valueOf(loan.getStatus()))
-        };
+    String status =
+        (statusFilter != null && !statusFilter.isBlank())
+            ? statusFilter.trim().toUpperCase()
+            : "ACTIVE";
+
+    JpaPagingItemReaderBuilder<Loan> builder =
+        new JpaPagingItemReaderBuilder<Loan>()
+            .name("loanReader")
+            .entityManagerFactory(entityManagerFactory)
+            .pageSize(10);
+
+    if ("ALL".equalsIgnoreCase(status)) {
+      builder.queryString("SELECT l FROM Loan l JOIN FETCH l.customer ORDER BY l.id");
+    } else {
+      LoanStatus loanStatus;
+      try {
+        loanStatus = LoanStatus.valueOf(status);
+      } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException(
+            "Invalid statusFilter parameter: '"
+                + status
+                + "'. Valid values are: "
+                + Arrays.toString(LoanStatus.values())
+                + " or ALL",
+            e);
+      }
+      builder
+          .queryString(
+              "SELECT l FROM Loan l JOIN FETCH l.customer WHERE l.status = :status ORDER BY l.id")
+          .parameterValues(Map.of("status", loanStatus));
+    }
+
+    return builder.build();
   }
 
   @Bean
   @StepScope
-  public FlatFileItemWriter<String[]> loanFileWriter(
-      @Value("#{jobParameters['reportDate']}") String reportDate) {
+  public ItemProcessor<Loan, LoanReportLine> loanProcessor(
+      @Value("#{jobParameters['reportDate']}") String reportDateParam) {
+    LocalDate reportDate = parseReportDate(reportDateParam);
+    return new LoanReportProcessor(reportDate);
+  }
 
-    if (reportDate == null || reportDate.isBlank()) {
-      reportDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+  @Bean
+  @StepScope
+  public FlatFileItemWriter<LoanReportLine> loanFileWriter(
+      @Value("#{jobParameters['reportDate']}") String reportDateParam,
+      @Value("#{jobParameters['statusFilter']}") String statusFilter,
+      @Value("#{jobParameters['outputPath']}") String outputPath) {
+
+    LocalDate reportDate = parseReportDate(reportDateParam);
+    String dateStr = reportDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+    String effectiveStatus =
+        (statusFilter != null && !statusFilter.isBlank())
+            ? statusFilter.trim().toUpperCase()
+            : "ACTIVE";
+
+    String fileName = effectiveStatus + "_LOANS_REPORT_" + dateStr + ".csv";
+    File targetFile = resolveOutputFile(outputPath, fileName, reportsDirectory);
+
+    if (targetFile.getParentFile() != null && !targetFile.getParentFile().exists()) {
+      targetFile.getParentFile().mkdirs();
     }
-    String filePath = reportsDirectory + "/ACTIVE_LOANS_REPORT_" + reportDate + ".csv";
 
-    return new FlatFileItemWriterBuilder<String[]>()
+    BeanWrapperFieldExtractor<LoanReportLine> fieldExtractor = new BeanWrapperFieldExtractor<>();
+    fieldExtractor.setNames(CSV_COLUMN_NAMES);
+
+    DelimitedLineAggregator<LoanReportLine> lineAggregator = new DelimitedLineAggregator<>();
+    lineAggregator.setDelimiter(",");
+    lineAggregator.setFieldExtractor(fieldExtractor);
+
+    return new FlatFileItemWriterBuilder<LoanReportLine>()
         .name("loanCsvWriter")
-        .resource(new FileSystemResource(filePath))
-        .append(true)
-        .lineAggregator(item -> String.join(",", item))
-        .headerCallback(
-            writer -> writer.write("\"ID\",\"Customer\",\"Amount\",\"Date\",\"Status\""))
+        .resource(new FileSystemResource(targetFile))
+        .append(false)
+        .shouldDeleteIfExists(true)
+        .lineAggregator(lineAggregator)
+        .headerCallback(writer -> writer.write(CSV_HEADER))
         .build();
+  }
+
+  public static File resolveOutputFile(
+      String outputPath, String fileName, String defaultDirectory) {
+    if (outputPath != null && !outputPath.isBlank()) {
+      File file = new File(outputPath);
+      if (outputPath.endsWith(".csv") || (!file.isDirectory() && file.getName().contains("."))) {
+        return file;
+      }
+      return new File(file, fileName);
+    }
+    return new File(defaultDirectory, fileName);
+  }
+
+  public static LocalDate parseReportDate(String dateStr) {
+    if (dateStr == null || dateStr.isBlank()) {
+      return LocalDate.now();
+    }
+    String trimmed = dateStr.trim();
+    try {
+      if (trimmed.length() >= 10 && trimmed.charAt(4) == '-' && trimmed.charAt(7) == '-') {
+        return LocalDate.parse(trimmed.substring(0, 10), DateTimeFormatter.ISO_LOCAL_DATE);
+      } else if (trimmed.length() == 8 && !trimmed.contains("-")) {
+        return LocalDate.parse(trimmed, DateTimeFormatter.ofPattern("yyyyMMdd"));
+      } else {
+        return LocalDate.parse(trimmed);
+      }
+    } catch (DateTimeParseException e) {
+      return LocalDate.now();
+    }
   }
 
   public static class DailyReportJobParametersIncrementer implements JobParametersIncrementer {
     @Override
     public JobParameters getNext(JobParameters parameters) {
-      String reportDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+      JobParametersBuilder builder =
+          parameters != null ? new JobParametersBuilder(parameters) : new JobParametersBuilder();
 
-      return new JobParametersBuilder(parameters != null ? parameters : new JobParameters())
-          .addString("reportDate", reportDate)
-          .addLong("run.id", System.currentTimeMillis())
-          .toJobParameters();
-    }
-  }
+      if (parameters == null || parameters.getString("reportDate") == null) {
+        String reportDate = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        builder.addString("reportDate", reportDate);
+      }
+      if (parameters == null || parameters.getString("statusFilter") == null) {
+        builder.addString("statusFilter", "ACTIVE");
+      }
 
-  private String escapeCsv(String value) {
-    if (value == null) {
-      return "\"\"";
+      return builder.addLong("run.id", System.currentTimeMillis()).toJobParameters();
     }
-    return "\"" + value.replace("\"", "\"\"") + "\"";
   }
 }
